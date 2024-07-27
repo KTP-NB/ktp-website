@@ -7,9 +7,9 @@ import Link from 'next/link'
 
 const navigation = [
   { name: 'About Us', href: '/about' },
-  { name: 'Features', href: '/features' },
-  { name: 'Marketplace', href: '/marketplace' },
-  { name: 'Company', href: '/company' },
+  { name: 'Rush', href: '/rush' },
+  { name: 'Members', href: '/members' },
+  { name: 'Contact us', href: '/contact' },
 ]
 
 export default function Header() {

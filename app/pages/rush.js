@@ -7,28 +7,33 @@ import 'tailwindcss/tailwind.css';
 const events = [
     {
         title: "Applications Due",
-        date: "Date 1",
-        description: "Description for applications due.",
+        date: "September 10, 2024",
+        description: "All applications for rushing Kappa Theta Pi are due by this date.",
     },
     {
-        title: "Rush Event 1",
-        date: "Date 2",
-        description: "Description for rush event 1.",
+        title: "Rush Kickoff Event",
+        date: "September 12, 2024",
+        description: "Join us for the kickoff event to learn more about Kappa Theta Pi and meet the members.",
     },
     {
-        title: "Rush Event 2",
-        date: "Date 3",
-        description: "Description for rush event 2.",
+        title: "Tech Talk and Networking",
+        date: "September 14, 2024",
+        description: "An opportunity to hear from industry professionals and network with other tech enthusiasts.",
     },
     {
-        title: "Rush Event 3",
-        date: "Date 4",
-        description: "Description for rush event 3.",
+        title: "Coding Workshop",
+        date: "September 18, 2024",
+        description: "Participate in a hands-on coding workshop led by experienced members of Kappa Theta Pi.",
     },
     {
-        title: "Final Event",
-        date: "Date 5",
-        description: "Description for the final event.",
+        title: "Social Mixer",
+        date: "September 20, 2024",
+        description: "Join us for a fun social mixer to get to know the current members and fellow rushes.",
+    },
+    {
+        title: "Final Interviews",
+        date: "September 25, 2024",
+        description: "Final interviews for prospective members who have made it through the initial rounds.",
     },
 ];
 

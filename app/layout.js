@@ -1,6 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "./components/header";
+import RushPage from "@/app/pages/rush";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +21,8 @@ export default function Layout({ children }) {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" />
       </head>
       <body className="min-h-screen flex flex-col bg-gray-900 text-white">
-        <Header />
+
+        <RushPage />
         <main className="flex-grow">{children}</main>
       </body>
     </html>

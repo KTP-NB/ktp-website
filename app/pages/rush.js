@@ -1,5 +1,6 @@
 // pages/rush.js
 import React from 'react';
+import {green} from "@mui/material/colors";
 import { Container, Paper, Typography, Box, Divider, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import 'tailwindcss/tailwind.css';
@@ -70,7 +71,7 @@ const RushPage = () => {
             <Typography variant="h3" align="center" gutterBottom>
                 Rush Events
             </Typography>
-            <Box display="flex" flexDirection="column" alignItems="center" padding="5px" borderRadius="5px" position="relative" mt={5} py={5} px={3} className="bg-gray-800">
+            <Box display="flex" flexDirection="column" alignItems="center" padding="5px" borderRadius="5px" position="relative" mt={5} py={5} px={3} backgroundColor="#1c398d"  >
                 <Divider orientation="vertical" flexItem style={{ height: '90%', position: 'absolute', left: '50%', borderRightWidth: 5, backgroundColor: 'white' }} />
                 {events.map((event, index) => (
                     <Box key={index} width="100%" display="flex" alignItems="center" my={3}>
@@ -106,7 +107,7 @@ const RushPage = () => {
             <Typography variant="h4" align="center" gutterBottom mt={5}>
                 FAQ
             </Typography>
-            <Box display="flex" flexDirection="column" alignItems="center" padding="5px" borderRadius="5px" mt={3} py={5} px={3} className="bg-gray-800" style={{ width: '100%' }}>
+            <Box display="flex" flexDirection="column" alignItems="center" padding="5px" borderRadius="5px" mt={3} py={5} px={3} backgroundColor="#1c398d" style={{ width: '100%' }}>
                 {faqs.map((faq, index) => (
                     <Accordion key={index} style={{ width: '100%', backgroundColor: 'white', color: 'black', margin: 0 }}>
                         <AccordionSummary expandIcon={<ExpandMoreIcon style={{ color: 'black' }} />} style={{ margin: 0 }}>

@@ -1,8 +1,8 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "./components/header";
-import RushPage from "@/app/pages/rush";
-import MembersPage from "@/app/pages/members";
+import RushPage from "@/app/rush/rush";
+import MembersPage from "@/app/members/members";
 
 const inter = Inter({ subsets: ["latin"] });
 

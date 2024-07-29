@@ -67,7 +67,7 @@ const faqs = [
 
 const RushPage = () => {
     return (
-        <Container>
+        <Container className={'bg-gray-900 '}>
             <Typography variant="h3" align="center" gutterBottom>
                 Rush Events
             </Typography>

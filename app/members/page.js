@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Paper, Typography, Box } from '@mui/material';
 import 'tailwindcss/tailwind.css';
+import Image from 'next/image';
 
 const members = [
     {
@@ -78,7 +79,13 @@ const MembersPage = () => {
                 {members.map((member, index) => (
                     <Box key={index} m={3} width="200px"> {/* Adjust width here */}
                         <Paper elevation={3} style={{ padding: '10px', backgroundColor: 'white', color: 'black', textAlign: 'center' }}>
-                            <img src={member.image} alt={member.name} style={{ width: '80%', borderRadius: '50%', marginBottom: '10px' }} /> {/* Adjust width and margin */}
+                                <Image
+                                src={member.image}
+                                alt={member.name}
+                                width={400} // Adjusted width to 80% of the original size
+                                height={400} // Adjusted height proportionally to maintain aspect ratio
+                                style={{ borderRadius: '50%', marginBottom: '10px' }} // Maintain styles from <img> tag
+                                />
                             <Typography variant="h6">{member.name}</Typography>
                             <Typography variant="subtitle1">{member.position}</Typography>
                         </Paper>

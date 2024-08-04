@@ -199,7 +199,7 @@ const MembersPage = () => {
                                     onClick={() => handleImageClick(member.linkedin)}
                                 />
                             </Box>
-                            <Box style={{ padding: '10px' }}>
+                            <Box style={{ padding: '10px' }} className="w-full bg-gray-900" sx={{color: grey[200]}}>
                                 <Typography variant="h6" className="relative group">
                                     {member.name}
                                     <Box className="absolute left-0 w-full bg-white text-black text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-2">

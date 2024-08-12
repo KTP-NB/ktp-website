@@ -752,7 +752,7 @@ const AboutUs = () => {
         >
           <Box
             component="img"
-            src="/images/ktp4.gif"
+            src="/images/history.png"
             alt="KTP 4"
             sx={{
               position: 'absolute',

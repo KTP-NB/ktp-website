@@ -82,9 +82,9 @@ const MembersPage = () => {
                                 <Image
                                 src={member.image}
                                 alt={member.name}
-                                width={400} // Adjusted width to 80% of the original size
-                                height={400} // Adjusted height proportionally to maintain aspect ratio
-                                style={{ borderRadius: '50%', marginBottom: '10px' }} // Maintain styles from <img> tag
+                                width={400} 
+                                height={400} 
+                                style={{ borderRadius: '50%', marginBottom: '10px' }} 
                                 />
                             <Typography variant="h6">{member.name}</Typography>
                             <Typography variant="subtitle1">{member.position}</Typography>

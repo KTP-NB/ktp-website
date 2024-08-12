@@ -61,7 +61,6 @@ section {
   box-sizing: border-box; /* Ensure padding does not add to width */
 }
 
-
 .card-icon {
   width: 50px;
   height: 50px;
@@ -149,28 +148,55 @@ const AboutUs = () => {
     <div className="container">
       <section>
         <Container className="text-white py-10">
-          <Typography variant="h3" align="center" gutterBottom className="text-white">
-            About Us
-          </Typography>
-          <Box className="p-5 text-lg">
-            <Typography variant="body1" gutterBottom>
-              <strong>Who are we?</strong>
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              Welcome to Kappa Theta Pi! We are a co-ed professional technology fraternity 
-              focused on fostering growth in professional, academic, and social aspects for students 
-              passionate about technology.
-              < br />
-              Here at the New Brunswick Chapter, we hope to bring a community of like-minded individuals 
-              who are dedicated to pushing the boundaries of technology and innovation. We strive to 
-              create an environment where members can collaborate, learn, and grow together, both 
-              personally and professionally.
-              < br />
-              Our chapter offers numerous opportunities for members to develop their skills and network with industry professionals. 
-              From technical workshops and hackathons to social events and mentorship programs, we aim to provide a well-rounded 
-              experience that prepares our members for success in the tech industry.
-            </Typography>
-          </Box>
+          <Grid container spacing={4} alignItems="center">
+            <Grid item xs={12} md={6}>
+              <Typography variant="h3" gutterBottom className="text-white">
+                President&apos;s Welcome
+              </Typography>
+              <Box className="p-5 text-lg">
+                <Typography variant="body1" gutterBottom>
+                  <strong>Welcome to the Alpha Beta Chapter of Kappa Theta Pi at New Brunswick!</strong>
+                </Typography>
+                <Typography variant="body1" gutterBottom>
+                  As President, I am honored to lead a community of passionate individuals dedicated to pushing the boundaries of technology and innovation. 
+                  Our chapter is committed to providing a supportive environment where members can collaborate, learn, and grow together, both personally and professionally.
+                  <br />
+                  We offer numerous opportunities for our members to develop their technical skills, network with industry professionals, and build lifelong friendships. 
+                  Whether through technical workshops, social events, or mentorship programs, Kappa Theta Pi is here to help you succeed in the fast-paced world of technology.
+                  <br />
+                  We invite you to explore our fraternity and see how you can benefit from being part of this dynamic and forward-thinking community.
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              {/* Collage Container */}
+              <Box
+                sx={{
+                  position: 'relative',
+                  width: 500,
+                  height: 500,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginLeft: 'auto',
+                }}
+              >
+                <Box
+                  component="img"
+                  src="/images/ktp4.gif"
+                  alt="KTP 4"
+                  sx={{
+                    position: 'absolute',
+                    top: 10,
+                    left: 20,
+                    width: 250,
+                    borderRadius: 2,
+                    boxShadow: 2,
+                  }}
+                />
+              </Box>
+            </Grid>
+          </Grid>
         </Container>
       </section>
 

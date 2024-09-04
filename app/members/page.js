@@ -16,7 +16,7 @@ const executiveMembers = [
     },
     {
         name: "Manan",
-        position: "Co - President",
+        position: "Vice President",
         image: "/images/Manan.jpg",
         year: "Senior",
         major: "Electrical Engineering",

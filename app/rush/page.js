@@ -1,6 +1,5 @@
 // pages/rush.js
 import React from 'react';
-import {green} from "@mui/material/colors";
 import { Container, Paper, Typography, Box, Divider, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import 'tailwindcss/tailwind.css';
@@ -67,18 +66,18 @@ const faqs = [
 
 const RushPage = () => {
     return (
-        <Container className={'bg-gray-900 '} sx={{marginTop: 15}}>
+        <Container className={'bg-gray-900 '} sx={{ marginTop: 15 }}>
             <Typography variant="h3" align="center" gutterBottom>
                 Rush Events
             </Typography>
-            <Box display="flex" flexDirection="column" alignItems="center" padding="5px" borderRadius="5px" position="relative" mt={5} py={5} px={3} backgroundColor="#1c398d"  >
+            <Box display="flex" flexDirection="column" alignItems="center" padding="5px" borderRadius="5px" position="relative" mt={5} py={5} px={3} backgroundColor="#1c398d">
                 <Divider orientation="vertical" flexItem style={{ height: '90%', position: 'absolute', left: '50%', borderRightWidth: 5, backgroundColor: 'white' }} />
                 {events.map((event, index) => (
                     <Box key={index} width="100%" display="flex" alignItems="center" my={3}>
                         {index % 2 === 0 ? (
                             <>
                                 <Box flexGrow={1} display="flex" justifyContent="flex-end">
-                                    <Paper elevation={3} style={{ padding: '20px', width: '300px', backgroundColor: 'white', color: 'black' }}>
+                                    <Paper className="transition-transform duration-300 transform hover:scale-105 p-5 w-72 bg-white text-black">
                                         <Typography variant="h6">{event.title}</Typography>
                                         <Typography variant="subtitle1">{event.date}</Typography>
                                         <Typography variant="body1">{event.description}</Typography>
@@ -92,7 +91,7 @@ const RushPage = () => {
                                 <Box flexGrow={3} />
                                 <Box mx={2} />
                                 <Box flexGrow={1} display="flex" justifyContent="flex-start">
-                                    <Paper elevation={4} style={{ padding: '20px', width: '300px', backgroundColor: 'white', color: 'black' }}>
+                                    <Paper className="transition-transform duration-300 transform hover:scale-105 p-5 w-72 bg-white text-black">
                                         <Typography variant="h6">{event.title}</Typography>
                                         <Typography variant="subtitle1">{event.date}</Typography>
                                         <Typography variant="body1">{event.description}</Typography>

@@ -1,8 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "./components/header";
-import RushPage from "@/app/rush/rush";
-import MembersPage from "@/app/members/members";
+import Footer from "./components/footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,6 +23,7 @@ export default function Layout({ children }) {
       <body className="min-h-screen flex flex-col bg-gray-900 text-white">
         <Header />
         <main className="flex-grow">{children}</main>
+        <Footer />
       </body>
     </html>
   )

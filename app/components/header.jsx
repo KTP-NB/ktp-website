@@ -47,9 +47,7 @@ export default function Header() {
           ))}
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <Link href="#" className="text-sm font-semibold leading-6 text-white hover:bg-gray-700 hover:text-indigo-300 px-3 py-2 rounded-md">
-            Log in <span aria-hidden="true">&rarr;</span>
-          </Link>
+
         </div>
       </nav>
       <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">

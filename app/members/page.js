@@ -130,89 +130,120 @@ const MembersPage = () => {
     };
 
     return (
-        <Container className="w-full bg-gray-900" sx={{ marginTop: 15 }}>
-            <Typography variant="h3" align="center" gutterBottom>
-                Executive Board
-            </Typography>
-            <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center" alignItems="center" padding="5px" borderRadius="5px" position="relative" mt={5} py={5} px={3} backgroundColor="#1c398d">
-                {executiveMembers.map((member, index) => (
-                    <Box
-                        key={index}
-                        m={3}
-                        width="200px"
-                        className="transition-transform transform hover:scale-105" // Add transition and scale effect
-                    >
-                        <Paper elevation={3} style={{ backgroundColor: 'white', color: 'black', textAlign: 'center', position: 'relative' }}>
-                            <Box style={{ width: '100%', height: '150px', overflow: 'hidden' }}>
-                                <img
-                                    src={member.image}
-                                    alt={member.name}
-                                    style={{
-                                        width: '100%',
-                                        height: '100%',
-                                        objectFit: 'cover',
-                                        cursor: 'pointer',
-                                        borderTopLeftRadius: '3px',
-                                        borderTopRightRadius: '3px',
-                                    }}
-                                    onClick={() => handleImageClick(member.linkedin)}
-                                />
-                            </Box>
-                            <Box style={{ padding: '10px' }} className="w-full bg-gray-900" sx={{color: grey[200]}}>
-                                <Typography variant="h6" className="relative group" >
-                                    {member.name}
-                                    <Box className="absolute left-0 w-full bg-white text-black text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-2">
-                                        {member.year} - {member.major}
-                                    </Box>
-                                </Typography>
-                                <Typography variant="subtitle1">{member.position}</Typography>
-                            </Box>
-                        </Paper>
-                    </Box>
-                ))}
-            </Box>
+        <div className="relative isolate min-h-screen bg-gray-900 text-white">
+            {/* Gradient Background */}
+            <div
+                aria-hidden="true"
+                className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
+            >
+                <div
+                    style={{
+                        clipPath:
+                            'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+                    }}
+                    className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#3b82f6] to-[#1e40af] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+                />
+            </div>
 
-            <Typography variant="h3" align="center" gutterBottom>
-                Active Members
-            </Typography>
-            <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center" alignItems="center" padding="5px" borderRadius="5px" position="relative" mt={5} py={5} px={3} backgroundColor="#1c398d">
-                {activeMembers.map((member, index) => (
-                    <Box
-                        key={index}
-                        m={3}
-                        width="200px"
-                        className="transition-transform transform hover:scale-105" // Add transition and scale effect
-                    >
-                        <Paper elevation={3} style={{ backgroundColor: 'white', color: 'black', textAlign: 'center', position: 'relative' }}>
-                            <Box style={{ width: '100%', height: '150px', overflow: 'hidden' }}>
-                                <img
-                                    src={member.image}
-                                    alt={member.name}
-                                    style={{
-                                        width: '100%',
-                                        height: '100%',
-                                        objectFit: 'cover',
-                                        cursor: 'pointer',
-                                        borderTopLeftRadius: '10px',
-                                        borderTopRightRadius: '10px',
-                                    }}
-                                    onClick={() => handleImageClick(member.linkedin)}
-                                />
-                            </Box>
-                            <Box style={{ padding: '10px' }} className="w-full bg-gray-900" sx={{color: grey[200]}}>
-                                <Typography variant="h6" className="relative group">
-                                    {member.name}
-                                    <Box className="absolute left-0 w-full bg-white text-black text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-2">
-                                        {member.year} - {member.major}
-                                    </Box>
-                                </Typography>
-                                <Typography variant="subtitle1">{member.position}</Typography>
-                            </Box>
-                        </Paper>
-                    </Box>
-                ))}
-            </Box>
-        </Container>
+            <Container className="w-full" sx={{ marginTop: 15 }}>
+                <Typography variant="h3" align="center" gutterBottom>
+                    Executive Board
+                </Typography>
+                <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center" alignItems="center" padding="5px"  position="relative" mt={5} py={5} px={3}>
+                    {executiveMembers.map((member, index) => (
+                        <Box
+                            key={index}
+                            m={3}
+                            width="200px"
+                            className="transition-transform transform hover:scale-105"
+                        >
+                            <Paper elevation={3} style={{ backgroundColor: 'white', color: 'black', textAlign: 'center', position: 'relative' }}>
+                                <Box style={{ width: '100%', height: '150px', overflow: 'hidden' }}>
+                                    <img
+                                        src={member.image}
+                                        alt={member.name}
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            objectFit: 'cover',
+                                            cursor: 'pointer',
+                                            borderTopLeftRadius: '3px',
+                                            borderTopRightRadius: '3px',
+                                        }}
+                                        onClick={() => handleImageClick(member.linkedin)}
+                                    />
+                                </Box>
+                                <Box style={{ padding: '10px' }} className="w-full bg-gray-900" sx={{ color: grey[200] }}>
+                                    <Typography variant="h6" className="relative group">
+                                        {member.name}
+                                        <Box className="absolute left-0 w-full bg-white text-black text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-2">
+                                            {member.year} - {member.major}
+                                        </Box>
+                                    </Typography>
+                                    <Typography variant="subtitle1">{member.position}</Typography>
+                                </Box>
+                            </Paper>
+                        </Box>
+                    ))}
+                </Box>
+
+                <Typography variant="h3" align="center" gutterBottom>
+                    Active Members
+                </Typography>
+                <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center" alignItems="center" padding="5px"  position="relative" mt={5} py={5} px={3} >
+                    {activeMembers.map((member, index) => (
+                        <Box
+                            key={index}
+                            m={3}
+                            width="200px"
+                            className="transition-transform transform hover:scale-105"
+
+                        >
+                            <Paper elevation={3} style={{ backgroundColor: 'white', color: 'black', textAlign: 'center', position: 'relative' }}>
+                                <Box style={{ width: '100%', height: '150px', overflow: 'hidden' }}>
+                                    <img
+                                        src={member.image}
+                                        alt={member.name}
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            objectFit: 'cover',
+                                            cursor: 'pointer',
+                                            borderTopLeftRadius: '10px',
+                                            borderTopRightRadius: '10px',
+                                        }}
+                                        onClick={() => handleImageClick(member.linkedin)}
+                                    />
+                                </Box>
+                                <Box style={{ padding: '10px' }} className="w-full bg-gray-900" sx={{ color: grey[200] }}>
+                                    <Typography variant="h6" className="relative group">
+                                        {member.name}
+                                        <Box className="absolute left-0 w-full bg-white text-black text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-2">
+                                            {member.year} - {member.major}
+                                        </Box>
+                                    </Typography>
+                                    <Typography variant="subtitle1">{member.position}</Typography>
+                                </Box>
+                            </Paper>
+                        </Box>
+                    ))}
+                </Box>
+            </Container>
+
+            {/* Bottom Gradient */}
+            <div
+                aria-hidden="true"
+                className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
+            >
+                <div
+                    style={{
+                        clipPath:
+                            'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+                    }}
+                    className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#3b82f6] to-[#1e40af] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
+                />
+            </div>
+        </div>
     );
 };
 

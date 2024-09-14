@@ -59,6 +59,18 @@
   }
 }
 
+@layer components {
+  .border-border {
+    @apply border border-gray-300; /* Defines border style */
+  }
+  .bg-background {
+    @apply bg-white; /* Apply a default background color */
+  }
+  .text-foreground {
+    @apply text-black; /* Apply a default text color */
+  }
+}
+
 @layer base {
   * {
     @apply border-border;

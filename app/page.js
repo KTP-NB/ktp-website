@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import Image from 'next/image'
 
 
 export default function Example() {
@@ -10,7 +11,13 @@ export default function Example() {
 
   return (
     <div className="bg-gray-900 text-white min-h-screen flex flex-col justify-center items-center">
+      <div className='absolute left-16 top-40 max-w-lg rounded-lg opacity-90'>
+        <Image src="/image1.jpg" alt="KTP Logo" width={400} height={400} className='rounded-md'/>
+      </div>
 
+      <div className='absolute right-16 bottom-16 max-w-lg rounded-lg opacity-90'>
+        <Image src="/image2.jpg" alt="KTP Logo" width={600} height={600} className='rounded-md'/>
+      </div>
 
     <div className="relative isolate px-6 lg:px-8 w-full">
       <div
@@ -26,6 +33,9 @@ export default function Example() {
  opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
         />
       </div>
+
+
+
       <div className="mx-auto py-24 sm:py-32 lg:py-40 flex flex-col items-center">
         <div className="hidden sm:mb-8 sm:flex sm:justify-center">
           <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-300 ring-1 ring-gray-600 hover:ring-gray-500">
@@ -37,7 +47,7 @@ export default function Example() {
           </div>
         </div>
         <div className="text-center w-full max-w-none">
-          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
+          <h1 className="text-5xl font-bold tracking-tight text-white sm:text-5xl">
             Kappa Theta Pi - New Brunswick
           </h1>
           <div className="mt-6 text-lg leading-8 text-gray-300 max-w-2xl mx-auto">
@@ -56,7 +66,8 @@ export default function Example() {
           </div>
         </div>
       </div>
-  
+ {/* Bottom Right Image (Larger, Centered, and Rounded) */}
+
       <div
         aria-hidden="true"
         className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"

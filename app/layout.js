@@ -8,6 +8,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata = {
   title: "KTP - New Brunswick",
   description: "New Brunswick's First Technology Fraternity",
+  icon: "/ktp.png",
 };
 
 

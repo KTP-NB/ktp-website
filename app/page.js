@@ -40,7 +40,7 @@ export default function Example() {
             Kappa Theta Pi - New Brunswick
           </h1>
           <div className="mt-6 text-lg leading-8 text-gray-300 max-w-2xl mx-auto">
-            New Brunswick's premier co-ed professional technology fraternity, committed to building a supportive community and helping students grow professionally. We foster diversity and inclusivity, empowering individuals with a shared passion for technology and career development.
+            New Brunswicks premier co-ed professional technology fraternity, committed to building a supportive community and helping students grow professionally. We foster diversity and inclusivity, empowering individuals with a shared passion for technology and career development.
           </div>
           <div className="mt-10 flex items-center justify-center gap-x-6">
           <a

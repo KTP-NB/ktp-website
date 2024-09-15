@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Paper, Typography, Box, Divider, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Container, Typography, Box, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import 'tailwindcss/tailwind.css';
 
@@ -63,8 +63,6 @@ const faqs = [
     },
 ];
 
-
-
 const RushPage = () => {
     return (
         <div className="relative isolate min-h-screen bg-gray-900 text-white">
@@ -86,38 +84,21 @@ const RushPage = () => {
                 <Typography variant="h3" align="center" gutterBottom>
                     Rush Events
                 </Typography>
-                <Box display="flex" flexDirection="column" alignItems="center" padding="5px"  position="relative" mt={5} py={5} px={3} >
-                    <Divider orientation="vertical" flexItem style={{ height: '90%', position: 'absolute', left: '50%', borderRightWidth: 5, backgroundColor: 'white' }} />
-                    {events.map((event, index) => (
-                        <Box key={index} width="100%" display="flex" alignItems="center" my={3}>
-                            {index % 2 === 0 ? (
-                                <>
-                                    <Box flexGrow={1} display="flex" justifyContent="flex-end">
-                                        <Paper className="transition-transform duration-300 transform hover:scale-105 p-5 w-72 bg-white text-black">
-                                            <Typography variant="h6">{event.title}</Typography>
-                                            <Typography variant="subtitle1">{event.date}</Typography>
-                                            <Typography variant="body1">{event.description}</Typography>
-                                        </Paper>
-                                    </Box>
-                                    <Box mx={2} />
-                                    <Box flexGrow={3} />
-                                </>
-                            ) : (
-                                <>
-                                    <Box flexGrow={3} />
-                                    <Box mx={2} />
-                                    <Box flexGrow={1} display="flex" justifyContent="flex-start">
-                                        <Paper className="transition-transform duration-300 transform hover:scale-105 p-5 w-72 bg-white text-black">
-                                            <Typography variant="h6">{event.title}</Typography>
-                                            <Typography variant="subtitle1">{event.date}</Typography>
-                                            <Typography variant="body1">{event.description}</Typography>
-                                        </Paper>
-                                    </Box>
-                                </>
-                            )}
-                        </Box>
-                    ))}
-                </Box>
+
+                {/* Tailwind Timeline */}
+                <div className="relative py-16">
+                    <div className="relative container mx-auto px-4">
+                        {events.map((event, index) => (
+                            <div key={index} className="mb-8 flex items-start">
+                                <div className="flex-1 text-left">
+                                    <h3 className="text-lg font-semibold text-white">{event.title}</h3>
+                                    <p className="text-gray-400">{event.date}</p>
+                                    <p className="text-gray-300">{event.description}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
 
                 <Typography variant="h4" align="center" gutterBottom mt={5}>
                     FAQ

@@ -18,6 +18,8 @@
     "@mui/styled-engine-sc": "^6.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "emailjs": "^4.0.3",
+    "emailjs-com": "^3.2.0",
     "framer-motion": "^11.3.21",
     "lucide-react": "^0.424.0",
     "next": "^14.2.5",

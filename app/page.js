@@ -12,11 +12,11 @@ export default function Example() {
   return (
     <div className="bg-gray-900 text-white min-h-screen flex flex-col justify-center items-center">
       <div className='absolute left-16 top-40 max-w-lg rounded-lg opacity-90'>
-        <Image src="/image1.png" alt="KTP Logo" width={400} height={400} className='rounded-md'/>
+        {/*<Image src="/image1.png" alt="KTP Logo" width={400} height={400} className='rounded-md'/>*/}
       </div>
 
       <div className='absolute right-16 bottom-16 max-w-lg rounded-lg opacity-90'>
-        <Image src="/image2.png" alt="KTP Logo" width={600} height={600} className='rounded-md'/>
+        {/*<Image src="/image2.png" alt="KTP Logo" width={600} height={600} className='rounded-md'/>*/}
       </div>
 
     <div className="relative isolate px-6 lg:px-8 w-full">

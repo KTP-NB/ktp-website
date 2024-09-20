@@ -65,6 +65,11 @@ const AboutUs = () => {
                     Who Are We
                 </Typography>
 
+                {/* 'From Our President' Section */}
+                <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold', marginTop: 5 }}>
+                    From Our President
+                </Typography>
+
                 {/* Content Section */}
                 <Grid container spacing={4} alignItems="center" sx={{ marginTop: 5 }}>
                     <Grid item xs={12} md={6}>
@@ -112,7 +117,7 @@ const AboutUs = () => {
                                     padding: 3,
                                     backgroundColor: 'white',
                                     textAlign: 'center',
-                                    height: '300px', // Fixed height for all cards
+                                    height: '250px', // Adjusted height for smaller cards
                                     transition: 'transform 0.3s ease', // Hover effect smooth transition
                                     '&:hover': {
                                         transform: 'scale(1.05)', // Slightly enlarges the card on hover
@@ -132,6 +137,42 @@ const AboutUs = () => {
                         </Grid>
                     ))}
                 </Grid>
+
+                {/* History Section */}
+                <Box sx={{ marginTop: 10 }}>
+                    <Grid container spacing={4} alignItems="center">
+                        {/* History Text */}
+                        <Grid item xs={12} md={6}>
+                            <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
+                                KTP's History
+                            </Typography>
+                            <Typography variant="body1" gutterBottom sx={{ color: 'white', fontSize: '1.25rem' }}>
+                                KTP was founded on January 10, 2012, in Ann Arbor, Michigan, and is the University of Michigan's
+                                first professional technology fraternity. The goals of the fraternity are to create bonds between students of Informatics,
+                                computer science, business, design, computer engineering, Information, and any others who are interested in technology, to
+                                develop networks through facilitation of professional and social growth, and to expose members to career options in the
+                                vast field of technology.
+                            </Typography>
+                        </Grid>
+
+                        {/* History Image */}
+                        <Grid item xs={12} md={6}>
+                            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                <img
+                                    src="/images/Eboard.jpeg"
+                                    alt="Eboard"
+                                    style={{
+                                        width: '100%',
+                                        height: 'auto',
+                                        borderRadius: '8px',
+                                        objectFit: 'cover',
+                                        boxShadow: '0 6px 12px rgba(0, 0, 0, 0.2)',
+                                    }}
+                                />
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </Box>
             </Container>
 
             {/* Bottom Gradient (Optional if needed for design consistency) */}
@@ -144,7 +185,7 @@ const AboutUs = () => {
                         clipPath:
                             'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
                     }}
-                    className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#3b82f6] to-[#1e40af] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
+                    className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#3b82f6] to-[#1e40af] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
                 />
             </div>
         </div>

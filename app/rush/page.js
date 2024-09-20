@@ -1,9 +1,10 @@
-"use client"; // Add this line to specify that this is a Client Component
+"use client";
 
 import React, { useState } from 'react';
 import { Container, Typography, Box } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import 'tailwindcss/tailwind.css';
+import Image from 'next/image';
 
 const events = [
     {
@@ -93,9 +94,10 @@ const RushPage = () => {
                     Rush Events
                 </Typography>
 
-                {/* Tailwind Timeline */}
-                <div className="relative py-16">
-                    <div className="relative container mx-auto px-4">
+                {/* Flexbox to split content into two columns */}
+                <div className="flex flex-col lg:flex-row items-start justify-between mt-10">
+                    {/* Timeline on the left */}
+                    <div className="w-full lg:w-1/2 pr-8">
                         {events.map((event, index) => (
                             <div key={index} className="mb-8 flex items-start">
                                 <div className="flex-1 text-left">
@@ -105,6 +107,24 @@ const RushPage = () => {
                                 </div>
                             </div>
                         ))}
+                    </div>
+
+                    {/* Images on the right */}
+                    <div className="w-full lg:w-1/2 flex flex-col gap-4 items-center justify-center">
+                        <Image
+                            src="/images/Rush.jpg"
+                            alt="Rush Event 1"
+                            width={300}
+                            height={300}
+                            className="rounded-md"
+                        />
+                        <Image
+                            src="/images/Rush2.jpg"
+                            alt="Rush Event 2"
+                            width={300}
+                            height={300}
+                            className="rounded-md"
+                        />
                     </div>
                 </div>
 

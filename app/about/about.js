@@ -39,6 +39,7 @@ body {
   overflow-x: hidden; /* Prevent horizontal overflow */
 }
 
+
 section {
   min-height: 100vh;
   display: flex;
@@ -158,10 +159,10 @@ const AboutUs = () => {
                   <strong>Welcome to the Alpha Beta Chapter of Kappa Theta Pi at New Brunswick!</strong>
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                  As President, I am honored to lead a community of passionate individuals dedicated to pushing the boundaries of technology and innovation. 
+                  As President, I am honored to lead a community of passionate individuals dedicated to pushing the boundaries of technology and innovation.
                   Our chapter is committed to providing a supportive environment where members can collaborate, learn, and grow together, both personally and professionally.
                   <br />
-                  We offer numerous opportunities for our members to develop their technical skills, network with industry professionals, and build lifelong friendships. 
+                  We offer numerous opportunities for our members to develop their technical skills, network with industry professionals, and build lifelong friendships.
                   Whether through technical workshops, social events, or mentorship programs, Kappa Theta Pi is here to help you succeed in the fast-paced world of technology.
                   <br />
                   We invite you to explore our fraternity and see how you can benefit from being part of this dynamic and forward-thinking community.
@@ -207,10 +208,10 @@ const AboutUs = () => {
               <strong>KTP&apos;s History</strong>
             </Typography>
             <Typography variant="body1" gutterBottom>
-              KTP was founded on January 10, 2012, in Ann Arbor, Michigan, and is the University of Michigan&apos;s 
-              first professional technology fraternity. The goals of the fraternity are to create bonds between students of Informatics, 
-              computer science, business, design, computer engineering, Information, and any others who are interested in technology, to 
-              develop networks through facilitation of professional and social growth, and to expose members to career options in the 
+              KTP was founded on January 10, 2012, in Ann Arbor, Michigan, and is the University of Michigan&apos;s
+              first professional technology fraternity. The goals of the fraternity are to create bonds between students of Informatics,
+              computer science, business, design, computer engineering, Information, and any others who are interested in technology, to
+              develop networks through facilitation of professional and social growth, and to expose members to career options in the
               vast field of technology.
             </Typography>
           </Box>
@@ -224,7 +225,7 @@ const AboutUs = () => {
               <strong>DEI Commitment</strong>
             </Typography>
             <Typography variant="body1" gutterBottom>
-              At Kappa Theta Pi, we prioritize diversity, equity, and inclusion, ensuring a welcoming environment for all members. We believe 
+              At Kappa Theta Pi, we prioritize diversity, equity, and inclusion, ensuring a welcoming environment for all members. We believe
               in the power of technology to bring positive change and strive to provide resources and opportunities to help our members succeed.
             </Typography>
             <Grid container spacing={4}>

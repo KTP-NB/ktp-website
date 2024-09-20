@@ -1,5 +1,7 @@
-import React from 'react';
-import { Container, Typography, Box, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+"use client"; // Add this line to specify that this is a Client Component
+
+import React, { useState } from 'react';
+import { Container, Typography, Box } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import 'tailwindcss/tailwind.css';
 
@@ -64,6 +66,12 @@ const faqs = [
 ];
 
 const RushPage = () => {
+    const [expandedIndex, setExpandedIndex] = useState(null);
+
+    const handleToggle = (index) => {
+        setExpandedIndex(expandedIndex === index ? null : index);
+    };
+
     return (
         <div className="relative isolate min-h-screen bg-gray-900 text-white">
             {/* Gradient Background */}
@@ -105,16 +113,17 @@ const RushPage = () => {
                 </Typography>
                 <Box display="flex" flexDirection="column" alignItems="center" padding="5px" mt={3} py={5} px={3} style={{ width: '100%' }}>
                     {faqs.map((faq, index) => (
-                        <Accordion key={index} style={{ width: '100%', backgroundColor: 'white', color: 'black', margin: 0 }}>
-                            <AccordionSummary expandIcon={<ExpandMoreIcon style={{ color: 'black' }} />} style={{ margin: 0 }}>
-                                <Typography variant={'h6'}>{faq.question}</Typography>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                <Typography>
+                        <Box key={index} style={{ width: '100%', margin: '10px 0', cursor: 'pointer', borderBottom: '1px solid rgba(255, 255, 255, 0.5)' }}>
+                            <Box display="flex" justifyContent="space-between" onClick={() => handleToggle(index)} style={{ padding: '10px', color: 'white' }}>
+                                <Typography variant="h6">{faq.question}</Typography>
+                                <ExpandMoreIcon style={{ color: 'white', transform: expandedIndex === index ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }} />
+                            </Box>
+                            {expandedIndex === index && (
+                                <Typography style={{ padding: '10px', color: 'white' }}>
                                     {faq.answer}
                                 </Typography>
-                            </AccordionDetails>
-                        </Accordion>
+                            )}
+                        </Box>
                     ))}
                 </Box>
             </Container>

@@ -208,11 +208,7 @@ const AboutUs = () => {
               <strong>KTP&apos;s History</strong>
             </Typography>
             <Typography variant="body1" gutterBottom>
-              KTP was founded on January 10, 2012, in Ann Arbor, Michigan, and is the University of Michigan&apos;s
-              first professional technology fraternity. The goals of the fraternity are to create bonds between students of Informatics,
-              computer science, business, design, computer engineering, Information, and any others who are interested in technology, to
-              develop networks through facilitation of professional and social growth, and to expose members to career options in the
-              vast field of technology.
+              KTP was founded on January 10, 2012, in Ann Arbor, Michigan, and is the University of Michigan's first professional technology fraternity. The goals of the fraternity are to create bonds between students of Informatics, computer science, business, design, computer engineering, Information, and any others who are interested in technology, to develop networks through facilitation of professional and social growth, and to expose members to career options in the vast field of technology. We, the founders of the Alpha Beta colony in New Brunswick, started this effort to build a stronger community for students interested in Technology. We saw a need for students to be in a community that would push their technology skills, industry knowledge, and connections to new heights. Recognizing the rapidly evolving landscape of tech, we aimed to create an environment where members could collaborate, innovate, and grow together. This community was envisioned not only as a space for learning but also as a network that could open doors to internships, mentorships, and career opportunities, bridging the gap between academic learning and real-world application. By fostering a culture of support, ambition, and continuous improvement, we have a long-term vision of being the cornerstone for tech enthusiasts for students, empowering our members to achieve their fullest potential.
             </Typography>
           </Box>
         </Container>

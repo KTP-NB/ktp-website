@@ -17,7 +17,7 @@ const pillars = [
     },
     {
         title: "Alumni Connections",
-        description: "Our alumni network connects you to members at top tech companies, including Microsoft, Amazon, Facebook, Apple, Google, consulting firms, financial technology firms, and startups.",
+        description: "While we are new, we have brothers who have interned / worked at various companies such as Vanguard, Fidelity, Nokia, and more, and we plan on building our Alumni Network as time goes by.",
         icon: <GroupIcon fontSize="large" sx={{ color: '#43a047' }} />, // Green
     },
     {
@@ -37,7 +37,7 @@ const pillars = [
     },
     {
         title: "Diversity, Equity, and Inclusion",
-        description: "KTP is an inclusive workplace that recruits the best in tech, encouraging members to bring their authentic selves.",
+        description: "KTP is an inclusive fraternity that recruits the best in tech, encouraging all members to bring their authentic selves.",
         icon: <Diversity3Icon fontSize="large" sx={{ color: '#fb8c00' }} />, // Orange
     },
 ];
@@ -103,6 +103,7 @@ const AboutUs = () => {
                     </Grid>
                 </Grid>
 
+
                 {/* Our Pillars Section */}
                 <Typography variant="h4" align="center" gutterBottom mt={10} sx={{ fontWeight: 'bold' }}>
                     Our Pillars
@@ -138,7 +139,7 @@ const AboutUs = () => {
                     ))}
                 </Grid>
 
-                {/* History Section */}
+                {/* KTP's History Section */}
                 <Box sx={{ marginTop: 10 }}>
                     <Grid container spacing={4} alignItems="center">
                         {/* History Text */}
@@ -146,14 +147,23 @@ const AboutUs = () => {
                             <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
                                 KTP's History
                             </Typography>
-                            <Typography variant="body1" gutterBottom sx={{ color: 'white', fontSize: '1.25rem' }}>
-                                KTP was founded on January 10, 2012, in Ann Arbor, Michigan, and is the University of Michigan's
-                                first professional technology fraternity. The goals of the fraternity are to create bonds between students of Informatics,
-                                computer science, business, design, computer engineering, Information, and any others who are interested in technology, to
-                                develop networks through facilitation of professional and social growth, and to expose members to career options in the
-                                vast field of technology.
+                            <Typography variant="body1" gutterBottom sx={{ color: 'white', fontSize: '1.25rem', mb: 2 }}>
+                                KTP was founded on January 10, 2012, in Ann Arbor, Michigan, as the University of Michigan's first professional technology fraternity.
+                            </Typography>
+                            <Typography variant="body1" gutterBottom sx={{ color: 'white', fontSize: '1.25rem', mb: 2 }}>
+                                The fraternity aims to create bonds between students from various fields such as Informatics, computer science, business, design, and computer engineering.
+                            </Typography>
+                            <Typography variant="body1" gutterBottom sx={{ color: 'white', fontSize: '1.25rem', mb: 2 }}>
+                                Our goal is to develop networks through professional and social growth while exposing members to career opportunities in the tech industry.
+                            </Typography>
+                            <Typography variant="body1" gutterBottom sx={{ color: 'white', fontSize: '1.25rem', mb: 2 }}>
+                                We, the founders of the Alpha Beta colony in New Brunswick, started this effort to build a stronger community for students interested in technology.
+                            </Typography>
+                            <Typography variant="body1" gutterBottom sx={{ color: 'white', fontSize: '1.25rem', mb: 2 }}>
+                                Recognizing the rapidly evolving landscape of tech, we aimed to create an environment where members could collaborate, innovate, and grow together.
                             </Typography>
                         </Grid>
+
 
                         {/* History Image */}
                         <Grid item xs={12} md={6}>
@@ -185,7 +195,7 @@ const AboutUs = () => {
                         clipPath:
                             'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
                     }}
-                    className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#3b82f6] to-[#1e40af] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+                    className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#3b82f6] to-[#1e40af] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
                 />
             </div>
         </div>

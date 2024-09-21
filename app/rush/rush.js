@@ -1,7 +1,10 @@
-import React from 'react';
-import { Container, Paper, Typography, Box, Divider, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+"use client";
+
+import React, { useState } from 'react';
+import { Container, Typography, Box } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import 'tailwindcss/tailwind.css';
+import Image from 'next/image';
 
 const events = [
     {
@@ -64,6 +67,12 @@ const faqs = [
 ];
 
 const RushPage = () => {
+    const [expandedIndex, setExpandedIndex] = useState(null);
+
+    const handleToggle = (index) => {
+        setExpandedIndex(expandedIndex === index ? null : index);
+    };
+
     return (
         <div className="relative isolate min-h-screen bg-gray-900 text-white">
             {/* Gradient Background */}
@@ -85,24 +94,37 @@ const RushPage = () => {
                     Rush Events
                 </Typography>
 
-                {/* Tailwind Timeline */}
-                <div className="relative py-16 bg-gray-900">
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-1 bg-gray-500 h-full"></div>
-                    </div>
-                    <div className="relative container mx-auto px-4">
+                {/* Flexbox to split content into two columns */}
+                <div className="flex flex-col lg:flex-row items-start justify-between mt-10">
+                    {/* Timeline on the left */}
+                    <div className="w-full lg:w-1/2 pr-8">
                         {events.map((event, index) => (
-                            <div key={index} className={`mb-8 flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}>
-                                <div className="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white">
-                                    <span className="text-xl font-bold">•</span>
-                                </div>
-                                <div className={`ml-4 ${index % 2 === 0 ? 'text-left' : 'text-right'}`}>
+                            <div key={index} className="mb-8 flex items-start">
+                                <div className="flex-1 text-left">
                                     <h3 className="text-lg font-semibold text-white">{event.title}</h3>
                                     <p className="text-gray-400">{event.date}</p>
                                     <p className="text-gray-300">{event.description}</p>
                                 </div>
                             </div>
                         ))}
+                    </div>
+
+                    {/* Images on the right */}
+                    <div className="w-full lg:w-1/2 flex flex-col gap-4 items-center justify-center">
+                        <Image
+                            src="/images/Rush.jpg"
+                            alt="Rush Event 1"
+                            width={275}
+                            height={275}
+                            className="rounded-md"
+                        />
+                        <Image
+                            src="/images/Rush2.jpg"
+                            alt="Rush Event 2"
+                            width={275}
+                            height={275}
+                            className="rounded-md"
+                        />
                     </div>
                 </div>
 
@@ -111,16 +133,17 @@ const RushPage = () => {
                 </Typography>
                 <Box display="flex" flexDirection="column" alignItems="center" padding="5px" mt={3} py={5} px={3} style={{ width: '100%' }}>
                     {faqs.map((faq, index) => (
-                        <Accordion key={index} style={{ width: '100%', backgroundColor: 'white', color: 'black', margin: 0 }}>
-                            <AccordionSummary expandIcon={<ExpandMoreIcon style={{ color: 'black' }} />} style={{ margin: 0 }}>
-                                <Typography variant={'h6'}>{faq.question}</Typography>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                <Typography>
+                        <Box key={index} style={{ width: '100%', margin: '10px 0', cursor: 'pointer', borderBottom: '1px solid rgba(255, 255, 255, 0.5)' }}>
+                            <Box display="flex" justifyContent="space-between" onClick={() => handleToggle(index)} style={{ padding: '10px', color: 'white' }}>
+                                <Typography variant="h6">{faq.question}</Typography>
+                                <ExpandMoreIcon style={{ color: 'white', transform: expandedIndex === index ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }} />
+                            </Box>
+                            {expandedIndex === index && (
+                                <Typography style={{ padding: '10px', color: 'white' }}>
                                     {faq.answer}
                                 </Typography>
-                            </AccordionDetails>
-                        </Accordion>
+                            )}
+                        </Box>
                     ))}
                 </Box>
             </Container>

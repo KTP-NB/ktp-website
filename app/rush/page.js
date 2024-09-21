@@ -5,6 +5,7 @@ import { Container, Typography, Box } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import 'tailwindcss/tailwind.css';
 import Image from 'next/image';
+import { motion } from 'framer-motion'; // Import framer-motion
 
 const events = [
     {
@@ -73,6 +74,18 @@ const RushPage = () => {
         setExpandedIndex(expandedIndex === index ? null : index);
     };
 
+    // Variants for the timeline events (left side animation)
+    const timelineVariant = {
+        hidden: { opacity: 0, x: -100 },
+        visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: "easeOut" } },
+    };
+
+    // Variants for the images (right side animation)
+    const imageVariant = {
+        hidden: { opacity: 0, x: 100 },
+        visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: "easeOut" } },
+    };
+
     return (
         <div className="relative isolate min-h-screen bg-gray-900 text-white">
             {/* Gradient Background */}
@@ -99,32 +112,54 @@ const RushPage = () => {
                     {/* Timeline on the left */}
                     <div className="w-full lg:w-1/2 pr-8">
                         {events.map((event, index) => (
-                            <div key={index} className="mb-8 flex items-start">
+                            <motion.div
+                                key={index}
+                                className="mb-8 flex items-start"
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: true, amount: 0.2 }}
+                                variants={timelineVariant}
+                            >
                                 <div className="flex-1 text-left">
                                     <h3 className="text-lg font-semibold text-white">{event.title}</h3>
                                     <p className="text-gray-400">{event.date}</p>
                                     <p className="text-gray-300">{event.description}</p>
                                 </div>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
 
-                    {/* Images on the right */}
+                    {/* Images on the right with animation */}
                     <div className="w-full lg:w-1/2 flex flex-col gap-4 items-center justify-center">
-                        <Image
-                            src="/images/Rush.jpg"
-                            alt="Rush Event 1"
-                            width={300}
-                            height={300}
-                            className="rounded-md"
-                        />
-                        <Image
-                            src="/images/Rush2.jpg"
-                            alt="Rush Event 2"
-                            width={300}
-                            height={300}
-                            className="rounded-md"
-                        />
+                        <motion.div
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true, amount: 0.2 }}
+                            variants={imageVariant}
+                        >
+                            <Image
+                                src="/images/Rush.jpg"
+                                alt="Rush Event 1"
+                                width={275}
+                                height={275}
+                                className="rounded-md"
+                            />
+                        </motion.div>
+
+                        <motion.div
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true, amount: 0.2 }}
+                            variants={imageVariant}
+                        >
+                            <Image
+                                src="/images/Rush2.jpg"
+                                alt="Rush Event 2"
+                                width={275}
+                                height={275}
+                                className="rounded-md"
+                            />
+                        </motion.div>
                     </div>
                 </div>
 
@@ -158,7 +193,7 @@ const RushPage = () => {
                         clipPath:
                             'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
                     }}
-                    className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#3b82f6] to-[#1e40af] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
+                    className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#3b82f6] to-[#1e40af] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
                 />
             </div>
         </div>

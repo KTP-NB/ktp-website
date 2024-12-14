@@ -104,7 +104,7 @@ const RushPage = () => {
 
             <Container className="w-full" sx={{ marginTop: 15 }}>
                 <Typography variant="h3" align="center" gutterBottom>
-                    Rush Events
+                    Fall 2024 Rush
                 </Typography>
 
                 {/* Flexbox to split content into two columns */}

@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { Container, Typography, Box } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import 'tailwindcss/tailwind.css';
 import Image from 'next/image';
 
 const events = [

@@ -8,31 +8,31 @@ import 'tailwindcss/tailwind.css';
 
 const executiveMembers = [
     {
-        name: "Shriya",
+        name: "Shriya Srinivasan",
         position: "President",
         image: "/images/Shriya.jpg",
         year: "Junior",
         major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/shriya",
+        linkedin: "https://www.linkedin.com/in/shriyasrinivasans/",
     },
     {
-        name: "Manan",
+        name: "Manan Shah",
         position: "Vice President",
         image: "/images/Manan.jpg",
         year: "Junior",
         major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/manan",
+        linkedin: "https://www.linkedin.com/in/manan-shah12/",
     },
     {
-        name: "Srimathi",
+        name: "Srimathi Vadivel",
         position: "Director of External",
         image: "/images/Srimathi.jpg",
         year: "Junior",
         major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/srimathi",
+        linkedin: "https://www.linkedin.com/in/srimathivadivel/",
     },
     {
-        name: "Akash",
+        name: "Akash Puzhakkal",
         position: "Director of Tech",
         image: "/images/Akash.jpg",
         year: "Junior",
@@ -40,60 +40,60 @@ const executiveMembers = [
         linkedin: "https://www.linkedin.com/in/akash-puzhakkal/",
     },
     {
-        name: "Ciera",
+        name: "Ciera Simon",
         position: "Director of Engagement",
         image: "/images/Ciera.jpg",
         year: "Junior",
         major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/ciera",
+        linkedin: "https://www.linkedin.com/in/ciera-simon-65473b24b/",
     },
     {
-        name: "Priyangshu",
+        name: "Priyangshu Bhowmik",
         position: "Director of Finance",
         image: "/images/Priyangshu.jpg",
         year: "Junior",
         major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/priyangshu",
+        linkedin: "https://www.linkedin.com/in/priyangshu-bhowmik-4a6270262/",
     },
     {
-        name: "Aishwarya",
+        name: "Aishwarya Velagapudi",
         position: "Director of Finance",
         image: "/images/Aishwarya.jpg",
         year: "Junior",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/aishwarya",
+        major: "BAIT",
+        linkedin: "https://www.linkedin.com/in/aishwarya-velagapudi/",
     },
     {
-        name: "Suhani",
+        name: "Suhani Mehra",
         position: "Director of Membership",
         image: "/images/Suhani.jpg",
         year: "Sophomore",
         major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/suhani",
+        linkedin: "https://www.linkedin.com/in/suhani-mehra/",
     },
     {
-        name: "Anushka",
+        name: "Anushka Kondur",
         position: "Director of Development",
         image: "/images/Anushka.jpg",
         year: "Senior",
         major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/anushka",
+        linkedin: "https://www.linkedin.com/in/anushka-kondur/",
     },
     {
-        name: "Sameer",
+        name: "Sameer Jiandani",
         position: "Director of Internal",
         image: "/images/Sameer.jpg",
         year: "Sophomore",
         major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/sameer",
+        linkedin: "https://www.linkedin.com/in/sameerjiandani/",
     },
     {
-        name: "Ananya",
+        name: "Ananya Ahlawat",
         position: "Director of Marketing",
         image: "/images/Ananya.jpg",
         year: "Junior",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/ananya",
+        major: "BAIT",
+        linkedin: "https://www.linkedin.com/in/ananya-ahlawat/",
     },
 ];
 
@@ -181,9 +181,52 @@ const activeMembers = [
 ];
 
 const MembersPage = () => {
-    const handleImageClick = (linkedin) => {
-        window.open(linkedin, '_blank');
+    const handleLinkedInClick = (linkedin) => {
+        if (linkedin) {
+            window.open(linkedin, '_blank', 'noopener,noreferrer');
+        }
     };
+
+    const MemberCard = ({ member, index }) => (
+        <Box
+            key={index}
+            m={3}
+            width="200px"
+            className="transition-transform transform hover:scale-105"
+        >
+            <Paper elevation={3} style={{ backgroundColor: 'white', color: 'black', textAlign: 'center', position: 'relative' }}>
+                <Box
+                    style={{ width: '100%', height: '150px', overflow: 'hidden', position: 'relative' }}
+                    onClick={() => handleLinkedInClick(member.linkedin)}
+                    className="cursor-pointer"
+                >
+                    <img
+                        src={member.image}
+                        alt={member.name}
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            borderTopLeftRadius: '3px',
+                            borderTopRightRadius: '3px',
+                        }}
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <LinkedInIcon style={{ fontSize: 40, color: 'white' }} />
+                    </div>
+                </Box>
+                <Box style={{ padding: '10px' }} className="w-full bg-gray-900" sx={{ color: grey[200] }}>
+                    <Typography variant="subtitle1" className="relative group font-medium">
+                        {member.name}
+                        <Box className="absolute left-0 w-full bg-white text-black text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-2">
+                            {member.year} - {member.major}
+                        </Box>
+                    </Typography>
+                    <Typography variant="subtitle1">{member.position}</Typography>
+                </Box>
+            </Paper>
+        </Box>
+    );
 
     return (
         <div className="relative isolate min-h-screen bg-gray-900 text-white">
@@ -206,42 +249,7 @@ const MembersPage = () => {
                 </Typography>
                 <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center" alignItems="center" padding="5px" position="relative" mt={5} py={5} px={3}>
                     {executiveMembers.map((member, index) => (
-                        <Box
-                            key={index}
-                            m={3}
-                            width="200px"
-                            className="transition-transform transform hover:scale-105"
-                        >
-                            <Paper elevation={3} style={{ backgroundColor: 'white', color: 'black', textAlign: 'center', position: 'relative' }}>
-                                <Box style={{ width: '100%', height: '150px', overflow: 'hidden', position: 'relative' }}>
-                                    <img
-                                        src={member.image}
-                                        alt={member.name}
-                                        style={{
-                                            width: '100%',
-                                            height: '100%',
-                                            objectFit: 'cover',
-                                            cursor: 'pointer',
-                                            borderTopLeftRadius: '3px',
-                                            borderTopRightRadius: '3px',
-                                        }}
-                                        onClick={() => handleImageClick(member.linkedin)}
-                                    />
-                                    <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                        <LinkedInIcon style={{ fontSize: 40, color: 'white' }} />
-                                    </div>
-                                </Box>
-                                <Box style={{ padding: '10px' }} className="w-full bg-gray-900" sx={{ color: grey[200] }}>
-                                    <Typography variant="h6" className="relative group">
-                                        {member.name}
-                                        <Box className="absolute left-0 w-full bg-white text-black text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-2">
-                                            {member.year} - {member.major}
-                                        </Box>
-                                    </Typography>
-                                    <Typography variant="subtitle1">{member.position}</Typography>
-                                </Box>
-                            </Paper>
-                        </Box>
+                        <MemberCard key={index} member={member} index={index} />
                     ))}
                 </Box>
 
@@ -250,51 +258,7 @@ const MembersPage = () => {
                 </Typography>
                 <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center" alignItems="center" padding="5px" position="relative" mt={5} py={5} px={3}>
                     {activeMembers.map((member, index) => (
-                        <Box
-                            key={index}
-                            m={3}
-                            width="200px"
-                            className="transition-transform transform hover:scale-105"
-                        >
-                            <Paper elevation={3} style={{ backgroundColor: 'white', color: 'black', textAlign: 'center', position: 'relative' }}>
-                                <Box style={{ width: '100%', height: '150px', overflow: 'hidden', position: 'relative' }}>
-                                    <img
-                                        src={member.image}
-                                        alt={member.name}
-                                        style={{
-                                            position: 'absolute',
-                                            left: '50%',
-                                            top: '50%',
-                                            transform: 'translate(-50%, -50%) scale(1.4)',
-                                            width: '100%',
-                                            height: '100%',
-                                            objectFit: 'cover',
-                                            cursor: 'pointer',
-                                            borderTopLeftRadius: '10px',
-                                            borderTopRightRadius: '10px',
-                                        }}
-                                        onClick={() => handleImageClick(member.linkedin)}
-                                    />
-                                    <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                        <LinkedInIcon style={{ fontSize: 40, color: 'white' }} />
-                                        {member.name !== "Anika Melkote" && (
-                                            <div className="absolute bottom-2 right-2 text-2xl font-bold text-white">
-                                                α
-                                            </div>
-                                        )}
-                                    </div>
-                                </Box>
-                                <Box style={{ padding: '10px' }} className="w-full bg-gray-900" sx={{ color: grey[200] }}>
-                                    <Typography variant="h6" className="relative group">
-                                        {member.name}
-                                        <Box className="absolute left-0 w-full bg-white text-black text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-2">
-                                            {member.year} - {member.major}
-                                        </Box>
-                                    </Typography>
-                                    <Typography variant="subtitle1">{member.position}</Typography>
-                                </Box>
-                            </Paper>
-                        </Box>
+                        <MemberCard key={index} member={member} index={index} />
                     ))}
                 </Box>
             </Container>

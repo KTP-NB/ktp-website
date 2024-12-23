@@ -3,97 +3,104 @@
 import React from 'react';
 import { Container, Paper, Typography, Box } from '@mui/material';
 import {grey} from "@mui/material/colors";
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import 'tailwindcss/tailwind.css';
 
 const executiveMembers = [
     {
-        name: "Shriya Srinivasan",
-        position: "President",
+        name: "Shriya",
+        position: "Co - President",
         image: "/images/Shriya.jpg",
-        year: "Junior",
+        year: "Senior",
         major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/shriyasrinivasans/",
+        linkedin: "https://www.linkedin.com/in/shriya",
     },
     {
-        name: "Manan Shah",
+        name: "Manan",
         position: "Vice President",
         image: "/images/Manan.jpg",
-        year: "Junior",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/manan-shah12/",
+        year: "Senior",
+        major: "Electrical Engineering",
+        linkedin: "https://www.linkedin.com/in/manan",
     },
     {
-        name: "Srimathi Vadivel",
-        position: "Director of External",
+        name: "Srimathi",
+        position: "VP of External Affairs",
         image: "/images/Srimathi.jpg",
         year: "Junior",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/srimathivadivel/",
+        major: "Business Administration",
+        linkedin: "https://www.linkedin.com/in/srimathi",
     },
     {
-        name: "Akash Puzhakkal",
-        position: "Director of Tech",
-        image: "/images/Akash.jpg",
-        year: "Junior",
+        name: "Akash",
+        position: "VP of Tech",
+        image: "/images/Akash.jpeg",
+        year: "Senior",
         major: "Computer Science",
         linkedin: "https://www.linkedin.com/in/akash-puzhakkal/",
     },
     {
-        name: "Ciera Simon",
-        position: "Director of Engagement",
+        name: "Ciera",
+        position: "VP of Engagement",
         image: "/images/Ciera.jpg",
         year: "Junior",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/ciera-simon-65473b24b/",
+        major: "Marketing",
+        linkedin: "https://www.linkedin.com/in/ciera",
     },
     {
-        name: "Priyangshu Bhowmik",
-        position: "Director of Finance",
+        name: "Priyangshu",
+        position: "VP of Finance",
         image: "/images/Priyangshu.jpg",
-        year: "Junior",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/priyangshu-bhowmik-4a6270262/",
-    },
-    {
-        name: "Aishwarya Velagapudi",
-        position: "Director of Finance",
-        image: "/images/Aishwarya.jpg",
-        year: "Junior",
-        major: "BAIT",
-        linkedin: "https://www.linkedin.com/in/aishwarya-velagapudi/",
-    },
-    {
-        name: "Suhani Mehra",
-        position: "Director of Membership",
-        image: "/images/Suhani.jpg",
-        year: "Sophomore",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/suhani-mehra/",
-    },
-    {
-        name: "Anushka Kondur",
-        position: "Director of Development",
-        image: "/images/Anushka.jpg",
         year: "Senior",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/anushka-kondur/",
+        major: "Finance",
+        linkedin: "https://www.linkedin.com/in/priyangshu",
     },
     {
-        name: "Sameer Jiandani",
-        position: "Director of Internal",
+        name: "Aishwarya",
+        position: "VP of Finance",
+        image: "/images/Aishwarya.jpg",
+        year: "Senior",
+        major: "Accounting",
+        linkedin: "https://www.linkedin.com/in/aishwarya",
+    },
+    {
+        name: "Suhani",
+        position: "VP of Membership",
+        image: "/images/Suhani.jpg",
+        year: "Junior",
+        major: "Psychology",
+        linkedin: "https://www.linkedin.com/in/suhani",
+    },
+    {
+        name: "Anika",
+        position: "VP of Marketing",
+        image: "/images/Anika.jpg",
+        year: "Senior",
+        major: "Marketing",
+        linkedin: "https://www.linkedin.com/in/anika",
+    },
+    {
+        name: "Anushka",
+        position: "VP of Development",
+        image: "/images/Anushka.jpg",
+        year: "Junior",
+        major: "Human Resources",
+        linkedin: "https://www.linkedin.com/in/anushka",
+    },
+    {
+        name: "Sameer",
+        position: "VP of Internal",
         image: "/images/Sameer.jpg",
-        year: "Sophomore",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/sameerjiandani/",
+        year: "Senior",
+        major: "Sociology",
+        linkedin: "https://www.linkedin.com/in/sameer",
     },
     {
-        name: "Ananya Ahlawat",
-        position: "Director of Marketing",
+        name: "Ananya",
+        position: "VP of Marketing",
         image: "/images/Ananya.jpg",
         year: "Junior",
-        major: "BAIT",
-        linkedin: "https://www.linkedin.com/in/ananya-ahlawat/",
+        major: "Communications",
+        linkedin: "https://www.linkedin.com/in/ananya",
     },
 ];
 
@@ -112,7 +119,7 @@ const activeMembers = [
         image: "/images/Krish.jpg",
         year: "Sophomore",
         major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/krishkharbanda/",
+        linkedin: "https://www.linkedin.com/in/krish-kharbanda",
     },
     {
         name: "Umair Siddiqui",
@@ -120,7 +127,7 @@ const activeMembers = [
         image: "/images/Umair.jpg",
         year: "Sophomore",
         major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/umairsiddiqui05/",
+        linkedin: "https://www.linkedin.com/in/umair-siddiqui",
     },
     {
         name: "Shiven Patel",
@@ -128,7 +135,7 @@ const activeMembers = [
         image: "/images/Shiven.jpg",
         year: "Sophomore",
         major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/shiven-patel123/",
+        linkedin: "https://www.linkedin.com/in/shiven-patel",
     },
     {
         name: "Yash Singh",
@@ -136,7 +143,7 @@ const activeMembers = [
         image: "/images/Yash.jpg",
         year: "Sophomore",
         major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/yash-singh-b06a56295/",
+        linkedin: "https://www.linkedin.com/in/yash-singh",
     },
     {
         name: "Abirami Jayakumar",
@@ -144,7 +151,7 @@ const activeMembers = [
         image: "/images/Abirami.jpg",
         year: "Sophomore",
         major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/abiramijayakumar/",
+        linkedin: "https://www.linkedin.com/in/abirami-jayakumar",
     },
     {
         name: "Aditi Sreeganesh",
@@ -168,17 +175,52 @@ const activeMembers = [
         image: "/images/Yugal.jpg",
         year: "Sophomore",
         major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/yugalshah/",
+        linkedin: "https://www.linkedin.com/in/yugal-shah",
     },
-    {
-        name: "Anika Melkote",
-        position: "Member",
-        image: "/images/Anika.jpg",
-        year: "Sophomore",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/anika-melkote",
-    }
 ];
+
+const MemberCard = ({ member, index }) => (
+    <Box
+        key={index}
+        m={3}
+        width="200px"
+        className="transition-transform transform hover:scale-105"
+    >
+        <Paper elevation={3} style={{ backgroundColor: 'white', color: 'black', textAlign: 'center', position: 'relative' }}>
+            <Box
+                style={{ width: '100%', height: '150px', overflow: 'hidden', position: 'relative' }}
+                onClick={() => handleLinkedInClick(member.linkedin)}
+                className="cursor-pointer"
+            >
+                <Image
+                    src={member.image}
+                    alt={member.name}
+                    width={300}
+                    height={300}
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        borderTopLeftRadius: '3px',
+                        borderTopRightRadius: '3px',
+                    }}
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <LinkedInIcon style={{ fontSize: 40, color: 'white' }} />
+                </div>
+            </Box>
+            <Box style={{ padding: '10px' }} className="w-full bg-gray-900" sx={{ color: grey[200] }}>
+                <Typography variant="subtitle1" className="relative group font-medium">
+                    {member.name}
+                    <Box className="absolute left-0 w-full bg-white text-black text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-2">
+                        {member.year} - {member.major}
+                    </Box>
+                </Typography>
+                <Typography variant="subtitle1">{member.position}</Typography>
+            </Box>
+        </Paper>
+    </Box>
+);
 
 const MembersPage = () => {
     const handleLinkedInClick = (linkedin) => {
@@ -186,47 +228,6 @@ const MembersPage = () => {
             window.open(linkedin, '_blank', 'noopener,noreferrer');
         }
     };
-
-    const MemberCard = ({ member, index }) => (
-        <Box
-            key={index}
-            m={3}
-            width="200px"
-            className="transition-transform transform hover:scale-105"
-        >
-            <Paper elevation={3} style={{ backgroundColor: 'white', color: 'black', textAlign: 'center', position: 'relative' }}>
-                <Box
-                    style={{ width: '100%', height: '150px', overflow: 'hidden', position: 'relative' }}
-                    onClick={() => handleLinkedInClick(member.linkedin)}
-                    className="cursor-pointer"
-                >
-                    <img
-                        src={member.image}
-                        alt={member.name}
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            borderTopLeftRadius: '3px',
-                            borderTopRightRadius: '3px',
-                        }}
-                    />
-                    <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                        <LinkedInIcon style={{ fontSize: 40, color: 'white' }} />
-                    </div>
-                </Box>
-                <Box style={{ padding: '10px' }} className="w-full bg-gray-900" sx={{ color: grey[200] }}>
-                    <Typography variant="subtitle1" className="relative group font-medium">
-                        {member.name}
-                        <Box className="absolute left-0 w-full bg-white text-black text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-2">
-                            {member.year} - {member.major}
-                        </Box>
-                    </Typography>
-                    <Typography variant="subtitle1">{member.position}</Typography>
-                </Box>
-            </Paper>
-        </Box>
-    );
 
     return (
         <div className="relative isolate min-h-screen bg-gray-900 text-white">

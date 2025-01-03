@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 import { Container, Grid, Typography, Paper, Box } from '@mui/material';
@@ -8,37 +8,38 @@ import EmojiPeopleIcon from '@mui/icons-material/EmojiPeople';
 import BuildIcon from '@mui/icons-material/Build';
 import SchoolIcon from '@mui/icons-material/School';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
+import Image from 'next/image';
 
 const pillars = [
     {
         title: "Professional Development",
         description: "KTP provides professional development and support for tech careers, including interview training, resume building, mentorship, and private company recruiting.",
-        icon: <WorkIcon fontSize="large" sx={{ color: '#1e88e5' }} />, // Blue
+        icon: <WorkIcon fontSize="large" sx={{ color: '#1e88e5' }} />,
     },
     {
         title: "Alumni Connections",
         description: "While we are new, we have brothers who have interned / worked at various companies such as Vanguard, Fidelity, Nokia, and more, and we plan on building our Alumni Network as time goes by.",
-        icon: <GroupIcon fontSize="large" sx={{ color: '#43a047' }} />, // Green
+        icon: <GroupIcon fontSize="large" sx={{ color: '#43a047' }} />,
     },
     {
         title: "Social Growth",
         description: "KTP fosters friendships through social events, including tailgates, bowling, apple picking, and KTP formal.",
-        icon: <EmojiPeopleIcon fontSize="large" sx={{ color: '#fbc02d' }} />, // Yellow
+        icon: <EmojiPeopleIcon fontSize="large" sx={{ color: '#fbc02d' }} />,
     },
     {
         title: "Technical Advancement",
         description: "Expand your technical skillset through workshops, projects, and more, preparing you for the industry through new member education and beyond.",
-        icon: <BuildIcon fontSize="large" sx={{ color: '#e53935' }} />, // Red
+        icon: <BuildIcon fontSize="large" sx={{ color: '#e53935' }} />,
     },
     {
         title: "Academic Support",
-        description: "KTP helps foster academic growth by providing a network of the brightest tech minds at Northwestern for support in and out of the classroom.",
-        icon: <SchoolIcon fontSize="large" sx={{ color: '#8e24aa' }} />, // Purple
+        description: "KTP helps foster academic growth by providing a network of the brightest tech minds for support in and out of the classroom.",
+        icon: <SchoolIcon fontSize="large" sx={{ color: '#8e24aa' }} />,
     },
     {
         title: "Diversity, Equity, and Inclusion",
         description: "KTP is an inclusive fraternity that recruits the best in tech, encouraging all members to bring their authentic selves.",
-        icon: <Diversity3Icon fontSize="large" sx={{ color: '#fb8c00' }} />, // Orange
+        icon: <Diversity3Icon fontSize="large" sx={{ color: '#fb8c00' }} />,
     },
 ];
 
@@ -65,7 +66,7 @@ const AboutUs = () => {
                     Who Are We
                 </Typography>
 
-                {/* 'From Our President' Section */}
+                {/* From Our President Section */}
                 <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold', marginTop: 5 }}>
                     From Our President
                 </Typography>
@@ -73,16 +74,14 @@ const AboutUs = () => {
                 {/* Content Section */}
                 <Grid container spacing={4} alignItems="center" sx={{ marginTop: 5 }}>
                     <Grid item xs={12} md={6}>
-                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                            <img
+                        <Box sx={{ display: 'flex', justifyContent: 'center', position: 'relative', width: 300, height: 300, margin: 'auto' }}>
+                            <Image
                                 src="/images/shriyapic.jpg"
                                 alt="President"
+                                fill
                                 style={{
-                                    width: '300px',
-                                    height: '300px',
                                     borderRadius: '50%',
                                     objectFit: 'cover',
-                                    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.2)',
                                 }}
                             />
                         </Box>
@@ -103,7 +102,6 @@ const AboutUs = () => {
                     </Grid>
                 </Grid>
 
-
                 {/* Our Pillars Section */}
                 <Typography variant="h4" align="center" gutterBottom mt={10} sx={{ fontWeight: 'bold' }}>
                     Our Pillars
@@ -118,10 +116,10 @@ const AboutUs = () => {
                                     padding: 3,
                                     backgroundColor: 'white',
                                     textAlign: 'center',
-                                    height: '250px', // Adjusted height for smaller cards
-                                    transition: 'transform 0.3s ease', // Hover effect smooth transition
+                                    height: '250px',
+                                    transition: 'transform 0.3s ease',
                                     '&:hover': {
-                                        transform: 'scale(1.05)', // Slightly enlarges the card on hover
+                                        transform: 'scale(1.05)',
                                     },
                                 }}
                             >
@@ -139,16 +137,16 @@ const AboutUs = () => {
                     ))}
                 </Grid>
 
-                {/* KTP's History Section */}
+                {/* KTP&apos;s History Section */}
                 <Box sx={{ marginTop: 10 }}>
                     <Grid container spacing={4} alignItems="center">
                         {/* History Text */}
                         <Grid item xs={12} md={6}>
                             <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
-                                KTP's History
+                                KTP&apos;s History
                             </Typography>
                             <Typography variant="body1" gutterBottom sx={{ color: 'white', fontSize: '1.25rem', mb: 2 }}>
-                                KTP was founded on January 10, 2012, in Ann Arbor, Michigan, as the University of Michigan's first professional technology fraternity.
+                                KTP was founded on January 10, 2012, in Ann Arbor, Michigan, as the University of Michigan&apos;s first professional technology fraternity.
                             </Typography>
                             <Typography variant="body1" gutterBottom sx={{ color: 'white', fontSize: '1.25rem', mb: 2 }}>
                                 The fraternity aims to create bonds between students from various fields such as Informatics, computer science, business, design, and computer engineering.
@@ -157,27 +155,22 @@ const AboutUs = () => {
                                 Our goal is to develop networks through professional and social growth while exposing members to career opportunities in the tech industry.
                             </Typography>
                             <Typography variant="body1" gutterBottom sx={{ color: 'white', fontSize: '1.25rem', mb: 2 }}>
-                                We, the founders of the Alpha Beta colony in New Brunswick, started this effort to build a stronger community for students interested in technology.
-                            </Typography>
-                            <Typography variant="body1" gutterBottom sx={{ color: 'white', fontSize: '1.25rem', mb: 2 }}>
-                                Recognizing the rapidly evolving landscape of tech, we aimed to create an environment where members could collaborate, innovate, and grow together.
+                                We, the founders of the Alpha Beta chapter in New Brunswick, started this effort to build a stronger community for students interested in technology.
                             </Typography>
                         </Grid>
 
-
                         {/* History Image */}
                         <Grid item xs={12} md={6}>
-                            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                                <img
+                            <Box sx={{ display: 'flex', justifyContent: 'center', position: 'relative', width: '100%', height: 400 }}>
+                                <Image
                                     src="/images/Eboard.jpeg"
-                                    alt="Eboard"
+                                    alt="Executive Board"
+                                    fill
                                     style={{
-                                        width: '100%',
-                                        height: 'auto',
                                         borderRadius: '8px',
                                         objectFit: 'cover',
-                                        boxShadow: '0 6px 12px rgba(0, 0, 0, 0.2)',
                                     }}
+                                    sizes="(max-width: 768px) 100vw, 50vw"
                                 />
                             </Box>
                         </Grid>
@@ -185,7 +178,7 @@ const AboutUs = () => {
                 </Box>
             </Container>
 
-            {/* Bottom Gradient (Optional if needed for design consistency) */}
+            {/* Bottom Gradient */}
             <div
                 aria-hidden="true"
                 className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"

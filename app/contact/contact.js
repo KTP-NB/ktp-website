@@ -50,7 +50,7 @@ const ContactPage = () => {
                     variants={containerVariants}
                 >
                     <Typography variant="h3" align="center" gutterBottom className="text-white">
-                        Let's Connect!
+                        Let&apos;s Connect!
                     </Typography>
 
                     <Box className="text-center mt-6 mb-12">
@@ -101,7 +101,7 @@ const ContactPage = () => {
 
                     <Box className="text-center mt-16">
                         <Typography variant="body1" className="text-gray-400 italic">
-                            "Join us in shaping the future of technology and business!"
+                            &quot;Join us in shaping the future of technology and business!&quot;
                         </Typography>
                     </Box>
                 </motion.div>

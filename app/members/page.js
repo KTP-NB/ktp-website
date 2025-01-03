@@ -3,8 +3,8 @@
 import React from 'react';
 import { Container, Paper, Typography, Box } from '@mui/material';
 import {grey} from "@mui/material/colors";
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import 'tailwindcss/tailwind.css';
+import NextImage from 'next/image';
+import {LinkedinIcon} from "lucide-react";
 
 const executiveMembers = [
     {
@@ -60,7 +60,7 @@ const executiveMembers = [
         position: "Director of Finance",
         image: "/images/Aishwarya.jpg",
         year: "Junior",
-        major: "Computer Science",
+        major: "BAIT",
         linkedin: "https://www.linkedin.com/in/aishwarya-velagapudi/",
     },
     {
@@ -92,7 +92,7 @@ const executiveMembers = [
         position: "Director of Marketing",
         image: "/images/Ananya.jpg",
         year: "Junior",
-        major: "Computer Science",
+        major: "BAIT",
         linkedin: "https://www.linkedin.com/in/ananya-ahlawat/",
     },
 ];
@@ -180,9 +180,54 @@ const activeMembers = [
     }
 ];
 
+const MemberCard = ({ member, index, onLinkedInClick }) => (
+    <Box
+        key={index}
+        m={3}
+        width="200px"
+        className="transition-transform transform hover:scale-105"
+    >
+        <Paper elevation={3} style={{ backgroundColor: 'white', color: 'black', textAlign: 'center', position: 'relative' }}>
+            <Box
+                style={{ width: '100%', height: '150px', overflow: 'hidden', position: 'relative' }}
+                onClick={() => onLinkedInClick(member.linkedin)}
+                className="cursor-pointer"
+            >
+                <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                    <NextImage
+                        src={member.image}
+                        alt={member.name}
+                        fill
+                        sizes="200px"
+                        style={{
+                            objectFit: 'cover',
+                            borderTopLeftRadius: '3px',
+                            borderTopRightRadius: '3px',
+                        }}
+                    />
+                </div>
+                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <LinkedinIcon style={{ fontSize: 40, color: 'white' }} />
+                </div>
+            </Box>
+            <Box style={{ padding: '10px' }} className="w-full bg-gray-900" sx={{ color: grey[200] }}>
+                <Typography variant="subtitle1" className="relative group font-medium">
+                    {member.name}
+                    <Box className="absolute left-0 w-full bg-white text-black text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-2">
+                        {member.year} - {member.major}
+                    </Box>
+                </Typography>
+                <Typography variant="subtitle1">{member.position}</Typography>
+            </Box>
+        </Paper>
+    </Box>
+);
+
 const MembersPage = () => {
-    const handleImageClick = (linkedin) => {
-        window.open(linkedin, '_blank');
+    const handleLinkedInClick = (linkedin) => {
+        if (linkedin) {
+            window.open(linkedin, '_blank', 'noopener,noreferrer');
+        }
     };
 
     return (
@@ -206,42 +251,12 @@ const MembersPage = () => {
                 </Typography>
                 <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center" alignItems="center" padding="5px" position="relative" mt={5} py={5} px={3}>
                     {executiveMembers.map((member, index) => (
-                        <Box
+                        <MemberCard
                             key={index}
-                            m={3}
-                            width="200px"
-                            className="transition-transform transform hover:scale-105"
-                        >
-                            <Paper elevation={3} style={{ backgroundColor: 'white', color: 'black', textAlign: 'center', position: 'relative' }}>
-                                <Box style={{ width: '100%', height: '150px', overflow: 'hidden', position: 'relative' }}>
-                                    <img
-                                        src={member.image}
-                                        alt={member.name}
-                                        style={{
-                                            width: '100%',
-                                            height: '100%',
-                                            objectFit: 'cover',
-                                            cursor: 'pointer',
-                                            borderTopLeftRadius: '3px',
-                                            borderTopRightRadius: '3px',
-                                        }}
-                                        onClick={() => handleImageClick(member.linkedin)}
-                                    />
-                                    <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                        <LinkedInIcon style={{ fontSize: 40, color: 'white' }} />
-                                    </div>
-                                </Box>
-                                <Box style={{ padding: '10px' }} className="w-full bg-gray-900" sx={{ color: grey[200] }}>
-                                    <Typography variant="subtitle1" className="relative group">
-                                        {member.name}
-                                        <Box className="absolute left-0 w-full bg-white text-black text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-2">
-                                            {member.year} - {member.major}
-                                        </Box>
-                                    </Typography>
-                                    <Typography variant="subtitle2">{member.position}</Typography>
-                                </Box>
-                            </Paper>
-                        </Box>
+                            member={member}
+                            index={index}
+                            onLinkedInClick={handleLinkedInClick}
+                        />
                     ))}
                 </Box>
 
@@ -250,51 +265,12 @@ const MembersPage = () => {
                 </Typography>
                 <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center" alignItems="center" padding="5px" position="relative" mt={5} py={5} px={3}>
                     {activeMembers.map((member, index) => (
-                        <Box
+                        <MemberCard
                             key={index}
-                            m={3}
-                            width="200px"
-                            className="transition-transform transform hover:scale-105"
-                        >
-                            <Paper elevation={3} style={{ backgroundColor: 'white', color: 'black', textAlign: 'center', position: 'relative' }}>
-                                <Box style={{ width: '100%', height: '150px', overflow: 'hidden', position: 'relative' }}>
-                                    <img
-                                        src={member.image}
-                                        alt={member.name}
-                                        style={{
-                                            position: 'absolute',
-                                            left: '50%',
-                                            top: '50%',
-                                            transform: 'translate(-50%, -50%) scale(1.4)',
-                                            width: '100%',
-                                            height: '100%',
-                                            objectFit: 'cover',
-                                            cursor: 'pointer',
-                                            borderTopLeftRadius: '10px',
-                                            borderTopRightRadius: '10px',
-                                        }}
-                                        onClick={() => handleImageClick(member.linkedin)}
-                                    />
-                                    <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                        <LinkedInIcon style={{ fontSize: 40, color: 'white' }} />
-                                        {member.name !== "Anika Melkote" && (
-                                            <div className="absolute bottom-2 right-2 text-2xl font-bold text-white">
-                                                α
-                                            </div>
-                                        )}
-                                    </div>
-                                </Box>
-                                <Box style={{ padding: '10px' }} className="w-full bg-gray-900" sx={{ color: grey[200] }}>
-                                    <Typography variant="subtitle1" className="relative group">
-                                        {member.name}
-                                        <Box className="absolute left-0 w-full bg-white text-black text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-2">
-                                            {member.year} - {member.major}
-                                        </Box>
-                                    </Typography>
-                                    <Typography variant="subtitle2">{member.position}</Typography>
-                                </Box>
-                            </Paper>
-                        </Box>
+                            member={member}
+                            index={index}
+                            onLinkedInClick={handleLinkedInClick}
+                        />
                     ))}
                 </Box>
             </Container>

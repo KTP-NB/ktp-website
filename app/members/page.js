@@ -80,12 +80,12 @@ const executiveMembers = [
         linkedin: "https://www.linkedin.com/in/anushka-kondur/",
     },
     {
-        name: "Sameer Jiandani",
+        name: "Yugal Shah",
         position: "Director of Internal",
-        image: "/images/Sameer.jpg",
+        image: "/images/Yugal.jpg",
         year: "Sophomore",
         major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/sameerjiandani/",
+        linkedin: "https://www.linkedin.com/in/yugalshah/",
     },
     {
         name: "Ananya Ahlawat",
@@ -155,6 +155,14 @@ const activeMembers = [
         linkedin: "https://www.linkedin.com/in/aditi-sreeganesh",
     },
     {
+        name: "Sameer Jiandani",
+        position: "Member",
+        image: "/images/Sameer.jpg",
+        year: "Sophomore",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/sameerjiandani/",
+    },
+    {
         name: "Akhil Thuremella",
         position: "Member",
         image: "/images/Akhil.jpg",
@@ -162,22 +170,8 @@ const activeMembers = [
         major: "Computer Science",
         linkedin: "https://www.linkedin.com/in/akhil-thuremella",
     },
-    {
-        name: "Yugal Shah",
-        position: "Member",
-        image: "/images/Yugal.jpg",
-        year: "Sophomore",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/yugalshah/",
-    },
-    {
-        name: "Anika Melkote",
-        position: "Member",
-        image: "/images/Anika.jpg",
-        year: "Sophomore",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/anika-melkote",
-    }
+
+
 ];
 
 const MemberCard = ({ member, index, onLinkedInClick }) => (

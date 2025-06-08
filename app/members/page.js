@@ -9,150 +9,144 @@ import {LinkedinIcon} from "lucide-react";
 const executiveMembers = [
     {
         name: "Shriya Srinivasan",
-        position: "President",
+        position: "National President",
         image: "/images/Shriya.jpg",
-        year: "Junior",
+        year: "Senior",
         major: "Computer Science",
         linkedin: "https://www.linkedin.com/in/shriyasrinivasans/",
     },
     {
-        name: "Manan Shah",
-        position: "Vice President",
-        image: "/images/Manan.jpg",
-        year: "Junior",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/manan-shah12/",
-    },
-    {
         name: "Srimathi Vadivel",
-        position: "Director of External",
+        position: "President",
         image: "/images/Srimathi.jpg",
-        year: "Junior",
+        year: "Senior",
         major: "Computer Science",
         linkedin: "https://www.linkedin.com/in/srimathivadivel/",
     },
     {
-        name: "Akash Puzhakkal",
-        position: "Director of Tech",
-        image: "/images/Akash.jpg",
+        name: "Yugal Shah",
+        position: "Vice President",
+        image: "/images/Yugal.jpg",
         year: "Junior",
+        major: "Computer Science and Data Science",
+        linkedin: "https://www.linkedin.com/in/yugalnshah/",
+    },
+    {
+        name: "Shiven Patel",
+        position: "VP of Prof Development",
+        image: "/images/Shiven.jpg",
+        year: "Junior",
+        major: "Computer Science and Data Science",
+        linkedin: "https://www.linkedin.com/in/shiven-patel123/",
+    },
+     {
+        name: "Krish Kharbanda",
+        position: "VP of Tech",
+        image: "/images/Krish.jpg",
+        year: "Junior",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/krishkharbanda/",
+    },
+    {
+        name: "Abirami Jayakumar",
+        position: "VP of Engagement",
+        image: "/images/Abirami.jpg",
+        year: "Junior",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/abiramijayakumar/",
+    },
+    {
+        name: "Umair Siddiqui",
+        position: "VP of Finance",
+        image: "/images/Umair.jpg",
+        year: "Junior",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/umairsiddiqui05/",
+    },
+    {
+        name: "Saatvik Kabra",
+        position: "VP of Membership",
+        image: "/images/Saatvik.jpg",
+        year: "Junior",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/saatvik-kabra",
+    },
+    {
+        name: "Yash Singh",
+        position: "VP of External Affairs",
+        image: "/images/Yash.jpg",
+        year: "Junior",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/yash-singh-b06a56295/",
+    },
+     {
+        name: "Aditi Sreeganesh",
+        position: "VP of Marketing",
+        image: "/images/Aditi.jpg",
+        year: "Junior",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/aditi-sreeganesh",
+    },
+     {
+        name: "Akhil Thuremella",
+        position: "VP of Internal Affairs",
+        image: "/images/Akhil.jpg",
+        year: "Senior",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/akhil-thuremella",
+    },
+   
+];
+
+const activeMembers = [
+     {
+        name: "Manan Shah",
+        position: "Member",
+        image: "/images/Manan.jpg",
+        year: "Senior",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/manan-shah12/",
+    },
+    
+    {
+        name: "Akash Puzhakkal",
+        position: "Member",
+        image: "/images/Akash.jpg",
+        year: "Senior",
         major: "Computer Science",
         linkedin: "https://www.linkedin.com/in/akash-puzhakkal/",
     },
     {
         name: "Ciera Simon",
-        position: "Director of Engagement",
+        position: "Member",
         image: "/images/Ciera.jpg",
-        year: "Junior",
+        year: "Senior",
         major: "Computer Science",
         linkedin: "https://www.linkedin.com/in/ciera-simon-65473b24b/",
     },
     {
         name: "Priyangshu Bhowmik",
-        position: "Director of Finance",
+        position: "Member",
         image: "/images/Priyangshu.jpg",
-        year: "Junior",
+        year: "Senior",
         major: "Computer Science",
         linkedin: "https://www.linkedin.com/in/priyangshu-bhowmik-4a6270262/",
     },
     {
         name: "Aishwarya Velagapudi",
-        position: "Director of Finance",
+        position: "Member",
         image: "/images/Aishwarya.jpg",
-        year: "Junior",
+        year: "Senior",
         major: "BAIT",
         linkedin: "https://www.linkedin.com/in/aishwarya-velagapudi/",
     },
     {
         name: "Suhani Mehra",
-        position: "Director of Membership",
+        position: "Member",
         image: "/images/Suhani.jpg",
         year: "Sophomore",
         major: "Computer Science",
         linkedin: "https://www.linkedin.com/in/suhani-mehra/",
-    },
-    {
-        name: "Anushka Kondur",
-        position: "Director of Development",
-        image: "/images/Anushka.jpg",
-        year: "Senior",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/anushka-kondur/",
-    },
-    {
-        name: "Yugal Shah",
-        position: "Director of Internal",
-        image: "/images/Yugal.jpg",
-        year: "Sophomore",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/yugalshah/",
-    },
-    {
-        name: "Ananya Ahlawat",
-        position: "Director of Marketing",
-        image: "/images/Ananya.jpg",
-        year: "Junior",
-        major: "BAIT",
-        linkedin: "https://www.linkedin.com/in/ananya-ahlawat/",
-    },
-];
-
-const activeMembers = [
-    {
-        name: "Saatvik Kabra",
-        position: "Member",
-        image: "/images/Saatvik.jpg",
-        year: "Sophomore",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/saatvik-kabra",
-    },
-    {
-        name: "Krish Kharbanda",
-        position: "Member",
-        image: "/images/Krish.jpg",
-        year: "Sophomore",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/krishkharbanda/",
-    },
-    {
-        name: "Umair Siddiqui",
-        position: "Member",
-        image: "/images/Umair.jpg",
-        year: "Sophomore",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/umairsiddiqui05/",
-    },
-    {
-        name: "Shiven Patel",
-        position: "Member",
-        image: "/images/Shiven.jpg",
-        year: "Sophomore",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/shiven-patel123/",
-    },
-    {
-        name: "Yash Singh",
-        position: "Member",
-        image: "/images/Yash.jpg",
-        year: "Sophomore",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/yash-singh-b06a56295/",
-    },
-    {
-        name: "Abirami Jayakumar",
-        position: "Member",
-        image: "/images/Abirami.jpg",
-        year: "Sophomore",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/abiramijayakumar/",
-    },
-    {
-        name: "Aditi Sreeganesh",
-        position: "Member",
-        image: "/images/Aditi.jpg",
-        year: "Sophomore",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/aditi-sreeganesh",
     },
     {
         name: "Sameer Jiandani",
@@ -162,17 +156,28 @@ const activeMembers = [
         major: "Computer Science",
         linkedin: "https://www.linkedin.com/in/sameerjiandani/",
     },
-    {
-        name: "Akhil Thuremella",
-        position: "Member",
-        image: "/images/Akhil.jpg",
-        year: "Junior",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/akhil-thuremella",
-    },
-
+   
 
 ];
+
+const alumniMembers = [
+    {
+        name: "Anushka Kondur",
+        position: "Former Director of Development",
+        image: "/images/Anushka.jpg",
+        year: "Senior",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/anushka-kondur/",
+    },
+    {
+        name: "Ananya Ahlawat",
+        position: "Former Director of Marketing",
+        image: "/images/Ananya.jpg",
+        year: "Senior",
+        major: "BAIT",
+        linkedin: "https://www.linkedin.com/in/ananya-ahlawat/",
+    },
+]
 
 const MemberCard = ({ member, index, onLinkedInClick }) => (
     <Box
@@ -259,6 +264,19 @@ const MembersPage = () => {
                 </Typography>
                 <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center" alignItems="center" padding="5px" position="relative" mt={5} py={5} px={3}>
                     {activeMembers.map((member, index) => (
+                        <MemberCard
+                            key={index}
+                            member={member}
+                            index={index}
+                            onLinkedInClick={handleLinkedInClick}
+                        />
+                    ))}
+                </Box>
+                <Typography variant="h3" align="center" gutterBottom>
+                    Alumni
+                </Typography>
+                <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center" alignItems="center" padding="5px" position="relative" mt={5} py={5} px={3}>
+                    {alumniMembers.map((member, index) => (
                         <MemberCard
                             key={index}
                             member={member}

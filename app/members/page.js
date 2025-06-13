@@ -89,7 +89,7 @@ const executiveMembers = [
     },
      {
         name: "Akhil Thuremella",
-        position: "VP of Internal Affairs",
+        position: "VP of Internal Operations",
         image: "/images/Akhil.jpg",
         year: "Senior",
         major: "Computer Science",
@@ -144,7 +144,7 @@ const activeMembers = [
         name: "Suhani Mehra",
         position: "Member",
         image: "/images/Suhani.jpg",
-        year: "Sophomore",
+        year: "Junior",
         major: "Computer Science",
         linkedin: "https://www.linkedin.com/in/suhani-mehra/",
     },
@@ -152,7 +152,7 @@ const activeMembers = [
         name: "Sameer Jiandani",
         position: "Member",
         image: "/images/Sameer.jpg",
-        year: "Sophomore",
+        year: "Junior",
         major: "Computer Science",
         linkedin: "https://www.linkedin.com/in/sameerjiandani/",
     },
@@ -165,16 +165,16 @@ const alumniMembers = [
         name: "Anushka Kondur",
         position: "Former Director of Development",
         image: "/images/Anushka.jpg",
-        year: "Senior",
-        major: "Computer Science",
+        year: "Vanguard",
+        major: "Investment Systems Engineer",
         linkedin: "https://www.linkedin.com/in/anushka-kondur/",
     },
     {
         name: "Ananya Ahlawat",
         position: "Former Director of Marketing",
         image: "/images/Ananya.jpg",
-        year: "Senior",
-        major: "BAIT",
+        year: "SHI",
+        major: "Contract Obligation & Strategy Analyst",
         linkedin: "https://www.linkedin.com/in/ananya-ahlawat/",
     },
 ]
@@ -213,7 +213,11 @@ const MemberCard = ({ member, index, onLinkedInClick }) => (
                 <Typography variant="subtitle1" className="relative group font-medium">
                     {member.name}
                     <Box className="absolute left-0 w-full bg-white text-black text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-2">
-                        {member.year} - {member.major}
+                        {member.company && member.role ? (
+                            `${member.company} - ${member.role}`
+                        ) : (
+                            `${member.year} - ${member.major}`
+                        )}
                     </Box>
                 </Typography>
                 <Typography variant="subtitle1">{member.position}</Typography>

@@ -300,6 +300,7 @@ const activeMembers = [
         major: "Computer Science",
         linkedin: "https://www.linkedin.com/in/krishmaske/",
     },
+    
 
 ];
 

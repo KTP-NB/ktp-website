@@ -162,16 +162,11 @@ const AboutUs = () => {
               we'll accomplish together in 2025–2026. The trajectory of our
               chapter's growth, both in the achievements of our individual
               members and our collective impact, has been remarkable to witness
-              from the very beginning.
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{ color: "white", mb: 3, fontSize: "1.25rem" }}
-            >
-              I hope this website gives you a taste of what makes our chapter
-              exceptional. Come experience it for yourself at Rush Week and our
-              open events, where you can meet our brothers, see our brotherhood
-              in action, and explore the possibility of joining.
+              from the very beginning. I hope this website gives you a taste of
+              what makes our chapter exceptional. Come experience it for
+              yourself at Rush Week and our open events, where you can meet our
+              brothers, see our brotherhood in action, and explore the
+              possibility of joining.
             </Typography>
           </Grid>
         </Grid>

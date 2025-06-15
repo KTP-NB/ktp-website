@@ -76,7 +76,7 @@ const AboutUs = () => {
                     <Grid item xs={12} md={6}>
                         <Box sx={{ display: 'flex', justifyContent: 'center', position: 'relative', width: 300, height: 300, margin: 'auto' }}>
                             <Image
-                                src="/images/shriyapic.jpg"
+                                src="/images/SrimathiPrez.jpg"
                                 alt="President"
                                 fill
                                 style={{
@@ -87,19 +87,25 @@ const AboutUs = () => {
                         </Box>
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <Typography variant="h5" gutterBottom sx={{ color: 'white', fontSize: '1.5rem', fontWeight: 'bold' }}>
-                            Welcome to Kappa Theta Pi
-                        </Typography>
-                        <Typography variant="body1" sx={{ color: 'white', mb: 3, fontSize: '1.25rem' }}>
-                            As President, I am honored to lead a community of passionate individuals dedicated to pushing the boundaries of technology and innovation. Our chapter is committed to providing a supportive environment where members can collaborate, learn, and grow together, both personally and professionally.
-                        </Typography>
-                        <Typography variant="body1" sx={{ color: 'white', mb: 3, fontSize: '1.25rem' }}>
-                            We offer numerous opportunities for our members to develop their technical skills, network with industry professionals, and build lifelong friendships. Whether through technical workshops, social events, or mentorship programs, Kappa Theta Pi is here to help you succeed in the fast-paced world of technology.
-                        </Typography>
-                        <Typography variant="body1" sx={{ color: 'white', fontSize: '1.25rem' }}>
-                            We invite you to explore our fraternity and see how you can benefit from being part of this dynamic and forward-thinking community.
-                        </Typography>
-                    </Grid>
+                                  <Typography variant="h5" gutterBottom sx={{ color: 'white', fontSize: '1.5rem', fontWeight: 'bold' }}>
+                                    Welcome to Kappa Theta Pi
+                                  </Typography>
+                                  <Typography variant="body1" sx={{ color: 'white', mb: 3, fontSize: '1.25rem' }}>
+                                    As one of the founding members of this chapter, it's been an incredible journey watching our vision come to life. We established a solid foundation in our inaugural year, and now we're ready to reach new heights. 
+                                  </Typography>
+                                  <Typography variant="body1" sx={{ color: 'white', mb: 3, fontSize: '1.25rem' }}>
+                                    The opportunities within Kappa Theta Pi are truly limitless. This past year has exceeded every expectation I had when we first started this chapter. It pushed me beyond my comfort zone, connected me with an incredible network of tech-minded individuals, expanded my technical skills, and introduced me to friends I know I'll have for life. What continues to amaze me is the caliber of companies where our brothers are making their mark. From innovative startups to Fortune 500 tech giants, our members are contributing to some of the most exciting organizations in the industry. 
+                                  </Typography>
+                                  <Typography variant="body1" sx={{ color: 'white', fontSize: '1.25rem' }}>
+                                    This fraternity has transformed me in ways I never anticipated. Professionally, it's sharpened my technical abilities, taught me invaluable leadership skills, and opened doors I didn't even know existed. The mentorship from brothers and the collaborative projects we tackle together have accelerated my growth exponentially. Personally, Kappa Theta Pi has made me more confident, more resilient, and more connected to a purpose greater than myself. The bonds we share push each of us to be our best selves, creating a culture where excellence isn't just encouraged, it's expected.
+                                  </Typography>
+                                  <Typography variant="body1" sx={{ color: 'white', mb: 3, fontSize: '1.25rem' }}>
+                                    I've had the privilege of watching some of Alpha Beta's most talented and driven members flourish, and I'm thrilled to see what we'll accomplish together in 2025-2026. The trajectory of our chapter's growth, both in the achievements of our individual members and our collective impact, has been remarkable to witness from the very beginning.
+                                  </Typography>
+                                  <Typography variant="body1" sx={{ color: 'white', mb: 3, fontSize: '1.25rem' }}>
+                                    I hope this website gives you a taste of what makes our chapter exceptional. Come experience it for yourself at Rush Week and our open events, where you can meet our brothers, see our brotherhood in action, and explore the possibility of joining :)
+                                  </Typography>
+                                </Grid>
                 </Grid>
 
                 {/* Our Pillars Section */}

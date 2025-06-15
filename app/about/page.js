@@ -82,7 +82,7 @@ const AboutUs = () => {
                     <Grid item xs={12} md={6}>
                         <Box sx={{ display: 'flex', justifyContent: 'center', position: 'relative', width: 300, height: 300, margin: 'auto' }}>
                             <Image
-                                src="/images/SrimathiPrez.jpg"
+                                src="/images/srimathipic.jpg"
                                 alt="President"
                                 fill
                                 style={{

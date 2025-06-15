@@ -245,6 +245,14 @@ const activeMembers = [
         linkedin: "https://www.linkedin.com/in/heetshah15/",
     },
     {
+        name: "Krish Maske",
+        position: "Member",
+        image: "/images/KrishM.jpg",
+        year: "Sophomore",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/krishmaske/",
+    },
+    {
         name: "Gravit Bali",
         position: "Member",
         image: "/images/Gravit.jpg",
@@ -292,16 +300,6 @@ const activeMembers = [
         major: "Computer Science",
         linkedin: "https://www.linkedin.com/in/darshsundar/",
     },
-    {
-        name: "Krish Maske",
-        position: "Member",
-        image: "/images/Krish.jpg",
-        year: "Sophomore",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/krishmaske/",
-    },
-    
-
 ];
 
 const alumniMembers = [

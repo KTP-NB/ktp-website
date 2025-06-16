@@ -89,7 +89,7 @@ const executiveMembers = [
     },
      {
         name: "Akhil Thuremella",
-        position: "VP of Internal Affairs",
+        position: "VP of Internal Operations",
         image: "/images/Akhil.jpg",
         year: "Senior",
         major: "Computer Science",
@@ -144,7 +144,7 @@ const activeMembers = [
         name: "Suhani Mehra",
         position: "Member",
         image: "/images/Suhani.jpg",
-        year: "Sophomore",
+        year: "Junior",
         major: "Computer Science",
         linkedin: "https://www.linkedin.com/in/suhani-mehra/",
     },
@@ -152,12 +152,154 @@ const activeMembers = [
         name: "Sameer Jiandani",
         position: "Member",
         image: "/images/Sameer.jpg",
-        year: "Sophomore",
+        year: "Junior",
         major: "Computer Science",
         linkedin: "https://www.linkedin.com/in/sameerjiandani/",
     },
-   
-
+    {
+        name: "Esha Pai",
+        position: "Member",
+        image: "/images/Esha.jpg",
+        year: "Sophomore",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/eshapai/",
+    },
+    {
+        name: "Priya Rana",
+        position: "Member",
+        image: "/images/Priya.jpg",
+        year: "Sophomore",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/prana24/",
+    },
+    {
+        name: "Rohan Shah",
+        position: "Member",
+        image: "/images/Rohan.jpg",
+        year: "Sophomore",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/rohanshahh/",
+    },
+    {
+        name: "Jayden Shah",
+        position: "Member",
+        image: "/images/Jayden.jpg",
+        year: "Sophomore",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/jaydenshah/",
+    },
+    {
+        name: "Raghul Srinivasan",
+        position: "Member",
+        image: "/images/Raghul.jpg",
+        year: "Sophomore",
+        major: "BAIT",
+        linkedin: "https://www.linkedin.com/in/raghulkrishnasrinivasan/",
+    },
+    {
+        name: "Gourika Dhiman",
+        position: "Member",
+        image: "/images/Gourika.jpg",
+        year: "Sophomore",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/gourikadhiman/",
+    },
+    {
+        name: "Radha Ghate",
+        position: "Member",
+        image: "/images/Radha.jpg",
+        year: "Sophomore",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/radhaghate/",
+    },
+    {
+        name: "Krisha Bhagat",
+        position: "Member",
+        image: "/images/Krisha.jpg",
+        year: "Sophomore",
+        major: "BAIT",
+        linkedin: "https://www.linkedin.com/in/krisha-bhagat-07b61127a/",
+    },
+    {
+        name: "Jignasu Shah",
+        position: "Member",
+        image: "/images/Jignasu.jpg",
+        year: "Sophomore",
+        major: "Computer Engineering",
+        linkedin: "https://www.linkedin.com/in/jignasu-shah/",
+    },
+    {
+        name: "Sujay Faldu",
+        position: "Member",
+        image: "/images/Sujay.jpg",
+        year: "Sophomore",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/sujay-faldu/",
+    },
+    {
+        name: "Heet Shah",
+        position: "Member",
+        image: "/images/Heet.jpg",
+        year: "Sophomore",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/heetshah15/",
+    },
+    {
+        name: "Krish Maske",
+        position: "Member",
+        image: "/images/KrishM.jpg",
+        year: "Sophomore",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/krishmaske/",
+    },
+    {
+        name: "Gravit Bali",
+        position: "Member",
+        image: "/images/Gravit.jpg",
+        year: "Sophomore",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/gravitbali/",
+    },
+    {
+        name: "Ethan Bingemann",
+        position: "Member",
+        image: "/images/Ethan.jpg",
+        year: "Sophomore",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/ethan-bingemann/",
+    },
+    {
+        name: "Abhiram Sajjala",
+        position: "Member",
+        image: "/images/Abhiram.jpg",
+        year: "Sophomore",
+        major: "Mechanical Engineering",
+        linkedin: "https://www.linkedin.com/in/abhiramsajjala/",
+    },
+    {
+        name: "Kesha Patel",
+        position: "Member",
+        image: "/images/Kesha.jpg",
+        year: "Sophomore",
+        major: "BAIT",
+        linkedin: "https://www.linkedin.com/in/kesha-patel-12r/",
+    },
+    {
+        name: "Kshiraj Gupta",
+        position: "Member",
+        image: "/images/Kshiraj.jpg",
+        year: "Sophomore",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/kshiraj-gupta/",
+    },
+    {
+        name: "Darsh Sundar",
+        position: "Member",
+        image: "/images/Darsh.jpg",
+        year: "Sophomore",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/darshsundar/",
+    },
 ];
 
 const alumniMembers = [
@@ -165,16 +307,16 @@ const alumniMembers = [
         name: "Anushka Kondur",
         position: "Former Director of Development",
         image: "/images/Anushka.jpg",
-        year: "Senior",
-        major: "Computer Science",
+        year: "Vanguard",
+        major: "Investment Systems Engineer",
         linkedin: "https://www.linkedin.com/in/anushka-kondur/",
     },
     {
         name: "Ananya Ahlawat",
         position: "Former Director of Marketing",
         image: "/images/Ananya.jpg",
-        year: "Senior",
-        major: "BAIT",
+        year: "SHI",
+        major: "Contract Obligation & Strategy Analyst",
         linkedin: "https://www.linkedin.com/in/ananya-ahlawat/",
     },
 ]
@@ -213,7 +355,11 @@ const MemberCard = ({ member, index, onLinkedInClick }) => (
                 <Typography variant="subtitle1" className="relative group font-medium">
                     {member.name}
                     <Box className="absolute left-0 w-full bg-white text-black text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-2">
-                        {member.year} - {member.major}
+                        {member.company && member.role ? (
+                            `${member.company} - ${member.role}`
+                        ) : (
+                            `${member.year} - ${member.major}`
+                        )}
                     </Box>
                 </Typography>
                 <Typography variant="subtitle1">{member.position}</Typography>

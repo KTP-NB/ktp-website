@@ -74,7 +74,7 @@ const AboutUs = () => {
           {/* Content Section */}
           <Grid container spacing={4} alignItems="center" sx={{ marginTop: 5 }}>
             <Grid item xs={12} md={6}>
-              <Box sx={{ display: 'flex', justifyContent: 'center', position: 'relative', width: 500, height: 500, margin: 'auto' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', position: 'relative', width: 700, height: 700, margin: 'auto' }}>
                 <Image
                     src="/images/shriyapic.jpg"
                     alt="President"

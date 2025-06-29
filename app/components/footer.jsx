@@ -11,17 +11,11 @@ export default function Footer() {
                     <a href="" className="text-gray-500 ml-1" target="_blank" rel="noopener noreferrer">@KTP</a>
                 </p>
                 <span className="inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start">
-                    <a href="https://www.instagram.com" className="text-gray-400" target="_blank" rel="noopener noreferrer">
+                    <a href="https://www.instagram.com/ktpnewbrunswick/" className="text-gray-400" target="_blank" rel="noopener noreferrer">
                         <FaInstagram className="w-5 h-5" />
                     </a>
-                    <a href="https://www.linkedin.com" className="ml-3 text-gray-400" target="_blank" rel="noopener noreferrer">
+                    <a href="https://www.linkedin.com/company/kappa-theta-pi-new-brunswick/" className="ml-3 text-gray-400" target="_blank" rel="noopener noreferrer">
                         <FaLinkedin className="w-5 h-5" />
-                    </a>
-                    <a href="https://www.facebook.com" className="ml-3 text-gray-400" target="_blank" rel="noopener noreferrer">
-                        <FaFacebook className="w-5 h-5" />
-                    </a>
-                    <a href="https://twitter.com" className="ml-3 text-gray-400" target="_blank" rel="noopener noreferrer">
-                        <FaTwitter className="w-5 h-5" />
                     </a>
                 </span>
             </div>

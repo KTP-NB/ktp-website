@@ -18,7 +18,7 @@ const pillars = [
     },
     {
         title: "Alumni Connections",
-        description: "While we are new, we have brothers who have interned / worked at various companies such as Vanguard, Fidelity, Nokia, and more, and we plan on building our Alumni Network as time goes by.",
+        description: "While we are new, we have brothers who have interned / worked at various companies such as Amazon, Vanguard, Fidelity, Nokia, and more, and we plan on building our Alumni Network as time goes by.",
         icon: <GroupIcon fontSize="large" sx={{ color: '#43a047' }} />,
     },
     {
@@ -108,7 +108,37 @@ const AboutUs = () => {
                 </Typography>
 
                 <Grid container spacing={3} mt={3}>
-                    {pillars.map((pillar, index) => (
+                    {pillars.slice(0, 3).map((pillar, index) => (
+                        <Grid item xs={12} sm={6} md={4} key={index}>
+                            <Paper
+                                elevation={3}
+                                sx={{
+                                    padding: 3,
+                                    backgroundColor: 'white',
+                                    textAlign: 'center',
+                                    height: '250px',
+                                    transition: 'transform 0.3s ease',
+                                    '&:hover': {
+                                        transform: 'scale(1.05)',
+                                    },
+                                }}
+                            >
+                                <Box display="flex" justifyContent="center" mb={1}>
+                                    {pillar.icon}
+                                </Box>
+                                <Typography variant="h6" color="black" sx={{ fontWeight: 'bold' }}>
+                                    {pillar.title}
+                                </Typography>
+                                <Typography variant="body2" color="black" mt={2}>
+                                    {pillar.description}
+                                </Typography>
+                            </Paper>
+                        </Grid>
+                    ))}
+                </Grid>
+
+                <Grid container spacing={3} mt={1} justifyContent="center">
+                    {pillars.slice(3, 5).map((pillar, index) => (
                         <Grid item xs={12} sm={6} md={4} key={index}>
                             <Paper
                                 elevation={3}

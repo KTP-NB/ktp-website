@@ -34,15 +34,6 @@ export default function Example() {
           </div>
 
           <div className="mx-auto py-24 sm:py-32 lg:py-40 flex flex-col items-center">
-            <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-              <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-300 ring-1 ring-gray-600 hover:ring-gray-500">
-                Help us achieve our vision.{' '}
-                <a href="#" className="font-semibold text-indigo-400">
-                  <span aria-hidden="true" className="absolute inset-0" />
-                  Read more <span aria-hidden="true">&rarr;</span>
-                </a>
-              </div>
-            </div>
             <div className="text-center w-full max-w-none">
               <h1 className="text-5xl font-bold tracking-tight text-white sm:text-5xl">
                 Kappa Theta Pi - New Brunswick

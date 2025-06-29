@@ -35,12 +35,7 @@ const pillars = [
         title: "Academic Support",
         description: "KTP helps foster academic growth by providing a network of the brightest tech minds for support in and out of the classroom.",
         icon: <SchoolIcon fontSize="large" sx={{ color: '#8e24aa' }} />,
-    },
-    {
-        title: "Diversity, Equity, and Inclusion",
-        description: "KTP is an inclusive fraternity that recruits the best in tech, encouraging all members to bring their authentic selves.",
-        icon: <Diversity3Icon fontSize="large" sx={{ color: '#fb8c00' }} />,
-    },
+    }
 ];
 
 const AboutUs = () => {

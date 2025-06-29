@@ -7,7 +7,7 @@ export default function Footer() {
                 <a className="flex title-font font-medium items-center md:justify-start justify-center text-white">
                     <span className="ml-3 text-xl">Kappa Theta Pi</span>
                 </a>
-                <p className="text-sm text-gray-400 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-800 sm:py-2 sm:mt-0 mt-4">© 2024 KTP - Alpha Beta —
+                <p className="text-sm text-gray-400 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-800 sm:py-2 sm:mt-0 mt-4">© 2025 KTP - Alpha Beta —
                     <a href="" className="text-gray-500 ml-1" target="_blank" rel="noopener noreferrer">@KTP</a>
                 </p>
                 <span className="inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start">

@@ -69,9 +69,8 @@ function NetworkSection() {
                 src={l.src}
                 alt={l.alt}
                 fill
-                style={{
-                  objectFit: 'contain',
-                }}
+                sizes="(max-width:600px) 40vw, (max-width:900px) 25vw, 160px" {/* ✅ added sizes */}
+                style={{ objectFit: 'contain' }}
               />
             </Box>
           ))}
@@ -138,119 +137,118 @@ const AboutUs = () => {
         </Typography>
 
         {/* From Our President (section header outside the card) */}
-<Typography
-  id="from-our-president"
-  variant="h4"
-  align="center"
-  gutterBottom
-  sx={{ fontWeight: 'bold', mt: 8, letterSpacing: 0.3 }}
->
-  From Our President
-</Typography>
-
-<Grid container spacing={4} alignItems="center" sx={{ mt: 3 }}>
-  {/* Left: Image */}
-  <Grid item xs={12} md={6}>
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        position: 'relative',
-        width: 500,
-        height: 500,
-        margin: 'auto',
-        maxWidth: '90vw',
-        maxHeight: 500,
-      }}
-    >
-      <Image
-        src="/images/srimathipic.jpg"
-        alt="President"
-        fill
-        style={{ borderRadius: '50%', objectFit: 'cover' }}
-        sizes="(max-width: 900px) 90vw, 500px"
-        priority
-      />
-    </Box>
-  </Grid>
-
-  {/* Right: Scrollable card with elegant scrollbar */}
-  <Grid item xs={12} md={6}>
-    <Card
-      elevation={4}
-      sx={{
-        maxHeight: 360,
-        overflow: 'auto',
-        bgcolor: 'rgba(255,255,255,0.06)',
-        borderRadius: 3,
-        border: '1px solid rgba(255,255,255,0.12)',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.25)',
-
-        /* Firefox */
-        scrollbarWidth: 'thin',
-        scrollbarColor: 'rgba(255,255,255,0.35) transparent',
-
-        /* WebKit */
-        '&::-webkit-scrollbar': { width: 8 },
-        '&::-webkit-scrollbar-track': { background: 'transparent' },
-        '&::-webkit-scrollbar-thumb': {
-          backgroundColor: 'rgba(255,255,255,0.35)',
-          borderRadius: 8,
-          backgroundClip: 'padding-box',
-          border: '2px solid transparent',
-        },
-        '&:hover::-webkit-scrollbar-thumb': {
-          backgroundColor: 'rgba(255,255,255,0.5)',
-        },
-      }}
-    >
-      <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
         <Typography
-          variant="h5"
+          id="from-our-president"
+          variant="h4"
+          align="center"
           gutterBottom
-          sx={{ color: 'white', fontSize: '1.35rem', fontWeight: 'bold' }}
+          sx={{ fontWeight: 'bold', mt: 8, letterSpacing: 0.3 }}
         >
-          Welcome to Kappa Theta Pi
+          From Our President
         </Typography>
 
-        <Typography variant="body1" sx={{ color: 'white', mb: 3, fontSize: '1.05rem', lineHeight: 1.7 }}>
-          Welcome to the Alpha Beta chapter of Kappa Theta Pi in New Brunswick! As we enter our second
-          year, we're excited to continue building something special, not just growing our numbers, but
-          strengthening the network, social connections, mentorship opportunities, and lifelong
-          friendships that define our fraternity.
-        </Typography>
+        <Grid container spacing={4} alignItems="center" sx={{ mt: 3 }}>
+          {/* Left: Image */}
+          <Grid item xs={12} md={6}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                position: 'relative',
+                width: 500,
+                height: 500,
+                margin: 'auto',
+                maxWidth: '90vw',
+                maxHeight: 500,
+              }}
+            >
+              <Image
+                src="/images/srimathipic.jpg"
+                alt="President"
+                fill
+                style={{ borderRadius: '50%', objectFit: 'cover' }}
+                sizes="(max-width: 900px) 90vw, 500px"
+                priority
+              />
+            </Box>
+          </Grid>
 
-        <Typography variant="body1" sx={{ color: 'white', mb: 3, fontSize: '1.05rem', lineHeight: 1.7 }}>
-          As one of the founding members of this chapter, it's been an incredible journey watching our
-          vision come to life. We established a solid foundation in our inaugural year, and now we're
-          ready to reach new heights.
-        </Typography>
+          {/* Right: Scrollable card with elegant scrollbar */}
+          <Grid item xs={12} md={6}>
+            <Card
+              elevation={4}
+              sx={{
+                maxHeight: 360,
+                overflow: 'auto',
+                bgcolor: 'rgba(255,255,255,0.06)',
+                borderRadius: 3,
+                border: '1px solid rgba(255,255,255,0.12)',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.25)',
 
-        <Typography variant="body1" sx={{ color: 'white', mb: 3, fontSize: '1.05rem', lineHeight: 1.7 }}>
-          The opportunities within Kappa Theta Pi are truly limitless. This past year has exceeded every
-          expectation I had when we first started this chapter. It pushed me beyond my comfort zone,
-          connected me with an incredible network of tech-minded individuals, expanded my technical
-          skills, and introduced me to friends I know I'll have for life. What continues to amaze me is
-          the caliber of companies where our brothers are making their mark. From innovative startups to
-          Fortune 500 tech giants, our members are contributing to some of the most exciting
-          organizations in the industry.
-        </Typography>
+                /* Firefox */
+                scrollbarWidth: 'thin',
+                scrollbarColor: 'rgba(255,255,255,0.35) transparent',
 
-        <Typography variant="body1" sx={{ color: 'white', mb: 0, fontSize: '1.05rem', lineHeight: 1.7 }}>
-          I've had the privilege of watching some of Alpha Beta's most talented and driven members
-          flourish, and I'm thrilled to see what we'll accomplish together in 2025-2026. The trajectory
-          of our chapter's growth, both in the achievements of our individual members and our collective
-          impact, has been remarkable to witness from the very beginning.
-          <br /><br />
-          I hope this website gives you a taste of what makes our chapter exceptional. Come experience it
-          for yourself at Rush Week and our open events, where you can meet our brothers, see our
-          brotherhood in action, and explore the possibility of joining. {":)"}
-        </Typography>
-      </CardContent>
-    </Card>
-  </Grid>
-</Grid>
+                /* WebKit */
+                '&::-webkit-scrollbar': { width: 8 },
+                '&::-webkit-scrollbar-track': { background: 'transparent' },
+                '&::-webkit-scrollbar-thumb': {
+                  backgroundColor: 'rgba(255,255,255,0.35)',
+                  borderRadius: 8,
+                  backgroundClip: 'padding-box',
+                  border: '2px solid transparent',
+                },
+                '&:hover::-webkit-scrollbar-thumb': {
+                  backgroundColor: 'rgba(255,255,255,0.5)',
+                },
+              }}
+            >
+              <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  sx={{ color: 'white', fontSize: '1.35rem', fontWeight: 'bold' }}
+                >
+                  Welcome to Kappa Theta Pi
+                </Typography>
 
+                <Typography variant="body1" sx={{ color: 'white', mb: 3, fontSize: '1.05rem', lineHeight: 1.7 }}>
+                  Welcome to the Alpha Beta chapter of Kappa Theta Pi in New Brunswick! As we enter our second
+                  year, we're excited to continue building something special, not just growing our numbers, but
+                  strengthening the network, social connections, mentorship opportunities, and lifelong
+                  friendships that define our fraternity.
+                </Typography>
+
+                <Typography variant="body1" sx={{ color: 'white', mb: 3, fontSize: '1.05rem', lineHeight: 1.7 }}>
+                  As one of the founding members of this chapter, it's been an incredible journey watching our
+                  vision come to life. We established a solid foundation in our inaugural year, and now we're
+                  ready to reach new heights.
+                </Typography>
+
+                <Typography variant="body1" sx={{ color: 'white', mb: 3, fontSize: '1.05rem', lineHeight: 1.7 }}>
+                  The opportunities within Kappa Theta Pi are truly limitless. This past year has exceeded every
+                  expectation I had when we first started this chapter. It pushed me beyond my comfort zone,
+                  connected me with an incredible network of tech-minded individuals, expanded my technical
+                  skills, and introduced me to friends I know I'll have for life. What continues to amaze me is
+                  the caliber of companies where our brothers are making their mark. From innovative startups to
+                  Fortune 500 tech giants, our members are contributing to some of the most exciting
+                  organizations in the industry.
+                </Typography>
+
+                <Typography variant="body1" sx={{ color: 'white', mb: 0, fontSize: '1.05rem', lineHeight: 1.7 }}>
+                  I've had the privilege of watching some of Alpha Beta's most talented and driven members
+                  flourish, and I'm thrilled to see what we'll accomplish together in 2025-2026. The trajectory
+                  of our chapter's growth, both in the achievements of our individual members and our collective
+                  impact, has been remarkable to witness from the very beginning.
+                  <br /><br />
+                  I hope this website gives you a taste of what makes our chapter exceptional. Come experience it
+                  for yourself at Rush Week and our open events, where you can meet our brothers, see our
+                  brotherhood in action, and explore the possibility of joining. {":)"}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
 
         {/* Our Pillars */}
         <Typography variant="h4" align="center" gutterBottom mt={10} sx={{ fontWeight: 'bold' }}>
@@ -340,8 +338,8 @@ const AboutUs = () => {
                   src="/images/Eboard.jpeg"
                   alt="Executive Board"
                   fill
-                  style={{ borderRadius: '8px', objectFit: 'cover' }}
                   sizes="(max-width: 768px) 100vw, 50vw"
+                  style={{ borderRadius: '8px', objectFit: 'cover' }}
                 />
               </Box>
             </Grid>

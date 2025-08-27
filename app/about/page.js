@@ -69,7 +69,7 @@ function NetworkSection() {
                 src={l.src}
                 alt={l.alt}
                 fill
-                sizes="(max-width:600px) 40vw, (max-width:900px) 25vw, 160px" {/* ✅ added sizes */}
+                sizes="(max-width:600px) 40vw, (max-width:900px) 25vw, 160px" // ✅ added sizes
                 style={{ objectFit: 'contain' }}
               />
             </Box>

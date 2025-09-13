@@ -74,7 +74,7 @@ const AboutUs = () => {
           {/* Content Section */}
           <Grid container spacing={4} alignItems="center" sx={{ marginTop: 5 }}>
             <Grid item xs={12} md={6}>
-              <Box sx={{ display: 'flex', justifyContent: 'center', position: 'relative', width: 300, height: 300, margin: 'auto' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', position: 'relative', width: 500, height: 500, margin: 'auto' }}>
                 <Image
                     src="/images/shriyapic.jpg"
                     alt="President"
@@ -149,7 +149,7 @@ const AboutUs = () => {
                   KTP was founded on January 10, 2012, in Ann Arbor, Michigan, as the University of Michigan&apos;s first professional technology fraternity.
                 </Typography>
                 <Typography variant="body1" gutterBottom sx={{ color: 'white', fontSize: '1.25rem', mb: 2 }}>
-                  The fraternity aims to create bonds between students from various fields such as Informatics, computer science, business, design, and computer engineering.
+                  The fraternity aims to create bonds between students from various fields such as informatics, computer science, business, design, and computer engineering.
                 </Typography>
                 <Typography variant="body1" gutterBottom sx={{ color: 'white', fontSize: '1.25rem', mb: 2 }}>
                   Our goal is to develop networks through professional and social growth while exposing members to career opportunities in the tech industry.

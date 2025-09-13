@@ -1,8 +1,12 @@
 'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
+import { useState } from 'react'
+import { Dialog, DialogPanel } from '@headlessui/react'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import Image from 'next/image'
+import Link from 'next/link'
 import { motion } from 'framer-motion';
+
 
 export default function Example() {
   // Exact, case-sensitive paths from /public/images

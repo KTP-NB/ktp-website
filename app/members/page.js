@@ -44,7 +44,7 @@ const executiveMembers = [
         position: "VP of Tech",
         image: "/images/Krish.jpg",
         year: "Junior",
-        major: "Computer Science",
+        major: "Computer Science and Mathematics",
         linkedin: "https://www.linkedin.com/in/krishkharbanda/",
     },
     {
@@ -52,7 +52,7 @@ const executiveMembers = [
         position: "VP of Engagement",
         image: "/images/Abirami.jpg",
         year: "Junior",
-        major: "Computer Science",
+        major: "Computer Sciencea and Mathematics",
         linkedin: "https://www.linkedin.com/in/abiramijayakumar/",
     },
     {
@@ -60,7 +60,7 @@ const executiveMembers = [
         position: "VP of Finance",
         image: "/images/Umair.jpg",
         year: "Junior",
-        major: "Computer Science",
+        major: "Computer Science and Data Science",
         linkedin: "https://www.linkedin.com/in/umairsiddiqui05/",
     },
     {
@@ -76,7 +76,7 @@ const executiveMembers = [
         position: "VP of External Affairs",
         image: "/images/Yash.jpg",
         year: "Junior",
-        major: "Computer Science",
+        major: "Computer Science and Data Science",
         linkedin: "https://www.linkedin.com/in/yash-singh-b06a56295/",
     },
      {
@@ -84,7 +84,7 @@ const executiveMembers = [
         position: "VP of Marketing",
         image: "/images/Aditi.jpg",
         year: "Junior",
-        major: "Computer Science",
+        major: "Mathematics and Data Science",
         linkedin: "https://www.linkedin.com/in/aditi-sreeganesh",
     },
      {
@@ -92,7 +92,7 @@ const executiveMembers = [
         position: "VP of Internal Operations",
         image: "/images/Akhil.jpg",
         year: "Senior",
-        major: "Computer Science",
+        major: "Computer Science and Data Science",
         linkedin: "https://www.linkedin.com/in/akhil-thuremella",
     },
    
@@ -104,7 +104,7 @@ const activeMembers = [
         position: "Member",
         image: "/images/Manan.jpg",
         year: "Senior",
-        major: "Computer Science",
+        major: "Computer Science and Data Science",
         linkedin: "https://www.linkedin.com/in/manan-shah12/",
     },
     
@@ -121,7 +121,7 @@ const activeMembers = [
         position: "Member",
         image: "/images/Ciera.jpg",
         year: "Senior",
-        major: "Computer Science",
+        major: "Computer Science and Cognitive Science",
         linkedin: "https://www.linkedin.com/in/ciera-simon-65473b24b/",
     },
     {
@@ -129,7 +129,7 @@ const activeMembers = [
         position: "Member",
         image: "/images/Priyangshu.jpg",
         year: "Senior",
-        major: "Computer Science",
+        major: "Computer Science and Data Science",
         linkedin: "https://www.linkedin.com/in/priyangshu-bhowmik-4a6270262/",
     },
     {
@@ -145,7 +145,7 @@ const activeMembers = [
         position: "Member",
         image: "/images/Suhani.jpg",
         year: "Junior",
-        major: "Computer Science",
+        major: "Computer Science and Data Science",
         linkedin: "https://www.linkedin.com/in/suhani-mehra/",
     },
     {
@@ -153,7 +153,7 @@ const activeMembers = [
         position: "Member",
         image: "/images/Sameer.jpg",
         year: "Junior",
-        major: "Computer Science",
+        major: "Computer Science and Cognitive Science",
         linkedin: "https://www.linkedin.com/in/sameerjiandani/",
     },
     {
@@ -161,7 +161,7 @@ const activeMembers = [
         position: "Member",
         image: "/images/Esha.jpg",
         year: "Sophomore",
-        major: "Computer Science",
+        major: "Computer Science and Biomathematics",
         linkedin: "https://www.linkedin.com/in/eshapai/",
     },
     {
@@ -169,7 +169,7 @@ const activeMembers = [
         position: "Member",
         image: "/images/Priya.jpg",
         year: "Sophomore",
-        major: "Computer Science",
+        major: "Computer Science and Mathematics",
         linkedin: "https://www.linkedin.com/in/prana24/",
     },
     {
@@ -185,7 +185,7 @@ const activeMembers = [
         position: "Member",
         image: "/images/Jayden.jpg",
         year: "Sophomore",
-        major: "Computer Science",
+        major: "Computer Science and Economics",
         linkedin: "https://www.linkedin.com/in/jaydenshah/",
     },
     {
@@ -193,7 +193,7 @@ const activeMembers = [
         position: "Member",
         image: "/images/Raghul.jpg",
         year: "Sophomore",
-        major: "BAIT",
+        major: "Data Science",
         linkedin: "https://www.linkedin.com/in/raghulkrishnasrinivasan/",
     },
     {
@@ -201,7 +201,7 @@ const activeMembers = [
         position: "Member",
         image: "/images/Gourika.jpg",
         year: "Sophomore",
-        major: "Computer Science",
+        major: "Computer Science and Data Science",
         linkedin: "https://www.linkedin.com/in/gourikadhiman/",
     },
     {
@@ -209,7 +209,7 @@ const activeMembers = [
         position: "Member",
         image: "/images/Radha.jpg",
         year: "Sophomore",
-        major: "Computer Science",
+        major: "Computer Science and Mathematics",
         linkedin: "https://www.linkedin.com/in/radhaghate/",
     },
     {
@@ -217,7 +217,7 @@ const activeMembers = [
         position: "Member",
         image: "/images/Krisha.jpg",
         year: "Sophomore",
-        major: "BAIT",
+        major: "BAIT and Finance",
         linkedin: "https://www.linkedin.com/in/krisha-bhagat-07b61127a/",
     },
     {
@@ -233,7 +233,7 @@ const activeMembers = [
         position: "Member",
         image: "/images/Sujay.jpg",
         year: "Sophomore",
-        major: "Computer Science",
+        major: "Computer Science and Economics",
         linkedin: "https://www.linkedin.com/in/sujay-faldu/",
     },
     {
@@ -241,7 +241,7 @@ const activeMembers = [
         position: "Member",
         image: "/images/Heet.jpg",
         year: "Sophomore",
-        major: "Computer Science",
+        major: "Computer Science and Data Science",
         linkedin: "https://www.linkedin.com/in/heetshah15/",
     },
     {
@@ -249,7 +249,7 @@ const activeMembers = [
         position: "Member",
         image: "/images/KrishM.jpg",
         year: "Sophomore",
-        major: "Computer Science",
+        major: "Computer Science and Data Science",
         linkedin: "https://www.linkedin.com/in/krishmaske/",
     },
     {
@@ -257,7 +257,7 @@ const activeMembers = [
         position: "Member",
         image: "/images/Gravit.jpg",
         year: "Sophomore",
-        major: "Computer Science",
+        major: "Computer Science and Cognitive Science",
         linkedin: "https://www.linkedin.com/in/gravitbali/",
     },
     {
@@ -281,7 +281,7 @@ const activeMembers = [
         position: "Member",
         image: "/images/Kesha.jpg",
         year: "Sophomore",
-        major: "BAIT",
+        major: "BAIT and Finance",
         linkedin: "https://www.linkedin.com/in/kesha-patel-12r/",
     },
     {
@@ -289,7 +289,7 @@ const activeMembers = [
         position: "Member",
         image: "/images/Kshiraj.jpg",
         year: "Sophomore",
-        major: "Computer Science",
+        major: "Computer Science and Data Science",
         linkedin: "https://www.linkedin.com/in/kshiraj-gupta/",
     },
     {

@@ -305,18 +305,18 @@ const activeMembers = [
 const alumniMembers = [
     {
         name: "Anushka Kondur",
-        position: "Former Director of Development",
+        position: "Investment Systems Engineer at Vanguard",
         image: "/images/Anushka.jpg",
-        year: "Vanguard",
-        major: "Investment Systems Engineer",
+        year: "Grad 2025",
+        major: "Former VP of Prof Development",
         linkedin: "https://www.linkedin.com/in/anushka-kondur/",
     },
     {
         name: "Ananya Ahlawat",
-        position: "Former Director of Marketing",
+        position: "Contract Obligation & Strategy Analyst at SHI",
         image: "/images/Ananya.jpg",
-        year: "SHI",
-        major: "Contract Obligation & Strategy Analyst",
+        year: "Grad 2025",
+        major: "Former VP of Marketing",
         linkedin: "https://www.linkedin.com/in/ananya-ahlawat/",
     },
 ]

@@ -26,7 +26,7 @@ const executiveMembers = [
     {
         name: "Yugal Shah",
         position: "Vice President",
-        image: "/images/Yugal.jpg",
+        image: "/images/Yugal.png",
         year: "Junior",
         major: "Computer Science and Data Science",
         linkedin: "https://www.linkedin.com/in/yugalnshah/",
@@ -42,7 +42,7 @@ const executiveMembers = [
      {
         name: "Krish Kharbanda",
         position: "VP of Tech",
-        image: "/images/Krish.jpg",
+        image: "/images/Krish.png",
         year: "Junior",
         major: "Computer Science and Mathematics",
         linkedin: "https://www.linkedin.com/in/krishkharbanda/",

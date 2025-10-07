@@ -31,7 +31,7 @@ const MosaicBackground = () => {
     useEffect(() => {
         const generateTiles = () => {
             const tiles = []
-            const tileCount = 20
+            const tileCount = 30
 
             for (let i = 0; i < tileCount; i++) {
                 const randomImage = images[Math.floor(Math.random() * images.length)]

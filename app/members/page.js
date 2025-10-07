@@ -18,7 +18,7 @@ const executiveMembers = [
     {
         name: "Srimathi Vadivel",
         position: "President",
-        image: "/images/Srimathi.jpg",
+        image: "/images/Srimathi.JPEG",
         year: "Senior",
         major: "Computer Science",
         linkedin: "https://www.linkedin.com/in/srimathivadivel/",
@@ -89,7 +89,7 @@ const executiveMembers = [
     },
      {
         name: "Akhil Thuremella",
-        position: "VP of Internal Operations",
+        position: "VP of Internal Ops",
         image: "/images/Akhil.jpg",
         year: "Senior",
         major: "Computer Science and Data Science",

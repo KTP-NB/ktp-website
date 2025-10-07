@@ -52,7 +52,7 @@ const executiveMembers = [
         position: "VP of Engagement",
         image: "/images/Abirami.jpg",
         year: "Junior",
-        major: "Computer Sciencea and Mathematics",
+        major: "Computer Science and Mathematics",
         linkedin: "https://www.linkedin.com/in/abiramijayakumar/",
     },
     {

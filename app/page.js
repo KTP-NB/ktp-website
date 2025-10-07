@@ -31,7 +31,7 @@ const MosaicBackground = () => {
     useEffect(() => {
         const generateTiles = () => {
             const tiles = []
-            const tileCount = 40
+            const tileCount = 20
 
             for (let i = 0; i < tileCount; i++) {
                 const randomImage = images[Math.floor(Math.random() * images.length)]
@@ -60,7 +60,7 @@ const MosaicBackground = () => {
 
         const interval = setInterval(() => {
             setMosaicTiles(generateTiles())
-        }, 10000)
+        }, 30000)
 
         return () => clearInterval(interval)
     }, [])

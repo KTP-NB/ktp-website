@@ -1,132 +1,141 @@
 'use client';
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
 import Link from 'next/link'
-import { motion } from 'framer-motion';
 
+const MosaicBackground = () => {
+    const images = [
+        '/images/homepicture1.JPG',
+        '/images/homepicture2.JPG',
+        '/images/homepicture3.JPG',
+        '/images/homepicture4.jpg',
+        '/images/homepicture5.jpg',
+        '/images/homepicture6.png',
+        '/images/homepicture7.png',
+        '/images/homepicture8.jpeg',
+        '/images/homepicture9.jpeg',
+        '/images/homepicture10.jpeg',
+        '/images/homepicture11.jpeg',
+        '/images/homepicture12.png',
+        '/images/homepicture13.png',
+        '/images/homepicture14.jpeg',
+        '/images/homepicture15.jpeg',
+        '/images/homepicture16.jpeg'
+    ]
+
+    const [mosaicTiles, setMosaicTiles] = useState([])
+
+    useEffect(() => {
+        const generateTiles = () => {
+            const tiles = []
+            const tileCount = 30
+
+            for (let i = 0; i < tileCount; i++) {
+                const randomImage = images[Math.floor(Math.random() * images.length)]
+                const size = Math.random() * 250 + 200 // 200-450px
+
+                const x = Math.random() * 90 + 5 // 5-95%
+                const y = Math.random() * 90 + 5 // 5-95%
+
+                const rotation = Math.random() * 40 - 20 // -20 to 20 degrees
+                const delay = Math.random() * 10
+
+                tiles.push({
+                    id: i,
+                    image: randomImage,
+                    size: size,
+                    x: x,
+                    y: y,
+                    rotation: rotation,
+                    delay: delay
+                })
+            }
+            return tiles
+        }
+
+        setMosaicTiles(generateTiles())
+
+        const interval = setInterval(() => {
+            setMosaicTiles(generateTiles())
+        }, 30000)
+
+        return () => clearInterval(interval)
+    }, [])
+
+    return (
+        // Changed from 'absolute' to 'absolute' but ONLY within this component's container
+        <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: -5 }}>
+            {mosaicTiles.map((tile) => (
+                <div
+                    key={tile.id}
+                    className="absolute transition-all duration-[10000ms] ease-in-out"
+                    style={{
+                        left: `${tile.x}%`,
+                        top: `${tile.y}%`,
+                        width: `${tile.size}px`,
+                        height: `${tile.size}px`,
+                        transform: `translate(-50%, -50%) rotate(${tile.rotation}deg)`,
+                        animationDelay: `${tile.delay}s`,
+                        opacity: 0.6,
+                    }}
+                >
+                    <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl">
+                        <Image
+                            src={tile.image}
+                            alt=""
+                            fill
+                            className="object-cover filter blur-[0.5px]"
+                            sizes="450px"
+                            onError={(e) => {
+                                e.target.parentElement.style.backgroundColor = '#4338ca';
+                                e.target.style.display = 'none';
+                            }}
+                        />
+                    </div>
+                </div>
+            ))}
+        </div>
+    )
+}
 
 export default function Example() {
-  // Exact, case-sensitive paths from /public/images
-  const BG_IMAGES = [
-    '/images/bg1.JPG',
-    '/images/bg2.png',
-    '/images/bg3.png',
-    '/images/bg4.jpeg',
-    '/images/bg5.jpeg',
-    '/images/bg6.jpeg',
-    '/images/bg7.jpeg',
-    '/images/bg8.jpeg',
-    '/images/bg9.png',
-    '/images/bg10.png',
-    '/images/bg11.jpeg',
-    '/images/bg12.jpeg',
-    '/images/bg13.jpeg',
-    '/images/bg14.jpeg',
-  ];
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  // --- FilmStrip component (inline for simplicity) ---
-  const FilmStrip = ({ images, speedSec = 40, tileH = 180 }) => {
-    const row = [...images, ...images]; // duplicate for a seamless loop
     return (
-      <div className="absolute inset-x-0 top-[64%] z-0 px-4 pointer-events-none select-none">
-        <div className="relative mx-auto max-w-6xl">
-          <div className="relative h-[220px] overflow-hidden">
-            {/* scrolling row */}
-            <motion.div
-              className="flex gap-6 w-max"
-              // Move RIGHT (left -> right). For leftward, use ['0%','-50%'].
-              animate={{ x: ['-50%', '0%'] }}
-              transition={{ duration: speedSec, ease: 'linear', repeat: Infinity }}
-              style={{ willChange: 'transform' }}
-            >
-              {row.map((src, i) => (
-                <div key={src + i} className="shrink-0">
-                  <Image
-                    src={src}
-                    alt=""
-                    width={300}
-                    height={tileH}
-                    className="h-[180px] w-[300px] object-cover rounded-2xl shadow-xl opacity-70"
-                    priority={i < 2}
-                  />
-                </div>
-              ))}
-            </motion.div>
+        // This container now defines the boundaries for the mosaic background
+        <div className="text-white min-h-screen flex flex-col justify-center items-center relative overflow-hidden">
+            <MosaicBackground />
 
-            {/* subtle edge fades so it feels embedded */}
-            <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-gray-900/90 to-transparent" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-gray-900/90 to-transparent" />
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  return (
-    <div className="relative min-h-screen overflow-hidden text-white bg-gray-900/40">
-      {/* ---- Gradients (furthest back) ---- */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 -top-40 -z-20 transform-gpu overflow-hidden blur-3xl sm:-top-80"
-      >
-        <div
-          className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem]
-                     -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr
-                     from-[#3b82f6] to-[#1e40af] opacity-30
-                     sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
-          style={{
-            clipPath:
-              'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
-          }}
-        />
-      </div>
-
-      {/* ---- Film strip (middle, behind text) ---- */}
-      <FilmStrip images={BG_IMAGES} speedSec={38} />
-
-      {/* ---- Foreground hero (top) ---- */}
-      <div className="relative z-10 isolate px-6 lg:px-8 w-full">
-        <div className="mx-auto py-24 sm:py-32 lg:py-40 flex flex-col items-center">
-          <div className="text-center w-full">
-            <h1 className="text-5xl font-bold tracking-tight text-white sm:text-5xl">
-              Kappa Theta Pi - New Brunswick
-            </h1>
-            <p className="mt-6 text-lg leading-8 text-gray-300 max-w-2xl mx-auto">
-              New Brunswick&apos;s premier co-ed professional technology fraternity, committed to
-              building a supportive community and helping students grow professionally. We foster
-              diversity and inclusivity, empowering individuals with a shared passion for technology
-              and career development.
-            </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Link
-                href="/rush"
-                className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Rush
-              </Link>
+            <div className='absolute left-16 top-40 max-w-lg rounded-lg opacity-90 z-10'>
+                {/*<Image src="/image1.png" alt="KTP Logo" width={400} height={400} className='rounded-md'/>*/}
             </div>
-          </div>
-        </div>
 
-        {/* ---- Bottom gradient (furthest back) ---- */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 top-[calc(100%-13rem)] -z-20 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
-        >
-          <div
-            className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem]
-                       -translate-x-1/2 bg-gradient-to-tr from-[#3b82f6] to-[#1e40af]
-                       opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
-            style={{
-              clipPath:
-                'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
-            }}
-          />
+            <div className='absolute right-16 bottom-16 max-w-lg rounded-lg opacity-90 z-10'>
+                {/*<Image src="/image2.png" alt="KTP Logo" width={600} height={600} className='rounded-md'/>*/}
+            </div>
+
+            <div className="relative isolate px-6 lg:px-8 w-full z-10">
+                <div className="mx-auto py-24 sm:py-32 lg:py-40 flex flex-col items-center">
+                    <div className="text-center w-full max-w-none relative z-20">
+                        <h1 className="text-5xl font-bold tracking-tight text-white sm:text-6xl drop-shadow-2xl backdrop-blur-sm bg-black/10 rounded-2xl p-8 border border-white/10">
+                            Kappa Theta Pi - New Brunswick
+                        </h1>
+                        <div className="mt-8 text-lg leading-8 text-gray-100 max-w-2xl mx-auto drop-shadow-lg backdrop-blur-sm bg-black/20 rounded-xl p-6 border border-white/5">
+                            New Brunswick&apos;s premier co-ed professional technology fraternity, committed to building a supportive community and helping students grow professionally. We foster diversity and inclusivity, empowering individuals with a shared passion for technology and career development.
+                        </div>
+                        <div className="mt-10 flex items-center justify-center gap-x-6">
+                            <Link href="/rush">
+                                <div className="rounded-md bg-indigo-600/90 backdrop-blur-sm px-3.5 py-2.5 text-sm font-semibold text-white shadow-2xl hover:bg-indigo-500/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all duration-300 hover:shadow-xl hover:scale-105 border border-indigo-400/30">
+                                    Rush
+                                </div>
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    )
 }

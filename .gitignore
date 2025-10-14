@@ -40,7 +40,6 @@ firebase.secret.json
 # Additional local and sensitive files
 .env.local
 .env.*.local
-firebase.secret.json
 *.secret.json
 *.serviceAccount.json
 serviceAccountKey*.json

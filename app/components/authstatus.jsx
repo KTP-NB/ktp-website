@@ -10,9 +10,7 @@ export default function AuthStatus() {
   if (!user) {
     return (
       <div className="flex items-center gap-4">
-        <a href="/login" className="hover:opacity-80">Login</a>
-        <a href="/signup" className="hover:opacity-80">Signup</a>
-      </div>
+        <a href="/login" className="hover:opacity-80">Login</a>      </div>
     );
   }
 

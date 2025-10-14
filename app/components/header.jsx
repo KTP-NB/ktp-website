@@ -25,7 +25,6 @@ export default function Header() {
     ? []
     : [
         { name: 'Login', href: '/login' },
-        { name: 'Signup', href: '/signup' },
       ];
 
   const handleNavigation = () => setMobileMenuOpen(false);

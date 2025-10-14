@@ -3,5 +3,4 @@
   publish = ".next"
 
 [secrets]
-  enabled = true
-  omit_keys = ["NEXT_PUBLIC_FIREBASE_*"]
+  enabled = false

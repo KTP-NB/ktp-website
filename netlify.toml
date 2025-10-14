@@ -2,11 +2,6 @@
   command = "npm run build"
   publish = ".next"
 
-[build.secrets]
-  omit_keys = [
-    "NEXT_PUBLIC_FIREBASE_API_KEY",
-    "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN",
-    "NEXT_PUBLIC_FIREBASE_PROJECT_ID",
-    "NEXT_PUBLIC_FIREBASE_APP_ID",
-    "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID"
-  ]
+[secrets]
+  enabled = true
+  omit_keys = ["NEXT_PUBLIC_FIREBASE_*"]

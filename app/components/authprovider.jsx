@@ -1,7 +1,7 @@
 'use client';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { initializeApp, getApps } from 'firebase/app';
-import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 
 // Init Firebase client here so it's available app-wide
 const firebaseConfig = {
@@ -29,6 +29,7 @@ export function AuthProvider({ children }) {
     loading: user === undefined,
     signOut: () => signOut(auth),
     signIn: (email, password) => signInWithEmailAndPassword(auth, email.toLowerCase(), password),
+    resetPassword: (email) => sendPasswordResetEmail(auth, email.toLowerCase()),
   }), [user]);
 
   return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;

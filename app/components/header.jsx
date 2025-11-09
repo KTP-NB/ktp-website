@@ -5,7 +5,7 @@ import { Dialog } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useAuth } from '@/components/authprovider'; // <-- make sure this path/casing matches your file
+import { useAuth } from '@/components/authprovider';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -21,19 +21,20 @@ export default function Header() {
     []
   );
 
-  const authLinks = !loading && user
-    ? []
-    : [
-        { name: 'Login', href: '/login' },
-      ];
+  const navLinksWithStudy = useMemo(() => {
+    if (!loading && user) {
+      return [...navLinks, { name: 'Study Tools', href: '/study-tools' }];
+    }
+    return navLinks;
+  }, [navLinks, loading, user]);
+
+  const authLinks = !loading && user ? [] : [{ name: 'Login', href: '/login' }];
 
   const handleNavigation = () => setMobileMenuOpen(false);
 
   return (
     <header className="absolute inset-x-0 top-0 z-50 bg-transparent">
-      {/* DESKTOP HEADER (grid keeps center truly centered) */}
       <nav aria-label="Global" className="grid grid-cols-3 items-center p-6 lg:px-8">
-        {/* Left: Logo (fixed area) */}
         <div className="flex">
           <Link href="/" onClick={handleNavigation} className="-m-1.5 p-1.5">
             <span className="sr-only">KTP</span>
@@ -41,9 +42,8 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* Center: main nav (only on lg+) */}
         <div className="hidden lg:flex justify-center gap-x-12">
-          {navLinks.map((item) => (
+          {navLinksWithStudy.map((item) => (
             <Link
               key={item.name}
               href={item.href}
@@ -54,7 +54,6 @@ export default function Header() {
           ))}
         </div>
 
-        {/* Right: auth area (only on lg+) */}
         <div className="hidden lg:flex justify-end items-center gap-x-6">
           {!loading && user ? (
             <>
@@ -79,7 +78,6 @@ export default function Header() {
           )}
         </div>
 
-        {/* Mobile: hamburger button (right side) */}
         <div className="flex lg:hidden col-start-3 justify-end">
           <button
             type="button"
@@ -92,7 +90,6 @@ export default function Header() {
         </div>
       </nav>
 
-      {/* MOBILE DRAWER */}
       <Dialog as="div" open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
         <div className="fixed inset-0 z-50" />
         <Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-gray-800 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-700">
@@ -113,9 +110,8 @@ export default function Header() {
 
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-700">
-              {/* Main nav */}
               <div className="space-y-2 py-6">
-                {navLinks.map((item) => (
+                {navLinksWithStudy.map((item) => (
                   <Link
                     key={item.name}
                     href={item.href}
@@ -127,7 +123,6 @@ export default function Header() {
                 ))}
               </div>
 
-              {/* Auth area */}
               <div className="py-6 space-y-2">
                 {!loading && user ? (
                   <>

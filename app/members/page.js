@@ -292,6 +292,72 @@ const activeMembers = [
         major: "Computer Science",
         linkedin: "https://www.linkedin.com/in/darshsundar/",
     },
+    {
+        name: "Anusha Iyer",
+        position: "Member",
+        image: "/images/Anusha.jpg",
+        year: "Sophomore",
+        major: "Computer Science and Math",
+        linkedin: "https://www.linkedin.com/in/anusha--iyer",
+    },
+    {
+        name: "Aaron Bansal",
+        position: "Member",
+        image: "/images/Aaron.jpg",
+        year: "Sophomore",
+        major: "Computer Science and Math",
+        linkedin: "https://www.linkedin.com/in/aaron-bansal",
+    },
+    {
+        name: "Anant Gupta",
+        position: "Member",
+        image: "/images/Anant.jpg",
+        year: "Sophomore",
+        major: "Computer Science and Data Science",
+        linkedin: "https://www.linkedin.com/in/anantgupta123/",
+    },
+    {
+        name: "Atul Marichetty",
+        position: "Member",
+        image: "/images/Atul.jpg",
+        year: "Sophomore",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/atul-marichetty-0a6636320/",
+    },
+    {
+        name: "Arnav Venkata",
+        position: "Member",
+        image: "/images/Arnav.jpg",
+        year: "Sophomore",
+        major: "Computer Science and Data Science",
+        linkedin: "https://www.linkedin.com/in/arnav-venkata/",
+    },
+    {
+        name: "Krish Bansal",
+        position: "Member",
+        image: "/images/KrishB.jpg",
+        year: "Sophomore",
+        major: "Computer Engineering",
+        linkedin: "https://www.linkedin.com/in/krish-bansal-44725b328/",
+    },
+    {
+        name: "Gokulraj Kumarassamy",
+        position: "Member",
+        image: "/images/Gokulraj.jpg",
+        year: "Sophomore",
+        major: "Computer Science and Math",
+        linkedin: "https://www.linkedin.com/in/gokulrajk1/",
+    },
+    {
+        name: "Aditya Velagapudi",
+        position: "Member",
+        image: "/images/Aditya.jpg",
+        year: "Sophomore",
+        major: "Computer Science and Business Analytics",
+        linkedin: "https://www.linkedin.com/in/adityavelagapudi/",
+    },
+    
+    
 ];
 
 const alumniMembers = [

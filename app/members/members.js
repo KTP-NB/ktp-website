@@ -173,14 +173,6 @@ const activeMembers = [
         linkedin: "https://www.linkedin.com/in/prana24/",
     },
     {
-        name: "Rohan Shah",
-        position: "Member",
-        image: "/images/Rohan.jpg",
-        year: "Sophomore",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/rohanshahh/",
-    },
-    {
         name: "Jayden Shah",
         position: "Member",
         image: "/images/Jayden.jpg",

@@ -321,7 +321,7 @@ const activeMembers = [
         position: "Member",
         image: "/images/Atul.jpg",
         year: "Sophomore",
-        major: "Computer Science",
+        major: "Computer Science and Math",
         linkedin: "https://www.linkedin.com/in/atul-marichetty-0a6636320/",
     },
     {

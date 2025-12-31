@@ -4,3 +4,6 @@
 
 [secrets]
   enabled = false
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

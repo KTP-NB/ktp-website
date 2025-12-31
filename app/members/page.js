@@ -319,7 +319,7 @@ const activeMembers = [
     {
         name: "Atul Marichetty",
         position: "Member",
-        image: "/images/Atul.jpg",
+        image: "/images/IMG_5209.JPG",
         year: "Sophomore",
         major: "Computer Science and Math",
         linkedin: "https://www.linkedin.com/in/atul-marichetty-0a6636320/",

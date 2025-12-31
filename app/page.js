@@ -1,141 +1,122 @@
-'use client';
+import fs from 'fs';
+import path from 'path';
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { useState, useEffect } from 'react'
-import { Dialog, DialogPanel } from '@headlessui/react'
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import Image from 'next/image'
-import Link from 'next/link'
-
-const MosaicBackground = () => {
-    const images = [
-        '/images/homepicture1.JPG',
-        '/images/homepicture2.JPG',
-        '/images/homepicture3.JPG',
-        '/images/homepicture4.jpg',
-        '/images/homepicture5.jpg',
-        '/images/homepicture6.png',
-        '/images/homepicture7.png',
-        '/images/homepicture8.jpeg',
-        '/images/homepicture9.jpeg',
-        '/images/homepicture10.jpeg',
-        '/images/homepicture11.jpeg',
-        '/images/homepicture12.png',
-        '/images/homepicture13.png',
-        '/images/homepicture14.jpeg',
-        '/images/homepicture15.jpeg',
-        '/images/homepicture16.jpeg'
-    ]
-
-    const [mosaicTiles, setMosaicTiles] = useState([])
-
-    useEffect(() => {
-        const generateTiles = () => {
-            const tiles = []
-            const tileCount = 30
-
-            for (let i = 0; i < tileCount; i++) {
-                const randomImage = images[Math.floor(Math.random() * images.length)]
-                const size = Math.random() * 250 + 200 // 200-450px
-
-                const x = Math.random() * 90 + 5 // 5-95%
-                const y = Math.random() * 90 + 5 // 5-95%
-
-                const rotation = Math.random() * 40 - 20 // -20 to 20 degrees
-                const delay = Math.random() * 10
-
-                tiles.push({
-                    id: i,
-                    image: randomImage,
-                    size: size,
-                    x: x,
-                    y: y,
-                    rotation: rotation,
-                    delay: delay
-                })
-            }
-            return tiles
+// read images from public/photos for ktp website directory
+function readPhotosFolder() {
+    const dir = path.join(process.cwd(), 'public', 'photos for ktp website');
+    try {
+        const files = fs.readdirSync(dir);
+        // return raw public paths; do not pre-encode — let the browser/next/image handle encoding
+        const images = files.filter((f) => /\.(jpe?g|png|gif|webp|avif|svg)$/i.test(f)).map((f) => `/photos for ktp website/${f}`);
+        return images;
+    } catch (e) {
+        // fallback to public/images if folder missing
+        const fallbackDir = path.join(process.cwd(), 'public', 'images');
+        try {
+            const files = fs.readdirSync(fallbackDir);
+            return files.filter((f) => /\.(jpe?g|png|gif|webp|avif|svg)$/i.test(f)).map((f) => `/images/${f}`);
+        } catch (e2) {
+            return [];
         }
+    }
+}
 
-        setMosaicTiles(generateTiles())
+const images = readPhotosFolder();
 
-        const interval = setInterval(() => {
-            setMosaicTiles(generateTiles())
-        }, 30000)
-
-        return () => clearInterval(interval)
-    }, [])
-
+function Hero({ heroImages }) {
     return (
-        // Changed from 'absolute' to 'absolute' but ONLY within this component's container
-        <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: -5 }}>
-            {mosaicTiles.map((tile) => (
+        <section className="relative isolate w-full bg-gray-900 text-white">
+            {/* Top gradient matching About page */}
+            <div aria-hidden="true" className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
                 <div
-                    key={tile.id}
-                    className="absolute transition-all duration-[10000ms] ease-in-out"
                     style={{
-                        left: `${tile.x}%`,
-                        top: `${tile.y}%`,
-                        width: `${tile.size}px`,
-                        height: `${tile.size}px`,
-                        transform: `translate(-50%, -50%) rotate(${tile.rotation}deg)`,
-                        animationDelay: `${tile.delay}s`,
-                        opacity: 0.6,
+                        clipPath:
+                            'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
                     }}
-                >
-                    <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl">
-                        <Image
-                            src={tile.image}
-                            alt=""
-                            fill
-                            className="object-cover filter blur-[0.5px]"
-                            sizes="450px"
-                            onError={(e) => {
-                                e.target.parentElement.style.backgroundColor = '#4338ca';
-                                e.target.style.display = 'none';
-                            }}
-                        />
+                    className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#3b82f6] to-[#1e40af] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+                />
+            </div>
+
+            {/* cluster of images on the background */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                {/* hide decorative photos on small screens */}
+                <div className="absolute inset-0 hidden md:flex items-center justify-center opacity-75 mix-blend-normal">
+                    <div className="relative w-full max-w-6xl pointer-events-none">
+                        <div className="absolute -left-12 -top-20 w-48 h-64 rounded-2xl overflow-hidden shadow-2xl rotate-6">
+                            <Image src={heroImages[0]} alt="" fill className="object-cover" />
+                        </div>
+                        <div className="absolute left-36 -top-28 w-56 h-72 rounded-2xl overflow-hidden shadow-2xl -rotate-6">
+                            <Image src={heroImages[1]} alt="" fill className="object-cover" />
+                        </div>
+                        <div className="absolute right-36 -top-24 w-48 h-64 rounded-2xl overflow-hidden shadow-2xl rotate-10">
+                            <Image src={heroImages[2]} alt="" fill className="object-cover" />
+                        </div>
+                        <div className="absolute -right-12 -top-18 w-56 h-72 rounded-2xl overflow-hidden shadow-2xl -rotate-2">
+                            <Image src={heroImages[3]} alt="" fill className="object-cover" />
+                        </div>
                     </div>
                 </div>
-            ))}
-        </div>
+            </div>
+
+            <div className="relative z-10 px-6 lg:px-8">
+                <div className="mx-auto max-w-5xl py-28 lg:py-36 text-center">
+                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight drop-shadow-lg">Kappa Theta Pi - New Brunswick</h1>
+                    <p className="mt-4 text-lg sm:text-xl text-white/80 max-w-3xl mx-auto">A co-ed professional technology fraternity focused on building community, growing careers, and celebrating technical curiosity. Join us in connecting, learning, and growing together.</p>
+                    <div className="mt-8">
+                        <Link href="/rush" className="inline-flex items-center rounded-full bg-[#0f3b66]/95 px-8 py-4 text-lg font-bold text-white shadow-2xl hover:bg-[#123f7a] transition">Rush</Link>
+                    </div>
+                </div>
+            </div>
+        </section>
     )
 }
 
-export default function Example() {
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
+function Gallery({ galleryImages }) {
     return (
-        // This container now defines the boundaries for the mosaic background
-        <div className="text-white min-h-screen flex flex-col justify-center items-center relative overflow-hidden">
-            <MosaicBackground />
-
-            <div className='absolute left-16 top-40 max-w-lg rounded-lg opacity-90 z-10'>
-                {/*<Image src="/image1.png" alt="KTP Logo" width={400} height={400} className='rounded-md'/>*/}
-            </div>
-
-            <div className='absolute right-16 bottom-16 max-w-lg rounded-lg opacity-90 z-10'>
-                {/*<Image src="/image2.png" alt="KTP Logo" width={600} height={600} className='rounded-md'/>*/}
-            </div>
-
-            <div className="relative isolate px-6 lg:px-8 w-full z-10">
-                <div className="mx-auto py-24 sm:py-32 lg:py-40 flex flex-col items-center">
-                    <div className="text-center w-full max-w-none relative z-20">
-                        <h1 className="text-5xl font-bold tracking-tight text-white sm:text-6xl drop-shadow-2xl backdrop-blur-sm bg-black/10 rounded-2xl p-8 border border-white/10">
-                            Kappa Theta Pi - New Brunswick
-                        </h1>
-                        <div className="mt-8 text-lg leading-8 text-gray-100 max-w-2xl mx-auto drop-shadow-lg backdrop-blur-sm bg-black/20 rounded-xl p-6 border border-white/5">
-                            New Brunswick&apos;s premier co-ed professional technology fraternity, committed to building a supportive community and helping students grow professionally. We foster diversity and inclusivity, empowering individuals with a shared passion for technology and career development.
-                        </div>
-                        <div className="mt-10 flex items-center justify-center gap-x-6">
-                            <Link href="/rush">
-                                <div className="rounded-md bg-indigo-600/90 backdrop-blur-sm px-3.5 py-2.5 text-sm font-semibold text-white shadow-2xl hover:bg-indigo-500/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all duration-300 hover:shadow-xl hover:scale-105 border border-indigo-400/30">
-                                    Rush
-                                </div>
-                            </Link>
+        <section className="w-full bg-white py-12">
+            <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+                    <div className="lg:col-span-1">
+                        <h2 className="text-2xl font-bold text-gray-900">New Jersey&apos;s Premier Technology Fraternity</h2>
+                        <p className="mt-3 text-gray-600">We create a mentor-driven environment that helps members prepare for technical careers, build leadership, and grow a lifelong network.</p>
+                        <div className="mt-4">
+                            <Link href="/about" className="inline-flex items-center rounded-full bg-[#0f3b66]/95 px-6 py-3 text-sm font-semibold text-white shadow hover:bg-[#123f7a] transition">More about us</Link>
                         </div>
                     </div>
+
+                      <div className="lg:col-span-3">
+                                    <div className="overflow-x-auto touch-pan-x" style={{ WebkitOverflowScrolling: 'touch' }}>
+                                        <div className="flex gap-6 pb-4 snap-x snap-mandatory">
+                                            {galleryImages.map((src, i) => (
+                                                <div key={i} className="snap-start min-w-[260px] md:min-w-[320px] lg:min-w-[360px] h-56 rounded-xl overflow-hidden shadow-lg flex-shrink-0">
+                                                    <Image src={src} alt="KTP photo" width={720} height={480} className="object-cover w-full h-full" />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
                 </div>
             </div>
-        </div>
+        </section>
     )
+}
+
+export default function Home() {
+    const heroImages = [
+        '/photos for ktp website/IMG_6856.JPG',
+        '/photos for ktp website/IMG_8831.JPG',
+        '/photos for ktp website/IMG_6482.JPEG',
+        '/photos for ktp website/IMG_6524.JPG',
+    ];
+
+    const galleryImages = images; // include hero images in the gallery as well
+
+    return (
+        <main className="min-h-screen bg-white text-gray-900">
+            <Hero heroImages={heroImages} />
+            <Gallery galleryImages={galleryImages} />
+        </main>
+    );
 }

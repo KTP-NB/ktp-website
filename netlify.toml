@@ -1,8 +1,0 @@
-[build]
-  command = "npm run build"
-
-[secrets]
-  enabled = false
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"

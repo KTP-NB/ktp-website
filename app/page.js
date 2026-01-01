@@ -1,29 +1,7 @@
-import fs from 'fs';
-import path from 'path';
 import Image from 'next/image';
 import Link from 'next/link';
 
-// read images from public/photos for ktp website directory
-function readPhotosFolder() {
-    const dir = path.join(process.cwd(), 'public', 'photos for ktp website');
-    try {
-        const files = fs.readdirSync(dir);
-        // return raw public paths; do not pre-encode — let the browser/next/image handle encoding
-        const images = files.filter((f) => /\.(jpe?g|png|gif|webp|avif|svg)$/i.test(f)).map((f) => `/photos for ktp website/${f}`);
-        return images;
-    } catch (e) {
-        // fallback to public/images if folder missing
-        const fallbackDir = path.join(process.cwd(), 'public', 'images');
-        try {
-            const files = fs.readdirSync(fallbackDir);
-            return files.filter((f) => /\.(jpe?g|png|gif|webp|avif|svg)$/i.test(f)).map((f) => `/images/${f}`);
-        } catch (e2) {
-            return [];
-        }
-    }
-}
 
-const images = readPhotosFolder();
 
 function Hero({ heroImages }) {
     return (
@@ -111,7 +89,39 @@ export default function Home() {
         '/photos for ktp website/IMG_6524.JPG',
     ];
 
-    const galleryImages = images; // include hero images in the gallery as well
+    const galleryImages = [
+        '/photos for ktp website/IMG_6482.JPEG',
+        '/photos for ktp website/IMG_6524.JPG',
+        '/photos for ktp website/IMG_6856.JPG',
+        '/photos for ktp website/IMG_8831.JPG',
+        '/photos for ktp website/100_5433.JPG',
+        '/photos for ktp website/948404BD-45D8-42ED-944B-A1FC2F99BCB3_1_201_a.jpeg',
+        '/photos for ktp website/DSC09511.jpg',
+        '/photos for ktp website/IMG_3107.jpeg',
+        '/photos for ktp website/IMG_3135.JPG',
+        '/photos for ktp website/IMG_3646.JPG',
+        '/photos for ktp website/IMG_3662.JPG',
+        '/photos for ktp website/IMG_3805.jpeg',
+        '/photos for ktp website/IMG_3855.jpeg',
+        '/photos for ktp website/IMG_3943.JPG',
+        '/photos for ktp website/IMG_4150.JPG',
+        '/photos for ktp website/IMG_4265.JPG',
+        '/photos for ktp website/IMG_4337.jpeg',
+        '/photos for ktp website/IMG_4362.JPG',
+        '/photos for ktp website/IMG_4405.jpeg',
+        '/photos for ktp website/IMG_4672.JPG',
+        '/photos for ktp website/IMG_5638.jpeg',
+        '/photos for ktp website/IMG_6198.JPG',
+        '/photos for ktp website/IMG_6229.JPG',
+        '/photos for ktp website/IMG_6877.JPG',
+        '/photos for ktp website/IMG_6881.JPG',
+        '/photos for ktp website/IMG_6892.JPG',
+        '/photos for ktp website/IMG_6932.JPG',
+        '/photos for ktp website/IMG_8832.JPG',
+        '/photos for ktp website/IMG_8833.JPG',
+        '/photos for ktp website/IMG_8834.JPG',
+    ]
+
 
     return (
         <main className="min-h-screen bg-white text-gray-900">

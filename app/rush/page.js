@@ -1,47 +1,43 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Container, Typography, Box } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Image from "next/image";
-import { motion } from "framer-motion"; // Import framer-motion
+
+/* =========================
+   DATA
+   ========================= */
 
 const events = [
   {
-    title: "Applications Due",
-    date: "September 10, 2024",
+    title: "Informational #1",
+    date: "Monday, January 26th • 8:00–10:00 PM",
+    location: "TBD",
+    image: "/images/homepicture13.png",
     description:
-      "All applications for rushing Kappa Theta Pi are due by this date.",
+      "Join us for an overview of what it means to be a brother of Kappa Theta Pi. Meet members, learn about rush, and ask questions in an open discussion format.",
   },
   {
-    title: "Rush Kickoff Event",
-    date: "September 12, 2024",
+    title: "Speed Networking",
+    date: "Tuesday, January 27th • 7:00–9:00 PM",
+    location: "TBD",
+    image: "/images/homepicture12.png",
     description:
-      "Join us for the kickoff event to learn more about Kappa Theta Pi and meet the members.",
+      "The same information will be presented as Open House #1. Feel free to attend either or both sessions.",
   },
   {
-    title: "Tech Talk and Networking",
-    date: "September 14, 2024",
+    title: "Informational 2",
+    date: "Wednesday, January 28th • 6:30–8:00 PM",
+    location: "TBD",
+    image: "/images/homepicture3.jpg",
     description:
-      "An opportunity to hear from industry professionals and network with other tech enthusiasts.",
+      "Hear honest conversations from our members about diversity, equity, and inclusion in KTP, on campus, and in the tech industry.",
   },
   {
-    title: "Coding Workshop",
-    date: "September 18, 2024",
+    title: "Resume Review",
+    date: "Thursday, January 29th • 8:00–9:00 PM",
+    location: "TBD",
+    image: "/images/homepicture2.jpg",
     description:
-      "Participate in a hands-on coding workshop led by experienced members of Kappa Theta Pi.",
-  },
-  {
-    title: "Social Mixer",
-    date: "September 20, 2024",
-    description:
-      "Join us for a fun social mixer to get to know the current members and fellow rushes.",
-  },
-  {
-    title: "Final Interviews",
-    date: "September 25, 2024",
-    description:
-      "Final interviews for prospective members who have made it through the initial rounds.",
+      "Get tips on crafting a strong resume and receive 1:1 support for your KTP rush application.",
   },
 ];
 
@@ -52,222 +48,274 @@ const faqs = [
       "Anyone with an interest in technology and a commitment to our values is welcome to rush KTP.",
   },
   {
-    question: "What types of social events does KTP plan on having?",
+    question: "What types of social events does KTP host?",
     answer:
-      "KTP plans a variety of social events including mixers, tech talks, coding workshops, and more.",
+      "We host mixers, tech talks, workshops, and social events throughout the semester.",
   },
   {
-    question: "How much of a time commitment is KTP's Pledge process?",
+    question: "How much of a time commitment is the pledge process?",
     answer:
-      "The pledge process is designed to be manageable alongside your studies, with weekly meetings and events.",
-  },
-  {
-    question: "How would KTP benefit me?",
-    answer:
-      "KTP offers networking opportunities, professional development, and a supportive community of tech enthusiasts.",
+      "The pledge process is designed to be manageable alongside coursework, with weekly meetings and events.",
   },
   {
     question: "What if I have no previous tech experience?",
     answer:
-      "No previous tech experience is required. We welcome members from all backgrounds and skill levels.",
+      "No prior tech experience is required. We welcome members from all backgrounds and skill levels.",
   },
   {
-    question: "What if I can't afford dues?",
+    question: "What if I can’t afford dues?",
     answer:
-      "KTP offers financial assistance and flexible payment options to ensure that dues are not a barrier to membership.",
+      "KTP offers financial assistance and flexible payment options so dues are not a barrier to membership.",
   },
 ];
 
-const RushPage = () => {
-  const [expandedIndex, setExpandedIndex] = useState(null);
+/* =========================
+   PAGE
+   ========================= */
+export default function RushPage() {
+  const [offsetY, setOffsetY] = useState(0);
+  const dots = useLoadingDots();
 
-  const [dotCount, setDotCount] = useState(0);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setDotCount((count) => (count + 1) % 4);
-    }, 500);
-
-    return () => clearInterval(timer);
-  });
-
-  const handleToggle = (index) => {
-    setExpandedIndex(expandedIndex === index ? null : index);
-  };
-
-  // Variants for the timeline events (left side animation)
-  const timelineVariant = {
-    hidden: { opacity: 0, x: -100 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.5, ease: "easeOut" },
-    },
-  };
-
-  // Variants for the images (right side animation)
-  const imageVariant = {
-    hidden: { opacity: 0, x: 100 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.5, ease: "easeOut" },
-    },
-  };
+    const handleScroll = () => setOffsetY(window.scrollY);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <div className="relative isolate min-h-screen bg-gray-900 text-white">
-      {/* Gradient Background */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
-      >
+    <div className="min-h-screen">
+
+      {/* ================= HERO ================= */}
+      <section className="relative h-[70vh] min-h-[750px] w-full overflow-hidden pb-30">
+        {/* Parallax background */}
         <div
-          style={{
-            clipPath:
-              "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
-          }}
-          className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#3b82f6] to-[#1e40af] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
-        />
-      </div>
-
-      <Container className="w-full" sx={{ marginTop: 15 }}>
-        <Typography variant="h3" align="center" gutterBottom>
-          Spring 2026 Rush
-        </Typography>
-
-        {/* Flexbox to split content into two columns */}
-        <div className="flex flex-col lg:flex-row items-start justify-between mt-10">
-          {/* Timeline on the left */}
-          {/* 
-                    <div className="w-full lg:w-1/2 pr-8">
-                        {events.map((event, index) => (
-                            <motion.div
-                                key={index}
-                                className="mb-8 flex items-start"
-                                initial="hidden"
-                                whileInView="visible"
-                                viewport={{ once: true, amount: 0.2 }}
-                                variants={timelineVariant}
-                            >
-                                <div className="flex-1 text-left">
-                                    <h3 className="text-lg font-semibold text-white">{event.title}</h3>
-                                    <p className="text-gray-400">{event.date}</p>
-                                    <p className="text-gray-300">{event.description}</p>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                    */}
-
-          {/* Images on the right with animation */}
-          {/*
-                     <div className="w-full lg:w-1/2 flex flex-col gap-4 items-center justify-center">
-                        <motion.div
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true, amount: 0.2 }}
-                            variants={imageVariant}
-                        >
-                            <Image
-                                src="/images/Rush.jpg"
-                                alt="Rush Event 1"
-                                width={275}
-                                height={275}
-                                className="rounded-md"
-                            />
-                        </motion.div>
-
-                        <motion.div
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true, amount: 0.2 }}
-                            variants={imageVariant}
-                        >
-                            <Image
-                                src="/images/Rush2.jpg"
-                                alt="Rush Event 2"
-                                width={275}
-                                height={275}
-                                className="rounded-md"
-                            />
-                        </motion.div>
-                    </div>
-                    */}
-
-          <div className="flex-1 text-center mb-20">
-            <h3 className="text-lg font-semibold text-white">
-              More Information Coming Soon{".".repeat(dotCount)}
-            </h3>
-          </div>
+          className="absolute inset-0"
+          style={{ transform: `translateY(${offsetY * 0.35}px)` }}
+        >
+          <img
+            src="/images/homepicture9.jpeg"
+            alt="Kappa Theta Pi Brothers"
+            className="h-full w-full object-cover object-center"
+          />
         </div>
 
-        <Typography variant="h4" align="center" gutterBottom mt={5}>
-          FAQ
-        </Typography>
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          padding="5px"
-          mt={3}
-          py={5}
-          px={3}
-          style={{ width: "100%" }}
-        >
-          {faqs.map((faq, index) => (
-            <Box
-              key={index}
-              style={{
-                width: "100%",
-                margin: "10px 0",
-                cursor: "pointer",
-                borderBottom: "1px solid rgba(255, 255, 255, 0.5)",
-              }}
-            >
-              <Box
-                display="flex"
-                justifyContent="space-between"
-                onClick={() => handleToggle(index)}
-                style={{ padding: "10px", color: "white" }}
-              >
-                <Typography variant="h6">{faq.question}</Typography>
-                <ExpandMoreIcon
-                  style={{
-                    color: "white",
-                    transform:
-                      expandedIndex === index
-                        ? "rotate(180deg)"
-                        : "rotate(0deg)",
-                    transition: "transform 0.3s",
-                  }}
-                />
-              </Box>
-              {expandedIndex === index && (
-                <Typography style={{ padding: "10px", color: "white" }}>
-                  {faq.answer}
-                </Typography>
-              )}
-            </Box>
-          ))}
-        </Box>
-      </Container>
+        {/* overlay */}
+        <div className="absolute inset-0 bg-black/35" />
 
-      {/* Bottom Gradient */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
+        {/* content */}
+        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
+
+         
+          <h1 className="text-4xl md:text-5xl font-semibold text-white">
+            Spring 2026 Rush{" "}
+            <span className="opacity">
+                Loading{dots}
+              </span>
+          </h1>
+         
+
+          <p className="mt-4 max-w-2xl text-base md:text-lg text-gray-200">
+            Learn about our rush process, events, and how to get involved with
+            Kappa Theta Pi at Rutgers–New Brunswick.
+          </p>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+
+        </div>
+
+
+      </section>
+
+{/* ================= TIMELINE HEADER ================= */}
+<section className="bg-gradient-to-b from-[#0f2a44] to-[#153a63] py-16">
+  <div className="max-w-4xl mx-auto text-center px-6">
+    <h2 className="text-4xl md:text-5xl font-semibold text-white tracking-tight">
+      Rush Events Timeline
+    </h2>
+
+    <p className="mt-4 text-lg text-blue-100 leading-relaxed">
+      Attend our open houses, panels, and information sessions to learn more
+      about Kappa Theta Pi, our values, and our community.
+    </p>
+
+    <div className="mt-8 flex justify-center gap-4">
+      <a
+        href="/apply"
+        className="rounded-full bg-blue-500 px-8 py-3 text-white font-medium hover:bg-blue-400 transition"
       >
-        <div
-          style={{
-            clipPath:
-              "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
-          }}
-          className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#3b82f6] to-[#1e40af] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
-        />
-      </div>
+        Apply Now
+      </a>
+
+      <a
+        href="/apply"
+        className="rounded-full border border-blue-300 px-8 py-3 text-blue-100 hover:bg-white/10 transition"
+
+      >
+        Interest Form
+      </a>
+
+
+      <a
+        href="#faq"
+        className="rounded-full border border-blue-300 px-8 py-3 text-blue-100 hover:bg-white/10 transition"
+      >
+        FAQs
+      </a>
+    </div>
+  </div>
+</section>
+
+
+  
+{/* ================= TIMELINE ================= */}
+<section className="bg-gradient-to-b from-slate-50 via-white to-slate-100 pt-2 pb-28">
+  <div className="max-w-7xl mx-auto px-6">
+   
+    <div className="relative space-y-24">
+      {/* Center line */}
+      <div className="absolute left-1/2 top-0 h-full w-[2px] bg-blue-200 -translate-x-1/2" />
+
+      {events.map((event, idx) => {
+        const isLeft = idx % 2 === 0;
+
+        return (
+          <div key={idx} className="grid grid-cols-[1fr_auto_1fr] items-center gap-12">
+            {/* LEFT COLUMN */}
+            <div className={`flex justify-${isLeft ? "end" : "start"}`}>
+              {isLeft ? (
+                <div className="max-w-md bg-white rounded-2xl shadow-md p-6">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {event.title}
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1">{event.date}</p>
+                  <p className="text-sm text-gray-500">{event.location}</p>
+                  <p className="mt-4 text-sm text-gray-700 leading-relaxed">
+                    {event.description}
+                  </p>
+                </div>
+              ) : (
+                <img
+                  src={event.image}
+                  alt={event.title}
+                  className="w-[360px] h-[240px] object-cover rounded-2xl shadow-lg"
+                />
+              )}
+            </div>
+
+            {/* TIMELINE DOT */}
+            <div className="relative z-10">
+              <div className="w-4 h-4 bg-blue-600 rounded-full ring-4 ring-blue-100" />
+            </div>
+
+            {/* RIGHT COLUMN */}
+            <div className={`flex justify-${isLeft ? "start" : "end"}`}>
+              {isLeft ? (
+                <img
+                  src={event.image}
+                  alt={event.title}
+                  className="w-[360px] h-[240px] object-cover rounded-2xl shadow-lg"
+                />
+              ) : (
+                <div className="max-w-md bg-white rounded-2xl shadow-md p-6">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {event.title}
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1">{event.date}</p>
+                  <p className="text-sm text-gray-500">{event.location}</p>
+                  <p className="mt-4 text-sm text-gray-700 leading-relaxed">
+                    {event.description}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+
+
+
+      {/* ================= FAQ ================= */}
+      <section id="faq" className="bg-slate-50 py-28">
+        <div className="max-w-7xl mx-auto px-6">
+          <h2 className="text-4xl font-bold text-center text-gray-900 mb-14">
+            Frequently Asked Questions
+          </h2>
+
+          <FAQAccordion faqs={faqs} />
+        </div>
+      </section>
     </div>
   );
-};
+}
 
-export default RushPage;
+/* =========================
+   FAQ ACCORDION
+   ========================= */
+
+function FAQAccordion({ faqs }) {
+  const [openIndex, setOpenIndex] = useState(null);
+
+  return (
+    <div className="space-y-4">
+      {faqs.map((faq, index) => {
+        const isOpen = openIndex === index;
+
+        return (
+          <div
+            key={index}
+            className={`rounded-xl border border-slate-200 bg-white transition-all ${
+              isOpen ? "shadow-md" : "hover:shadow-sm"
+            }`}
+          >
+            <button
+              onClick={() => setOpenIndex(isOpen ? null : index)}
+              className="flex w-full items-center justify-between px-6 py-5 text-left"
+            >
+              <span className="text-base font-medium text-gray-900">
+                {faq.question}
+              </span>
+
+              <span
+                className={`ml-4 text-blue-600 transition-transform duration-300 ${
+                  isOpen ? "rotate-180" : ""
+                }`}
+              >
+                ▼
+              </span>
+            </button>
+
+            <div
+              className={`overflow-hidden transition-all duration-300 ${
+                isOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+              }`}
+            >
+              <p className="px-6 pb-5 text-sm leading-relaxed text-gray-600">
+                {faq.answer}
+              </p>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+
+function useLoadingDots() {
+  const [dots, setDots] = useState("");
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDots((prev) => (prev.length >= 3 ? "" : prev + "."));
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return dots;
+}
+

@@ -5,6 +5,9 @@ import { Container, Paper, Typography, Box } from '@mui/material';
 import {grey} from "@mui/material/colors";
 import NextImage from 'next/image';
 import {LinkedinIcon} from "lucide-react";
+import Tabs from '../components/Tabs';
+import { useState } from 'react';
+
 
 const executiveMembers = [
     {
@@ -99,47 +102,6 @@ const executiveMembers = [
 ];
 
 const activeMembers = [
-     {
-        name: "Manan Shah",
-        position: "Member",
-        image: "/images/Manan.jpg",
-        year: "Senior",
-        major: "Computer Science and Data Science",
-        linkedin: "https://www.linkedin.com/in/manan-shah12/",
-    },
-    
-    {
-        name: "Akash Puzhakkal",
-        position: "Member",
-        image: "/images/Akash.jpg",
-        year: "Senior",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/akash-puzhakkal/",
-    },
-    {
-        name: "Ciera Simon",
-        position: "Member",
-        image: "/images/Ciera.jpg",
-        year: "Senior",
-        major: "Computer Science and Cognitive Science",
-        linkedin: "https://www.linkedin.com/in/ciera-simon-65473b24b/",
-    },
-    {
-        name: "Priyangshu Bhowmik",
-        position: "Member",
-        image: "/images/Priyangshu.jpg",
-        year: "Senior",
-        major: "Computer Science and Data Science",
-        linkedin: "https://www.linkedin.com/in/priyangshu-bhowmik-4a6270262/",
-    },
-    {
-        name: "Aishwarya Velagapudi",
-        position: "Member",
-        image: "/images/Aishwarya.jpg",
-        year: "Senior",
-        major: "BAIT",
-        linkedin: "https://www.linkedin.com/in/aishwarya-velagapudi/",
-    },
     {
         name: "Suhani Mehra",
         position: "Member",
@@ -363,7 +325,7 @@ const activeMembers = [
 const alumniMembers = [
     {
         name: "Anushka Kondur",
-        position: "Investment Systems Engineer at Vanguard",
+        position: "Founding Class ",
         image: "/images/Anushka.jpg",
         year: "Grad 2025",
         major: "Former VP of Prof Development",
@@ -371,140 +333,431 @@ const alumniMembers = [
     },
     {
         name: "Ananya Ahlawat",
-        position: "Contract Obligation & Strategy Analyst at SHI",
+        position: "Founding Class",
         image: "/images/Ananya.jpg",
         year: "Grad 2025",
         major: "Former VP of Marketing",
         linkedin: "https://www.linkedin.com/in/ananya-ahlawat/",
     },
+     {
+        name: "Priyangshu Bhowmik",
+        position: "Founding Class",
+        image: "/images/Priyangshu.jpg",
+        year: "Grad 2025",
+        major: "Computer Science and Data Science",
+        linkedin: "https://www.linkedin.com/in/priyangshu-bhowmik-4a6270262/",
+    },
+    {
+        name: "Manan Shah",
+        position: "Founding Class",
+        image: "/images/Manan.jpg",
+        year: "Grad 2025",
+        major: "Computer Science and Data Science",
+        linkedin: "https://www.linkedin.com/in/manan-shah12/",
+    },
+    
+    {
+        name: "Akash Puzhakkal",
+        position: "Founding Class",
+        image: "/images/Akash.jpg",
+        year: "Grad 2025",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/akash-puzhakkal/",
+    },
+    {
+        name: "Ciera Simon",
+        position: "Founding Class",
+        image: "/images/Ciera.jpg",
+        year: "Grad 2025",
+        major: "Computer Science and Cognitive Science",
+        linkedin: "https://www.linkedin.com/in/ciera-simon-65473b24b/",
+    },
+    {
+        name: "Aishwarya Velagapudi",
+        position: "Founding Class",
+        image: "/images/Aishwarya.jpg",
+        year: "Grad 2025",
+        major: "BAIT",
+        linkedin: "https://www.linkedin.com/in/aishwarya-velagapudi/",
+    }
 ]
 
-const MemberCard = ({ member, index, onLinkedInClick }) => (
-    <Box
-        key={index}
-        m={3}
-        width="200px"
-        className="transition-transform transform hover:scale-105"
-    >
-        <Paper elevation={3} style={{ backgroundColor: 'white', color: 'black', textAlign: 'center', position: 'relative' }}>
-            <Box
-                style={{ width: '100%', height: '150px', overflow: 'hidden', position: 'relative' }}
-                onClick={() => onLinkedInClick(member.linkedin)}
-                className="cursor-pointer"
-            >
-                <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-                    <NextImage
-                        src={member.image}
-                        alt={member.name}
-                        fill
-                        sizes="200px"
-                        style={{
-                            objectFit: 'cover',
-                            borderTopLeftRadius: '3px',
-                            borderTopRightRadius: '3px',
-                        }}
-                    />
-                </div>
-                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <LinkedinIcon style={{ fontSize: 40, color: 'white' }} />
-                </div>
-            </Box>
-            <Box style={{ padding: '10px' }} className="w-full bg-gray-900" sx={{ color: grey[200] }}>
-                <Typography variant="subtitle1" className="relative group font-medium">
-                    {member.name}
-                    <Box className="absolute left-0 w-full bg-white text-black text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-2">
-                        {member.company && member.role ? (
-                            `${member.company} - ${member.role}`
-                        ) : (
-                            `${member.year} - ${member.major}`
-                        )}
-                    </Box>
-                </Typography>
-                <Typography variant="subtitle1">{member.position}</Typography>
-            </Box>
-        </Paper>
-    </Box>
-);
+const techCommittee = [
+    {
+        name: "Krish Kharbanda",
+        position: "VP of Tech",
+        image: "/images/Krish.png",
+        year: "Junior",
+        major: "Computer Science and Mathematics",
+        linkedin: "https://www.linkedin.com/in/krishkharbanda/",
+    },
+    {
+        name: "Shiven Patel",
+        position: "VP of Prof Development",
+        image: "/images/Shiven.jpg",
+        year: "Junior",
+        major: "Computer Science and Data Science",
+        linkedin: "https://www.linkedin.com/in/shiven-patel123/",
+    },
+    {
+        name: "Krish Maske",
+        position: "Member",
+        image: "/images/KrishM.jpg",
+        year: "Sophomore",
+        major: "Computer Science and Data Science",
+        linkedin: "https://www.linkedin.com/in/krishmaske/",
+    },
+      {
+        name: "Aaron Bansal",
+        position: "Member",
+        image: "/images/Aaron.jpg",
+        year: "Sophomore",
+        major: "Computer Science and Math",
+        linkedin: "https://www.linkedin.com/in/aaron-bansal",
+    },
+    {
+        name: "Gravit Bali",
+        position: "Member",
+        image: "/images/Gravit.jpg",
+        year: "Sophomore",
+        major: "Computer Science and Cognitive Science",
+        linkedin: "https://www.linkedin.com/in/gravitbali/",
+    },
+    {
+        name: "Kshiraj Gupta",
+        position: "Member",
+        image: "/images/Kshiraj.jpg",
+        year: "Sophomore",
+        major: "Computer Science and Data Science",
+        linkedin: "https://www.linkedin.com/in/kshiraj-gupta/"
+    }
+];
 
-const MembersPage = () => {
-    const handleLinkedInClick = (linkedin) => {
-        if (linkedin) {
-            window.open(linkedin, '_blank', 'noopener,noreferrer');
-        }
-    };
+const marketingCommittee  = [
+    {
+        name: "Aditi Sreeganesh",
+        position: "VP of Marketing",
+        image: "/images/Aditi.jpg",
+        year: "Junior",
+        major: "Mathematics and Data Science",
+        linkedin: "https://www.linkedin.com/in/aditi-sreeganesh",
+    },
+    {
+        name: "Kesha Patel",
+        position: "Member",
+        image: "/images/Kesha.jpg",
+        year: "Sophomore",
+        major: "BAIT and Finance",
+        linkedin: "https://www.linkedin.com/in/kesha-patel-12r/",
+    },
+     {
+        name: "Krish Bansal",
+        position: "Member",
+        image: "/images/KrishB.jpg",
+        year: "Sophomore",
+        major: "Computer Engineering",
+        linkedin: "https://www.linkedin.com/in/krish-bansal-44725b328/",
+    },
+];
 
-    return (
-        <div className="relative isolate min-h-screen bg-gray-900 text-white">
-            <div
-                aria-hidden="true"
-                className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
-            >
-                <div
-                    style={{
-                        clipPath:
-                            'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
-                    }}
-                    className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#3b82f6] to-[#1e40af] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
-                />
-            </div>
+const financeCommittee = [
+     {
+        name: "Umair Siddiqui",
+        position: "VP of Finance",
+        image: "/images/Umair.jpg",
+        year: "Junior",
+        major: "Computer Science and Data Science",
+        linkedin: "https://www.linkedin.com/in/umairsiddiqui05/",
+    },
+     {
+        name: "Sujay Faldu",
+        position: "Member",
+        image: "/images/Sujay.jpg",
+        year: "Sophomore",
+        major: "Computer Science and Economics",
+        linkedin: "https://www.linkedin.com/in/sujay-faldu/",
+    },
+    {
+        name: "Heet Shah",
+        position: "Member",
+        image: "/images/Heet.jpg",
+        year: "Sophomore",
+        major: "Computer Science and Data Science",
+        linkedin: "https://www.linkedin.com/in/heetshah15/",
+    },
+    {
+        name: "Raghul Srinivasan",
+        position: "Member",
+        image: "/images/Raghul.jpg",
+        year: "Sophomore",
+        major: "Data Science",
+        linkedin: "https://www.linkedin.com/in/raghulkrishnasrinivasan/",
+    },
+     {
+        name: "Arnav Venkata",
+        position: "Member",
+        image: "/images/Arnav.jpg",
+        year: "Sophomore",
+        major: "Computer Science and Data Science",
+        linkedin: "https://www.linkedin.com/in/arnav-venkata/",
+    },
+];
 
-            <Container className="w-full" sx={{ marginTop: 15 }}>
-                <Typography variant="h3" align="center" gutterBottom>
-                    Executive Board
-                </Typography>
-                <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center" alignItems="center" padding="5px" position="relative" mt={5} py={5} px={3}>
-                    {executiveMembers.map((member, index) => (
-                        <MemberCard
-                            key={index}
-                            member={member}
-                            index={index}
-                            onLinkedInClick={handleLinkedInClick}
-                        />
-                    ))}
-                </Box>
+const pledgeCommittee = [
+    {
+        name: "Saatvik Kabra",
+        position: "VP of Membership",
+        image: "/images/Saatvik.jpg",
+        year: "Junior",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/saatvik-kabra"
+    },
+    {
+        name: "Abirami Jayakumar",
+        position: "VP of Engagement",
+        image: "/images/Abirami.jpg",
+        year: "Junior",
+        major: "Computer Science and Mathematics",
+        linkedin: "https://www.linkedin.com/in/abiramijayakumar/",
+    },
+    {
+        name: "Abhiram Sajjala",
+        position: "Member",
+        image: "/images/Abhiram.jpg",
+        year: "Sophomore",
+        major: "Mechanical Engineering",
+        linkedin: "https://www.linkedin.com/in/abhiramsajjala/",
+    },
+      {
+        name: "Esha Pai",
+        position: "Member",
+        image: "/images/Esha.jpg",
+        year: "Sophomore",
+        major: "Computer Science and Biomathematics",
+        linkedin: "https://www.linkedin.com/in/eshapai/",
+    },
+    {
+        name: "Priya Rana",
+        position: "Member",
+        image: "/images/Priya.jpg",
+        year: "Sophomore",
+        major: "Computer Science and Mathematics",
+        linkedin: "https://www.linkedin.com/in/prana24/",
+    },
+     {
+        name: "Gokulraj Kumarassamy",
+        position: "Member",
+        image: "/images/Gokulraj.jpg",
+        year: "Sophomore",
+        major: "Computer Science and Math",
+        linkedin: "https://www.linkedin.com/in/gokulrajk1/",
+    }
+];
 
-                <Typography variant="h3" align="center" gutterBottom>
-                    Active Members
-                </Typography>
-                <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center" alignItems="center" padding="5px" position="relative" mt={5} py={5} px={3}>
-                    {activeMembers.map((member, index) => (
-                        <MemberCard
-                            key={index}
-                            member={member}
-                            index={index}
-                            onLinkedInClick={handleLinkedInClick}
-                        />
-                    ))}
-                </Box>
-                <Typography variant="h3" align="center" gutterBottom>
-                    Alumni
-                </Typography>
-                <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center" alignItems="center" padding="5px" position="relative" mt={5} py={5} px={3}>
-                    {alumniMembers.map((member, index) => (
-                        <MemberCard
-                            key={index}
-                            member={member}
-                            index={index}
-                            onLinkedInClick={handleLinkedInClick}
-                        />
-                    ))}
-                </Box>
-            </Container>
+const outreachCommittee = [
+     {
+        name: "Yash Singh",
+        position: "VP of External Affairs",
+        image: "/images/Yash.jpg",
+        year: "Junior",
+        major: "Computer Science and Data Science",
+        linkedin: "https://www.linkedin.com/in/yash-singh-b06a56295/",
+        
+    },
+     {
+        name: "Jayden Shah",
+        position: "Member",
+        image: "/images/Jayden.jpg",
+        year: "Sophomore",
+        major: "Computer Science and Economics",
+        linkedin: "https://www.linkedin.com/in/jaydenshah/",
+    },
+     {
+        name: "Gourika Dhiman",
+        position: "Member",
+        image: "/images/Gourika.jpg",
+        year: "Sophomore",
+        major: "Computer Science and Data Science",
+        linkedin: "https://www.linkedin.com/in/gourikadhiman/",
+    },
+    {
+        name: "Radha Ghate",
+        position: "Member",
+        image: "/images/Radha.jpg",
+        year: "Sophomore",
+        major: "Computer Science and Mathematics",
+        linkedin: "https://www.linkedin.com/in/radhaghate/",
+    }
+];
 
-            <div
-                aria-hidden="true"
-                className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
-            >
-                <div
-                    style={{
-                        clipPath:
-                            'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
-                    }}
-                    className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#3b82f6] to-[#1e40af] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
-                />
-            </div>
-        </div>
-    );
+const committeeMembers = {
+    Tech: techCommittee,
+    Finance: financeCommittee,
+    Pledge: pledgeCommittee,
+    Outreach: outreachCommittee,
+    Marketing: marketingCommittee
 };
 
-export default MembersPage;
+
+
+
+const MemberCard = ({ member, onLinkedInClick }) => (
+  <Box
+    m={2.5}
+    width="220px"
+    className="group transition-all duration-300 hover:-translate-y-2"
+  >
+    <Box
+      sx={{
+        bgcolor: '#0f172a',
+        color: 'white',
+        textAlign: 'center',
+        borderRadius: '14px',
+        overflow: 'hidden',
+        boxShadow: '0 10px 25px rgba(0,0,0,0.35)',
+      }}
+      className="hover:shadow-2xl"
+    >
+      {/* IMAGE */}
+        <Box
+        sx={{ height: 180, position: 'relative' }}
+        onClick={() => onLinkedInClick(member.linkedin)}
+        className="cursor-pointer"
+        >
+        <NextImage
+            src={member.image}
+            alt={member.name}
+            fill
+            sizes="220px"
+            style={{ objectFit: 'cover' }}
+            priority={false}
+        />
+
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="bg-white/10 backdrop-blur-md p-3 rounded-full">
+            <LinkedinIcon color="white" size={36} />
+            </div>
+        </div>
+        </Box>
+
+
+
+      {/* TEXT */}
+      <Box sx={{ p: 2 }}>
+        <Typography fontWeight={600} fontSize={16}>
+          {member.name}
+        </Typography>
+
+        <Box
+          mt={0.8}
+          display="inline-block"
+          px={1.5}
+          py={0.4}
+          borderRadius="999px"
+          sx={{
+            bgcolor: 'rgba(59,130,246,0.15)',
+            color: '#93c5fd',
+            fontSize: 12,
+            fontWeight: 500,
+          }}
+        >
+          {member.position}
+        </Box>
+      </Box>
+    </Box>
+  </Box>
+);
+
+
+export default function MembersPage() {
+  const [activeTab, setActiveTab] = useState('Executive Board');
+
+  const handleLinkedInClick = (url) => {
+    if (url) window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const tabMap = {
+    'Executive Board': executiveMembers,
+    'Active Members': activeMembers,
+    Committees: committeeMembers,
+    Alumni: alumniMembers,
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-900 text-white py-24">
+      <Container>
+        <Typography
+          variant="h3"
+          align="center"
+          gutterBottom
+          sx={{ fontWeight: 700 }}
+        >
+          Our Members
+        </Typography>
+
+        <Typography align="center" sx={{ color: grey[400], mb: 5 }}>
+          Meet the people building our community
+        </Typography>
+
+        <Tabs
+          tabs={['Executive Board', 'Active Members', 'Committees', 'Alumni']}
+          active={activeTab}
+          setActive={setActiveTab}
+        />
+
+        <Box
+          display="flex"
+          flexWrap="wrap"
+          justifyContent="center"
+          mt={5}
+          className="animate-fade-in"
+        >
+        {activeTab !== 'Committees' ? (
+        tabMap[activeTab].map((member, idx) => (
+            <MemberCard
+            key={idx}
+            member={member}
+            onLinkedInClick={handleLinkedInClick}
+            />
+        ))
+        ) : (
+        Object.entries(committeeMembers).map(([committeeName, members]) => (
+            <Box key={committeeName} width="100%" mb={8}>
+            {/* COMMITTEE TITLE */}
+            <Typography
+                variant="h5"
+                align="center"
+                sx={{
+                fontWeight: 700,
+                mb: 3,
+                letterSpacing: '0.02em',
+                }}
+            >
+                {committeeName} Committee
+            </Typography>
+
+            {/* MEMBERS */}
+            <Box
+                display="flex"
+                flexWrap="wrap"
+                justifyContent="center"
+            >
+                {members.map((member, idx) => (
+                <MemberCard
+                    key={idx}
+                    member={member}
+                    onLinkedInClick={handleLinkedInClick}
+                />
+                ))}
+            </Box>
+            </Box>
+        ))
+        )}
+
+        </Box>
+      </Container>
+    </div>
+  );
+}

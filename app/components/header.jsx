@@ -34,7 +34,7 @@ export default function Header() {
 
   return (
     <header className="absolute inset-x-0 top-0 z-50 bg-transparent">
-      <nav aria-label="Global" className="grid grid-cols-3 items-center p-6 lg:px-8">
+      <nav aria-label="Global" className="grid grid-cols-3 items-center py-4 px-8 lg:px-8">
         <div className="flex">
           <Link href="/" onClick={handleNavigation} className="-m-1.5 p-1.5">
             <span className="sr-only">KTP</span>

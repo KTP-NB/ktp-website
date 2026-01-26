@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { Dialog } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
@@ -10,13 +11,16 @@ import { useAuth } from '@/components/authprovider';
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, loading, signOut } = useAuth();
+  const router = useRouter();
 
   const navLinks = useMemo(
     () => [
+      { name: 'Home', href: '/' },
       { name: 'About Us', href: '/about' },
       { name: 'Rush', href: '/rush' },
       { name: 'Members', href: '/members' },
       { name: 'Contact us', href: '/contact' },
+      { name: 'Gallery', href: '/gallery' },
     ],
     []
   );
@@ -34,11 +38,11 @@ export default function Header() {
 
   return (
     <header className="absolute inset-x-0 top-0 z-50 bg-transparent">
-      <nav aria-label="Global" className="grid grid-cols-3 items-center py-4 px-8 lg:px-8">
-        <div className="flex">
-          <Link href="/" onClick={handleNavigation} className="-m-1.5 p-1.5">
+      <nav aria-label="Global" className="grid grid-cols-3 items-center p-6 lg:px-8">
+        <div className="flex items-center">
+          <Link href="/" onClick={handleNavigation} className="-m-1.5 p-1.5 flex items-center">
             <span className="sr-only">KTP</span>
-            <Image src="/ktp.png" alt="KTP Logo" width={48} height={48} className="pb-2" />
+            <Image src="/ktp.png" alt="KTP Logo" width={64} height={64} className="block" />
           </Link>
         </div>
 
@@ -47,7 +51,12 @@ export default function Header() {
             <Link
               key={item.name}
               href={item.href}
-              className="text-sm font-semibold leading-6 text-white hover:bg-white hover:text-blue-950 px-3 py-2 rounded-md"
+              onClick={(e) => {
+                // force navigation using router in case an overlay blocks native link behavior
+                e.preventDefault();
+                router.push(item.href);
+              }}
+              className="text-sm font-semibold leading-6 text-white hover:bg-white hover:text-blue-950 px-3 py-2 rounded-md whitespace-nowrap pointer-events-auto relative z-50"
             >
               {item.name}
             </Link>
@@ -70,7 +79,7 @@ export default function Header() {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-sm font-semibold leading-6 text-white hover:bg-white hover:text-blue-950 px-3 py-2 rounded-md"
+                className="text-sm font-semibold leading-6 text-white hover:bg-white hover:text-blue-950 px-3 py-2 rounded-md whitespace-nowrap"
               >
                 {item.name}
               </Link>
@@ -90,13 +99,14 @@ export default function Header() {
         </div>
       </nav>
 
-      <Dialog as="div" open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
-        <div className="fixed inset-0 z-50" />
-        <Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-gray-800 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-700">
+      {mobileMenuOpen && (
+        <Dialog as="div" open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
+          <div className="fixed inset-0 z-50" />
+          <Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-gray-800 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-700">
           <div className="flex items-center justify-between">
-            <Link href="/" onClick={handleNavigation} className="-m-1.5 p-1.5">
+            <Link href="/" onClick={handleNavigation} className="-m-1.5 p-1.5 flex items-center">
               <span className="sr-only">KTP</span>
-              <Image src="/ktp.png" alt="KTP Logo" width={32} height={32} className="pb-2" />
+              <Image src="/ktp.png" alt="KTP Logo" width={48} height={48} className="block" />
             </Link>
             <button
               type="button"
@@ -116,7 +126,7 @@ export default function Header() {
                     key={item.name}
                     href={item.href}
                     onClick={handleNavigation}
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-gray-700 hover:text-indigo-300"
+                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-gray-700 hover:text-indigo-300 whitespace-nowrap relative z-50"
                   >
                     {item.name}
                   </Link>
@@ -142,7 +152,7 @@ export default function Header() {
                       key={item.name}
                       href={item.href}
                       onClick={handleNavigation}
-                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-gray-700 hover:text-indigo-300"
+                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-gray-700 hover:text-indigo-300 whitespace-nowrap relative z-50"
                     >
                       {item.name}
                     </Link>
@@ -151,8 +161,9 @@ export default function Header() {
               </div>
             </div>
           </div>
-        </Dialog.Panel>
-      </Dialog>
+          </Dialog.Panel>
+        </Dialog>
+      )}
     </header>
   );
 }

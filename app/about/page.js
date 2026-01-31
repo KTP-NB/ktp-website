@@ -136,6 +136,8 @@ const AboutUs = () => {
             Who Are We
           </Typography>
 
+          <FunFact />
+
           {/* From Our President (section header outside the card) */}
           <Typography
               id="from-our-president"

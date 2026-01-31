@@ -8,6 +8,7 @@ import EmojiPeopleIcon from '@mui/icons-material/EmojiPeople';
 import BuildIcon from '@mui/icons-material/Build';
 import SchoolIcon from '@mui/icons-material/School';
 import Image from 'next/image';
+import FunFact from '../components/FunFact';
 
 /** ---------- Static Our Network (simple responsive grid) ---------- */
 const logos = [

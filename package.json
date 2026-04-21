@@ -16,12 +16,12 @@
     "@mui/icons-material": "^6.1.0",
     "@mui/material": "^6.1.0",
     "@mui/styled-engine-sc": "^6.1.0",
+    "@supabase/supabase-js": "^2.104.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "emailjs": "^4.0.3",
     "emailjs-com": "^3.2.0",
-    "firebase": "^12.5.0",
-    "firebase-admin": "^13.4.0",
+    "firebase-scrypt": "^2.2.0",
     "framer-motion": "^11.5.6",
     "lucide-react": "^0.424.0",
     "next": "^14.2.5",
@@ -38,6 +38,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
     "postcss": "^8",
+    "supabase": "^2.93.0",
     "tailwindcss": "^3.4.1"
   }
 }

@@ -2,11 +2,8 @@
 
 import AuthGate from "@/components/authgate";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { app } from "@/lib/firebase";
-import { getStorage, ref, listAll, getDownloadURL, uploadBytes, deleteObject } from "firebase/storage";
+import { supabase, supabaseBucket } from "@/lib/supabase";
 import { FolderOpen, FileText, File, Home, ChevronRight, ExternalLink, Loader2, Upload, FolderPlus, MoreVertical, Trash2 } from "lucide-react";
-
-const storage = getStorage(app, "gs://ktp-website-2903e.firebasestorage.app");
 
 function getParentPath(path) {
   if (!path) return "";
@@ -32,10 +29,25 @@ function getFileIcon(name) {
 }
 
 async function deleteFolderRecursive(path) {
-  const storageRef = ref(storage, path);
-  const result = await listAll(storageRef);
-  await Promise.all(result.items.map((itemRef) => deleteObject(itemRef)));
-  await Promise.all(result.prefixes.map((prefixRef) => deleteFolderRecursive(prefixRef.fullPath)));
+  const { data, error } = await supabase.storage.from(supabaseBucket).list(path, {
+    limit: 1000,
+    sortBy: { column: "name", order: "asc" },
+  });
+
+  if (error) throw error;
+
+  const files = (data || []).filter((item) => item.id !== null);
+  const folders = (data || []).filter((item) => item.id === null);
+
+  if (files.length > 0) {
+    const filePaths = files.map((item) => (path ? `${path}/${item.name}` : item.name));
+    const { error: removeError } = await supabase.storage.from(supabaseBucket).remove(filePaths);
+    if (removeError) throw removeError;
+  }
+
+  await Promise.all(
+    folders.map((folder) => deleteFolderRecursive(path ? `${path}/${folder.name}` : folder.name))
+  );
 }
 
 export default function StudyToolsPage() {
@@ -53,22 +65,44 @@ export default function StudyToolsPage() {
   const loadCurrentPath = useCallback(() => {
     setLoading(true);
     setError(null);
-    const storageRef = ref(storage, currentPath || undefined);
-
-    listAll(storageRef)
-      .then((result) => {
-        setFolders(result.prefixes);
-        return Promise.all(
-          result.items.map((itemRef) =>
-            getDownloadURL(itemRef).then((url) => ({
-              name: itemRef.name,
-              url,
-              fullPath: itemRef.fullPath,
-            }))
-          )
-        );
+    supabase.storage
+      .from(supabaseBucket)
+      .list(currentPath || undefined, {
+        limit: 1000,
+        sortBy: { column: "name", order: "asc" },
       })
-      .then(setFiles)
+      .then(async ({ data, error }) => {
+        if (error) throw error;
+
+        const folders = (data || [])
+          .filter((item) => item.id === null)
+          .map((item) => ({
+            ...item,
+            fullPath: currentPath ? `${currentPath}/${item.name}` : item.name,
+          }));
+        const fileItems = (data || []).filter((item) => item.id !== null);
+
+        setFolders(folders);
+
+        const fileEntries = await Promise.all(
+          fileItems.map(async (item) => {
+            const fullPath = currentPath ? `${currentPath}/${item.name}` : item.name;
+            const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+              .from(supabaseBucket)
+              .createSignedUrl(fullPath, 60 * 60);
+
+            if (signedUrlError) throw signedUrlError;
+
+            return {
+              name: item.name,
+              url: signedUrlData.signedUrl,
+              fullPath,
+            };
+          })
+        );
+
+        setFiles(fileEntries);
+      })
       .catch((err) => setError(err?.message || "Failed to load"))
       .finally(() => setLoading(false));
   }, [currentPath]);
@@ -84,8 +118,11 @@ export default function StudyToolsPage() {
     try {
       for (const file of filesToUpload) {
         const path = currentPath ? `${currentPath}/${file.name}` : file.name;
-        const storageRef = ref(storage, path);
-        await uploadBytes(storageRef, file);
+        const { error: uploadError } = await supabase.storage.from(supabaseBucket).upload(path, file, {
+          upsert: true,
+        });
+
+        if (uploadError) throw uploadError;
       }
       await loadCurrentPath();
     } catch (err) {
@@ -105,8 +142,13 @@ export default function StudyToolsPage() {
     setError(null);
     try {
       const folderPath = currentPath ? `${currentPath}/${trimmed}/.keep` : `${trimmed}/.keep`;
-      const storageRef = ref(storage, folderPath);
-      await uploadBytes(storageRef, new Blob(["."], { type: "text/plain" }));
+      const { error: uploadError } = await supabase.storage.from(supabaseBucket).upload(
+        folderPath,
+        new Blob(["."], { type: "text/plain" }),
+        { upsert: true }
+      );
+
+      if (uploadError) throw uploadError;
       await loadCurrentPath();
     } catch (err) {
       setError(err?.message || "Failed to create folder");
@@ -121,8 +163,8 @@ export default function StudyToolsPage() {
     setDeletingId(fullPath);
     setError(null);
     try {
-      const storageRef = ref(storage, fullPath);
-      await deleteObject(storageRef);
+      const { error: removeError } = await supabase.storage.from(supabaseBucket).remove([fullPath]);
+      if (removeError) throw removeError;
       await loadCurrentPath();
     } catch (err) {
       setError(err?.message || "Failed to delete file");
@@ -154,7 +196,7 @@ export default function StudyToolsPage() {
       <div className="max-w-4xl mx-auto px-6 pt-28 pb-10">
         <h1 className="text-3xl font-bold mb-2">Study Materials</h1>
         <p className="opacity-80 mb-8 text-sm">
-          Browse folders and open or download files. All materials are stored securely in Firebase Storage.
+          Browse folders and open or download files. All materials are stored securely in Supabase Storage.
         </p>
 
         <div className="rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-sm overflow-hidden shadow-xl">

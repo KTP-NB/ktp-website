@@ -49,3 +49,5 @@ credentials.json
 .netlify/
 .env
 !.env.example
+
+leaks-report.json

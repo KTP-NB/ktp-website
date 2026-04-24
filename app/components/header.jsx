@@ -45,11 +45,11 @@ export default function Header() {
             {/* Logo Circle */}
             <div className="relative h-12 w-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center overflow-hidden transition-transform group-hover:scale-110">
                 <Image 
-                    src="/ktp.png" 
+                    src="/ktp-icon.png" 
                     alt="KTP Logo" 
-                    width={50} 
-                    height={50} 
-                    className="w-full h-full object-contain scale-[1]" 
+                    width={48} 
+                    height={48} 
+                    className="block" 
                 />
             </div>
             
@@ -131,7 +131,7 @@ export default function Header() {
           <div className="flex items-center justify-between">
             <Link href="/" onClick={handleNavigation} className="-m-1.5 p-1.5 flex items-center">
               <span className="sr-only">KTP</span>
-              <Image src="/ktp.png" alt="KTP Logo" width={48} height={48} className="block" />
+              <Image src="/ktp-icon.png" alt="KTP Logo" width={48} height={48} className="block" />
             </Link>
             <button
               type="button"

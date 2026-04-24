@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata = {
   title: "KTP - New Brunswick",
   description: "New Brunswick's First Technology Fraternity",
-  icons: { icon: "/ktp.png" },
+  icons: { icon: "/ktp-icon.png" },
 };
 
 export default function RootLayout({ children }) {

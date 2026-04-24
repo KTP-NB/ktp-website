@@ -14,7 +14,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <p className="text-sm text-muted-foreground sm:ml-4 sm:pl-4 sm:border-l sm:border-white/10 sm:py-2 sm:mt-0 mt-4">
-          © 2025 KTP – Alpha Beta
+          © 2025 KTP – New Brunswick
         </p>
 
         {/* Social Icons */}

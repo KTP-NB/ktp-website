@@ -7,6 +7,7 @@ import NextImage from 'next/image';
 import {LinkedinIcon} from "lucide-react";
 import Tabs from '../components/Tabs';
 import { useState } from 'react';
+import FadeIn from '@/components/FadeIn';
 
 
 const executiveMembers = [
@@ -609,14 +610,16 @@ const MemberCard = ({ member, onLinkedInClick }) => (
   >
     <Box
       sx={{
-        bgcolor: '#0f172a',
+        bgcolor: 'rgba(255, 255, 255, 0.05)',
+        backdropFilter: 'blur(12px)',
         color: 'white',
         textAlign: 'center',
         borderRadius: '14px',
         overflow: 'hidden',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
         boxShadow: '0 10px 25px rgba(0,0,0,0.35)',
       }}
-      className="hover:shadow-2xl"
+      className="hover:shadow-2xl hover:border-white/20 transition-all duration-300"
     >
       {/* IMAGE */}
         <Box
@@ -686,18 +689,14 @@ export default function MembersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white py-24">
+    <div className="min-h-screen text-white py-24">
+      <FadeIn>
       <Container>
-        <Typography
-          variant="h3"
-          align="center"
-          gutterBottom
-          sx={{ fontWeight: 700 }}
-        >
+        <h1 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-[1.1] drop-shadow-2xl text-center text-white">
           Our Members
-        </Typography>
+        </h1>
 
-        <Typography align="center" sx={{ color: grey[400], mb: 5 }}>
+        <Typography align="center" sx={{ color: grey[400], mb: 3, mt: 1, fontSize: '1.1rem' }}>
           Meet the people building our community
         </Typography>
 
@@ -758,6 +757,7 @@ export default function MembersPage() {
 
         </Box>
       </Container>
+      </FadeIn>
     </div>
   );
 }

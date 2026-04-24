@@ -27,7 +27,7 @@ const ContactPage = () => {
     };
 
     return (
-        <div className="relative isolate min-h-screen bg-gray-900">
+        <div className="relative isolate min-h-screen bg-[#0B1425]">
             {/* Top Gradient Background */}
             <div
                 aria-hidden="true"
@@ -38,7 +38,7 @@ const ContactPage = () => {
                         clipPath:
                             'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
                     }}
-                    className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#3b82f6] to-[#1e40af] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+                    className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#1c315f] to-[#112347] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
                 />
             </div>
 
@@ -117,7 +117,7 @@ const ContactPage = () => {
                         clipPath:
                             'polygon(0% 0%, 27.5% 0%, 45.2% 65.5%, 47.5% 41.7%, 52.4% 31.9%, 60.2% 37.6%, 72.5% 67.5%, 80.7% 98%, 85.5% 99.9%, 97.5% 73.1%, 100% 38.4%, 74.1% 55.9%, 76.1% 2.3%, 27.6% 23.2%, 17.9% 0%, 0.1% 35.1%)',
                     }}
-                    className="relative right-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#3b82f6] to-[#1e40af] opacity-30 sm:right-[calc(50%-30rem)] sm:w-[72.1875rem]"
+                    className="relative right-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#1c315f] to-[#112347] opacity-30 sm:right-[calc(50%-30rem)] sm:w-[72.1875rem]"
                 />
             </div>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useAuth } from "@/components/authprovider";
+import FadeIn from "@/components/FadeIn";
 
 export default function LoginPage() {
   const { user, loading, signIn, resetPassword } = useAuth();
@@ -32,16 +33,18 @@ export default function LoginPage() {
   return (
     <main
       className="min-h-[80vh] flex items-start justify-center
-                 bg-gradient-to-br from-[#0B1425] via-[#0B1425] to-[#112347]
                  px-4 pt-28 md:pt-36 pb-16"
     >
+      <FadeIn className="w-full max-w-lg mx-auto">
       <form
         onSubmit={onSubmit}
-        className="w-full max-w-lg mx-auto rounded-2xl p-10 md:p-14
+        className="rounded-2xl p-10 md:p-14
                    bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl
                    flex flex-col gap-6"
       >
-        <h1 className="text-4xl font-bold text-center mb-2">Log in</h1>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-[1.1] drop-shadow-2xl text-center text-white mb-4">
+            Log in
+          </h1>
 
         <div className="flex flex-col gap-2">
           <label className="text-sm opacity-80">Email</label>
@@ -114,8 +117,8 @@ export default function LoginPage() {
         <button
           disabled={busy}
           className="w-full rounded-xl px-4 py-3 text-lg font-medium
-                     bg-white/10 border border-white/20 hover:bg-white/20
-                     transition disabled:opacity-50"
+                     bg-blue-600 border border-white/10 hover:bg-blue-500
+                     transition disabled:opacity-50 text-white"
         >
           {busy ? "Signing in…" : "Log in"}
         </button>
@@ -141,6 +144,7 @@ export default function LoginPage() {
           Forgot password?
         </button>
       </form>
+      </FadeIn>
     </main>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Dialog } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
@@ -12,6 +12,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, loading, signOut } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   const navLinks = useMemo(
     () => [
@@ -40,36 +41,60 @@ export default function Header() {
     <header className="absolute inset-x-0 top-0 z-50 bg-transparent">
       <nav aria-label="Global" className="grid grid-cols-3 items-center p-6 lg:px-8">
         <div className="flex items-center">
-          <Link href="/" onClick={handleNavigation} className="-m-1.5 p-1.5 flex items-center">
-            <span className="sr-only">KTP</span>
-            <Image src="/ktp.png" alt="KTP Logo" width={64} height={64} className="block" />
+          <Link href="/" onClick={handleNavigation} className="flex items-center gap-4 group transition-all">
+            {/* Logo Circle */}
+            <div className="relative h-12 w-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center overflow-hidden transition-transform group-hover:scale-110">
+                <Image 
+                    src="/ktp.png" 
+                    alt="KTP Logo" 
+                    width={50} 
+                    height={50} 
+                    className="w-full h-full object-contain scale-[1]" 
+                />
+            </div>
+            
+            {/* Logo Text Stack */}
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold tracking-[0.2em] text-white uppercase leading-none mb-1">
+                New Brunswick Chapter
+              </span>
+              <span className="text-xl font-extrabold text-white tracking-tight leading-none">
+                <span className="text-blue-300">K</span>appa <span className="text-blue-300">T</span>heta <span className="text-blue-300">P</span>i
+              </span>
+            </div>
           </Link>
         </div>
 
-        <div className="hidden lg:flex justify-center gap-x-12">
-          {navLinksWithStudy.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              onClick={(e) => {
-                // force navigation using router in case an overlay blocks native link behavior
-                e.preventDefault();
-                router.push(item.href);
-              }}
-              className="text-sm font-semibold leading-6 text-white hover:bg-white hover:text-blue-950 px-3 py-2 rounded-md whitespace-nowrap pointer-events-auto relative z-50"
-            >
-              {item.name}
-            </Link>
-          ))}
+        <div className="hidden lg:flex justify-center gap-x-2">
+          {navLinksWithStudy.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push(item.href);
+                }}
+                className={`text-base font-bold leading-6 transition-all duration-300 px-6 py-2.5 rounded-full whitespace-nowrap pointer-events-auto relative z-50 ${
+                  isActive 
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' 
+                    : 'text-white hover:bg-white/10 hover:text-blue-200'
+                }`}
+              >
+                {item.name}
+              </Link>
+            );
+          })}
         </div>
 
-        <div className="hidden lg:flex justify-end items-center gap-x-6">
+        <div className="hidden lg:flex justify-end items-center gap-x-2">
           {!loading && user ? (
             <>
               <span className="text-sm opacity-80">{user.email}</span>
               <button
                 onClick={async () => { await signOut(); window.location.href = '/'; }}
-                className="text-sm font-semibold leading-6 text-white px-3 py-2 rounded-md border border-white/20 hover:bg-white hover:text-blue-950"
+                className="text-base font-bold leading-6 text-white px-6 py-2.5 rounded-full border border-white/20 hover:bg-white/10 transition-all"
               >
                 Sign out
               </button>
@@ -79,7 +104,7 @@ export default function Header() {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-sm font-semibold leading-6 text-white hover:bg-white hover:text-blue-950 px-3 py-2 rounded-md whitespace-nowrap"
+                className="text-base font-bold leading-6 text-white hover:bg-white/10 px-8 py-3 rounded-full border border-white/30 whitespace-nowrap transition-all"
               >
                 {item.name}
               </Link>
@@ -121,16 +146,23 @@ export default function Header() {
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-700">
               <div className="space-y-2 py-6">
-                {navLinksWithStudy.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    onClick={handleNavigation}
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-gray-700 hover:text-indigo-300 whitespace-nowrap relative z-50"
-                  >
-                    {item.name}
-                  </Link>
-                ))}
+                {navLinksWithStudy.map((item) => {
+                  const isActive = pathname === item.href;
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={handleNavigation}
+                      className={`-mx-3 block rounded-full px-4 py-3 text-base font-bold leading-7 whitespace-nowrap relative z-50 transition-all ${
+                        isActive
+                          ? 'bg-blue-600 text-white'
+                          : 'text-white hover:bg-white/10'
+                      }`}
+                    >
+                      {item.name}
+                    </Link>
+                  );
+                })}
               </div>
 
               <div className="py-6 space-y-2">

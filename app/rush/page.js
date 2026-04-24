@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import FadeIn from "@/components/FadeIn";
 
 /* =========================
    DATA
@@ -97,6 +98,7 @@ export default function RushPage() {
 
   return (
     <div className="min-h-screen">
+      <FadeIn>
 
       {/* ================= HERO ================= */}
       <section className="relative h-[70vh] min-h-[950px] w-full overflow-hidden pb-30">
@@ -119,7 +121,7 @@ export default function RushPage() {
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
 
          
-          <h1 className="text-4xl md:text-5xl font-semibold text-white">
+          <h1 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-[1.1] drop-shadow-2xl mb-4 text-center text-white">
             Spring 2026 Rush{" "}
             <span className="opacity">
                 Loading{dots}
@@ -141,7 +143,7 @@ export default function RushPage() {
 {/* ================= TIMELINE HEADER ================= */}
 <section className="bg-gradient-to-b from-[#0f2a44] to-[#153a63] py-16">
   <div className="max-w-4xl mx-auto text-center px-6">
-    <h2 className="text-4xl md:text-5xl font-semibold text-white tracking-tight">
+    <h2 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight text-center">
       Rush Events Timeline
     </h2>
 
@@ -385,6 +387,7 @@ export default function RushPage() {
           <FAQAccordion faqs={faqs} />
         </div>
       </section>
+      </FadeIn>
     </div>
   );
 }

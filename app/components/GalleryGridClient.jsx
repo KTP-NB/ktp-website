@@ -24,7 +24,7 @@ export default function GalleryGridClient({ images = [], initialLoad = 20 }) {
 
       {count < images.length && (
         <div className="flex justify-center mt-8">
-          <button onClick={handleLoadMore} className="px-6 py-3 bg-blue-900 text-white rounded-md hover:bg-blue-700">
+          <button onClick={handleLoadMore} className="inline-flex items-center rounded-full bg-blue-600/90 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-500 transition">
             Load more
           </button>
         </div>

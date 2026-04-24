@@ -129,7 +129,7 @@ const AboutUs = () => {
                       gutterBottom
                       sx={{ color: '#bfdbfe', fontSize: '1.75rem', fontWeight: 'bold' }}
                   >
-                    President's Welcome
+                    President&apos;s Welcome
                   </Typography>
 
                   <Typography variant="body1" sx={{ color: 'rgba(255, 255, 255, 0.85)', mb: 3, fontSize: '1.05rem', lineHeight: 1.7 }}>

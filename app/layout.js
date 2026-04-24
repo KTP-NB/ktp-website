@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import { AuthProvider } from "./components/authprovider";
+import MouseGlow from "./components/MouseGlow";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,6 +17,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${inter.className} dark`}>
       <body className="min-h-screen flex flex-col">
+        <MouseGlow />
         <AuthProvider>
           <Header />
           <main className="flex-grow">{children}</main>

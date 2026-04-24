@@ -56,7 +56,7 @@ export default function Header() {
             {/* Logo Text Stack */}
             <div className="flex flex-col">
               <span className="text-[10px] font-bold tracking-[0.2em] text-white uppercase leading-none mb-1">
-                New Brunswick Chapter
+                Alpha Beta Chapter
               </span>
               <span className="text-xl font-extrabold text-white tracking-tight leading-none">
                 <span className="text-blue-300">K</span>appa <span className="text-blue-300">T</span>heta <span className="text-blue-300">P</span>i

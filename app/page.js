@@ -70,13 +70,13 @@ function Hero() {
                 <div className="mx-auto max-w-7xl relative">
                     {/* Floating Images - Left Side */}
                     <div className="hidden xl:block absolute left-[-4rem] top-[-4rem] bottom-[-4rem] w-64 pointer-events-none z-10">
-                        <motion.div initial={{ opacity: 0, scale: 0.8, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.8, ease: "easeOut" }} className="absolute top-[5%] left-0">
-                            <div className="relative w-64 h-80 rounded-2xl border border-blue-100/35 overflow-hidden shadow-2xl animate-float pointer-events-auto" style={{ '--rotation': '-6deg', transform: 'rotate(-6deg)' }}>
+                        <motion.div initial={{ opacity: 0, scale: 0.8, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.8, ease: "easeOut" }} className="absolute top-[10%] left-0">
+                            <div className="relative w-[21.06rem] h-[15.66rem] rounded-2xl border border-blue-100/35 overflow-hidden shadow-2xl animate-float pointer-events-auto" style={{ '--rotation': '-6deg', transform: 'rotate(-6deg)' }}>
                                 <Image src={heroImages[0]} alt="KTP moment" fill className="object-cover" />
                             </div>
                         </motion.div>
-                        <motion.div initial={{ opacity: 0, scale: 0.8, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.9, ease: "easeOut" }} className="absolute bottom-[5%] left-8">
-                            <div className="relative w-72 h-72 rounded-2xl border border-blue-100/35 overflow-hidden shadow-2xl animate-float-slow pointer-events-auto" style={{ '--rotation': '4deg', transform: 'rotate(4deg)' }}>
+                        <motion.div initial={{ opacity: 0, scale: 0.8, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.9, ease: "easeOut" }} className="absolute bottom-[9%] left-8">
+                            <div className="relative w-[16.2rem] h-[16.2rem] rounded-2xl border border-blue-100/35 overflow-hidden shadow-2xl animate-float-slow pointer-events-auto" style={{ '--rotation': '4deg', transform: 'rotate(4deg)' }}>
                                 <Image src={heroImages[1]} alt="KTP moment" fill className="object-cover" />
                             </div>
                         </motion.div>
@@ -85,17 +85,17 @@ function Hero() {
                     {/* Floating Images - Right Side */}
                     <div className="hidden xl:block absolute right-[-4rem] top-[-4rem] bottom-[-4rem] w-80 pointer-events-none z-10">
                         <motion.div initial={{ opacity: 0, scale: 0.8, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.5, delay: 1.0, ease: "easeOut" }} className="absolute top-[8%] right-0">
-                            <div className="relative w-72 h-72 rounded-2xl border border-blue-100/35 overflow-hidden shadow-2xl animate-float-slow pointer-events-auto" style={{ '--rotation': '8deg', transform: 'rotate(8deg)' }}>
+                            <div className="relative w-[16.2rem] h-[16.2rem] rounded-2xl border border-blue-100/35 overflow-hidden shadow-2xl animate-float-slow pointer-events-auto" style={{ '--rotation': '8deg', transform: 'rotate(8deg)' }}>
                                 <Image src={heroImages[2]} alt="KTP moment" fill className="object-cover" />
                             </div>
                         </motion.div>
                         <motion.div initial={{ opacity: 0, scale: 0.8, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.5, delay: 1.1, ease: "easeOut" }} className="absolute top-[43%] right-[10rem] z-30">
-                            <div className="relative right-[-1rem] w-56 h-44 rounded-2xl border border-blue-100/35 overflow-hidden shadow-2xl animate-float pointer-events-auto" style={{ '--rotation': '-1deg', transform: 'rotate(-1deg)' }}>
+                            <div className="relative right-[-1rem] w-[12.6rem] h-[9.9rem] rounded-2xl border border-blue-100/35 overflow-hidden shadow-2xl animate-float pointer-events-auto" style={{ '--rotation': '-1deg', transform: 'rotate(-1deg)' }}>
                                 <Image src={'/photos for ktp website/IMG_6731.JPG'} alt="KTP moment" fill className="object-cover" />
                             </div>
                         </motion.div>
                         <motion.div initial={{ opacity: 0, scale: 0.8, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.5, delay: 1.2, ease: "easeOut" }} className="absolute bottom-5 right-3">
-                            <div className="relative bottom-[-1rem] w-80 h-60 rounded-3xl border border-blue-100/35 overflow-hidden shadow-2xl animate-float pointer-events-auto" style={{ '--rotation': '-5deg', transform: 'rotate(-5deg)' }}>
+                            <div className="relative bottom-[-1rem] w-[18rem] h-[13.5rem] rounded-3xl border border-blue-100/35 overflow-hidden shadow-2xl animate-float pointer-events-auto" style={{ '--rotation': '-5deg', transform: 'rotate(-5deg)' }}>
                                 <Image src={heroImages[3]} alt="KTP moment" fill className="object-cover" />
                             </div>
                         </motion.div>
@@ -106,12 +106,12 @@ function Hero() {
                         {/* Left side for smaller screens */}
                         <div className="xl:hidden flex gap-4 mb-12">
                              <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.8 }}>
-                                <div className="relative w-36 h-48 sm:w-44 sm:h-60 rounded-xl border border-blue-100/35 overflow-hidden shadow-xl animate-float" style={{ '--rotation': '-4deg', transform: 'rotate(-4deg)' }}>
+                                <div className="relative w-[8.1rem] h-[10.8rem] sm:w-[9.9rem] sm:h-[13.5rem] rounded-xl border border-blue-100/35 overflow-hidden shadow-xl animate-float" style={{ '--rotation': '-4deg', transform: 'rotate(-4deg)' }}>
                                     <Image src={heroImages[0]} alt="KTP moment" fill className="object-cover" />
                                 </div>
                             </motion.div>
                             <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.9 }}>
-                                <div className="relative w-36 h-48 sm:w-44 sm:h-60 rounded-xl border border-blue-100/35 overflow-hidden shadow-xl animate-float-slow mt-10" style={{ '--rotation': '3deg', transform: 'rotate(3deg)' }}>
+                                <div className="relative w-[8.1rem] h-[10.8rem] sm:w-[9.9rem] sm:h-[13.5rem] rounded-xl border border-blue-100/35 overflow-hidden shadow-xl animate-float-slow mt-10" style={{ '--rotation': '3deg', transform: 'rotate(3deg)' }}>
                                     <Image src={heroImages[1]} alt="KTP moment" fill className="object-cover" />
                                 </div>
                             </motion.div>
@@ -124,7 +124,7 @@ function Hero() {
                                 transition={{ duration: 0.5, delay: 0.1 }}
                                 className="text-sm uppercase tracking-[0.3em] text-blue-200 font-bold mb-4 drop-shadow-md"
                             >
-                                Kappa Theta Pi | New Brunswick
+                                Kappa Theta Pi | Alpha Beta
                             </motion.p>
                             <motion.h1
                                 initial={{ opacity: 0, y: 24 }}
@@ -162,12 +162,12 @@ function Hero() {
                         {/* Right side for smaller screens */}
                         <div className="xl:hidden flex gap-4 mt-12">
                              <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 1.0 }}>
-                                <div className="relative w-36 h-48 sm:w-44 sm:h-60 rounded-xl border border-blue-100/35 overflow-hidden shadow-xl animate-float-slow" style={{ '--rotation': '5deg', transform: 'rotate(5deg)' }}>
+                                <div className="relative w-[8.1rem] h-[10.8rem] sm:w-[9.9rem] sm:h-[13.5rem] rounded-xl border border-blue-100/35 overflow-hidden shadow-xl animate-float-slow" style={{ '--rotation': '5deg', transform: 'rotate(5deg)' }}>
                                     <Image src={heroImages[2]} alt="KTP moment" fill className="object-cover" />
                                 </div>
                             </motion.div>
                             <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 1.1 }}>
-                                <div className="relative w-36 h-48 sm:w-44 sm:h-60 rounded-xl border border-blue-100/35 overflow-hidden shadow-xl animate-float mt-10" style={{ '--rotation': '-6deg', transform: 'rotate(-6deg)' }}>
+                                <div className="relative w-[8.1rem] h-[10.8rem] sm:w-[9.9rem] sm:h-[13.5rem] rounded-xl border border-blue-100/35 overflow-hidden shadow-xl animate-float mt-10" style={{ '--rotation': '-6deg', transform: 'rotate(-6deg)' }}>
                                     <Image src={heroImages[3]} alt="KTP moment" fill className="object-cover" />
                                 </div>
                             </motion.div>

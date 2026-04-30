@@ -544,6 +544,156 @@ const allMembers = [
         committees: []
     },
     {
+        name: "Godasrita Dintakurti",
+        position: "Member",
+        image: "/images/GODA.JPG",
+        year: "Sophomore",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/godasrita-dintakurti/",
+        class: "Delta",
+        status: "Active",
+        executive_board: false,
+        committees: []
+    },
+    {
+        name: "Anish Allada",
+        position: "Member",
+        image: "",
+        year: "Freshman",
+        major: "Computer Science and Data Science",
+        linkedin: "https://www.linkedin.com/in/anish-allada/",
+        class: "Delta",
+        status: "Active",
+        executive_board: false,
+        committees: [
+            "Tech"
+        ]
+    },
+    {
+        name: "Jyothika Akkineni",
+        position: "Member",
+        image: "/images/Jyo.JPG",
+        year: "Freshman",
+        major: "Computer Science and Economics",
+        linkedin: "https://www.linkedin.com/in/jyothikaakkineni/",
+        class: "Delta",
+        status: "Active",
+        executive_board: false,
+        committees: [
+            "Pledge"
+        ]
+    },
+    {
+        name: "Vedavyas Painoori",
+        position: "Member",
+        image: "/images/Ved.JPG",
+        year: "Freshman",
+        major: "Computer Science and Data Science",
+        linkedin: "https://www.linkedin.com/in/vedavyas-painoori/",
+        class: "Delta",
+        status: "Active",
+        executive_board: false,
+        committees: [
+            "Finance"
+        ]
+    },
+    {
+        name: "Advitya Suri",
+        position: "Member",
+        image: "/images/ADI.JPG",
+        year: "Sophomore",
+        major: "Computer Science and Math",
+        linkedin: "https://www.linkedin.com/in/advitya-suri/",
+        class: "Delta",
+        status: "Active",
+        executive_board: false,
+        committees: []
+    },
+    {
+        name: "Srinidhi Pappu",
+        position: "Member",
+        image: "/images/Srinidhi.JPG",
+        year: "Freshman",
+        major: "Computer Science and Data Science",
+        linkedin: "https://www.linkedin.com/in/srinidhi-pappu/",
+        class: "Delta",
+        status: "Active",
+        executive_board: false,
+        committees: [
+            "Finance"
+        ]
+    },
+    {
+        name: "Krish Patel",
+        position: "Member",
+        image: "/images/KrishP.JPG",
+        year: "Freshman",
+        major: "Computer Science and Math",
+        linkedin: "https://www.linkedin.com/in/krish-pat/",
+        class: "Delta",
+        status: "Active",
+        executive_board: false,
+        committees: [
+            "Tech"
+        ]
+    },
+    {
+        name: "Anvi Khambadkone",
+        position: "Member",
+        image: "/images/Anvi.JPG",
+        year: "Freshman",
+        major: "Computer Science and Cognitive Science",
+        linkedin: "https://www.linkedin.com/in/anvi-khambadkone/",
+        class: "Delta",
+        status: "Active",
+        executive_board: false,
+        committees: [
+            "Pledge"
+        ]
+    },
+    {
+        name: "Nayan Yadav",
+        position: "Member",
+        image: "/images/Nayan.JPG",
+        year: "Sophomore",
+        major: "Computer Engineering",
+        linkedin: "https://www.linkedin.com/in/nayan-yadav-ny2006/",
+        class: "Delta",
+        status: "Active",
+        executive_board: false,
+        committees: [
+            "Tech"
+        ]
+    },
+    {
+        name: "Kaivalya Atigre",
+        position: "Member",
+        image: "/images/Kaiv.JPG",
+        year: "Sophomore",
+        major: "Computer Science",
+        linkedin: "https://www.linkedin.com/in/kaivalya-atigre/",
+        class: "Delta",
+        status: "Active",
+        executive_board: false,
+        committees: [
+            "Marketing"
+        ]
+    },
+    {
+        name: "Mira Kehair",
+        position: "Member",
+        image: "/images/Mira.JPG",
+        year: "Freshman",
+        major: "Computer Science and Math",
+        linkedin: "https://www.linkedin.com/in/mira-kehair-52a6613a9/",
+        class: "Delta",
+        status: "Active",
+        executive_board: false,
+        committees: [
+            "Outreach"
+        ]
+    },
+    {
         name: "Anushka Kondur",
         position: "Founding Class ",
         image: "/images/Anushka.jpg",

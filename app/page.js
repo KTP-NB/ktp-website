@@ -36,6 +36,30 @@ const whoAreWeImages = [
     '/photos for ktp website/IMG_3943.JPG',
 ];
 
+const highlightPosts = [
+    {
+        header: 'Internship',
+        src: 'https://www.linkedin.com/embed/feed/update/urn:li:share:7454530076777381888?collapsed=1',
+        href: 'https://www.linkedin.com/feed/update/urn:li:share:7454530076777381888',
+        height: 645,
+        title: 'Internship LinkedIn post',
+    },
+    {
+        header: 'Hackathon',
+        src: 'https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7454658652143239169?collapsed=1',
+        href: 'https://www.linkedin.com/feed/update/urn:li:ugcPost:7454658652143239169',
+        height: 628,
+        title: 'Hackathon LinkedIn post',
+    },
+    {
+        header: 'Program',
+        src: 'https://www.linkedin.com/embed/feed/update/urn:li:share:7456056574806142976?collapsed=1',
+        href: 'https://www.linkedin.com/feed/update/urn:li:share:7456056574806142976',
+        height: 531,
+        title: 'Program LinkedIn post',
+    },
+];
+
 const logos = [
     { src: '/companies/Bloomberg.png', alt: 'Bloomberg' },
     { src: '/companies/amazon.png', alt: 'Amazon' },
@@ -235,6 +259,46 @@ function CarouselSection() {
     );
 }
 
+function HighlightsSection() {
+    return (
+        <section className="px-6 lg:px-8 pb-16 lg:pb-20">
+            <div className="mx-auto max-w-7xl rounded-3xl border border-blue-100/35 bg-[#dbe8ff]/28 backdrop-blur-xl shadow-[0_16px_45px_rgba(16,36,76,0.30)] p-8 md:p-10 lg:p-12">
+                <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-white font-semibold">KTP Highlights</p>
+                    <h2 className="mt-3 text-3xl sm:text-4xl font-black tracking-tight text-blue-200">Chapter Spotlight</h2>
+                </div>
+                <div className="mt-8 overflow-x-auto touch-pan-x pretty-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
+                    <div className="flex gap-8 xl:gap-12 xl:justify-center pb-4 snap-x snap-mandatory">
+                        {highlightPosts.map((post) => (
+                            <div key={post.src} className="snap-start min-w-[336px] flex-shrink-0">
+                                <h3 className="mb-3 text-lg font-bold text-white">{post.header}</h3>
+                                <div className="relative overflow-hidden rounded-2xl">
+                                    <iframe
+                                        src={post.src}
+                                        height={Math.round(post.height * 2 / 3)}
+                                        width="336"
+                                        frameBorder="0"
+                                        allowFullScreen
+                                        title={post.title}
+                                        className="block w-full"
+                                    />
+                                    <a
+                                        href={post.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label={`Open ${post.header} LinkedIn post in a new tab`}
+                                        className="absolute inset-0"
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
 function NetworkSection() {
     return (
         <section className="px-6 lg:px-8 pb-16 lg:pb-20">
@@ -267,6 +331,7 @@ export default function Home() {
     return (
         <main className="min-h-screen text-foreground pb-8 overflow-x-hidden">
             <Hero />
+            <HighlightsSection />
             <CarouselSection />
             <NetworkSection />
         </main>

@@ -1,0 +1,720 @@
+[
+  {
+    "name": "Shriya Srinivasan",
+    "position": "Member",
+    "image": "/headshots/Founding/Shriya.jpg",
+    "year": "Grad 2026",
+    "major": "Computer Science",
+    "linkedin": "https://www.linkedin.com/in/shriyasrinivasans/",
+    "class": "Founding",
+    "status": "Alumni",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Srimathi Vadivel",
+    "position": "Memeber",
+    "image": "/headshots/Founding/Srimathi.JPEG",
+    "year": "Grad 2026",
+    "major": "Computer Science",
+    "linkedin": "https://www.linkedin.com/in/srimathivadivel/",
+    "class": "Founding",
+    "status": "Alumni",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Yugal Shah",
+    "position": "Member",
+    "image": "/headshots/Alpha/Yugal.png",
+    "year": "Junior",
+    "major": "Computer Science and Data Science",
+    "linkedin": "https://www.linkedin.com/in/yugalnshah/",
+    "class": "Alpha",
+    "status": "Active",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Shiven Patel",
+    "position": "Member",
+    "image": "/headshots/Alpha/Shiven.jpg",
+    "year": "Grad 2026",
+    "major": "Computer Science and Data Science",
+    "linkedin": "https://www.linkedin.com/in/shiven-patel123/",
+    "class": "Alpha",
+    "status": "Alumni",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Krish Kharbanda",
+    "position": "Member",
+    "image": "/headshots/Alpha/Krish.png",
+    "year": "Grad 2026",
+    "major": "Computer Science and Mathematics",
+    "linkedin": "https://www.linkedin.com/in/krishkharbanda/",
+    "class": "Alpha",
+    "status": "Alumni",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Abirami Jayakumar",
+    "position": "Member",
+    "image": "/headshots/Alpha/Abirami.jpg",
+    "year": "Junior",
+    "major": "Computer Science and Mathematics",
+    "linkedin": "https://www.linkedin.com/in/abiramijayakumar/",
+    "class": "Alpha",
+    "status": "Active",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Umair Siddiqui",
+    "position": "Member",
+    "image": "/headshots/Alpha/Umair.jpg",
+    "year": "Junior",
+    "major": "Computer Science and Data Science",
+    "linkedin": "https://www.linkedin.com/in/umairsiddiqui05/",
+    "class": "Alpha",
+    "status": "Active",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Saatvik Kabra",
+    "position": "Member",
+    "image": "/headshots/Alpha/Saatvik.jpg",
+    "year": "Junior",
+    "major": "Computer Science",
+    "linkedin": "https://www.linkedin.com/in/saatvik-kabra",
+    "class": "Alpha",
+    "status": "Active",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Yash Singh",
+    "position": "Member",
+    "image": "/headshots/Alpha/Yash.jpg",
+    "year": "Junior",
+    "major": "Computer Science and Data Science",
+    "linkedin": "https://www.linkedin.com/in/yash-singh-b06a56295/",
+    "class": "Alpha",
+    "status": "Active",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Aditi Sreeganesh",
+    "position": "President",
+    "image": "/headshots/Alpha/Aditi.jpg",
+    "year": "Junior",
+    "major": "Mathematics and Data Science",
+    "linkedin": "https://www.linkedin.com/in/aditi-sreeganesh",
+    "class": "Alpha",
+    "status": "Active",
+    "executive_board": true,
+    "committees": []
+  },
+  {
+    "name": "Akhil Thuremella",
+    "position": "Member",
+    "image": "/headshots/Alpha/Akhil.jpg",
+    "year": "Grad 2026",
+    "major": "Computer Science and Data Science",
+    "linkedin": "https://www.linkedin.com/in/akhil-thuremella",
+    "class": "Alpha",
+    "status": "Alumni",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Suhani Mehra",
+    "position": "Member",
+    "image": "/headshots/Founding/Suhani.jpg",
+    "year": "Junior",
+    "major": "Computer Science and Data Science",
+    "linkedin": "https://www.linkedin.com/in/suhani-mehra/",
+    "class": "Founding",
+    "status": "Active",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Sameer Jiandani",
+    "position": "Member",
+    "image": "/headshots/Founding/Sameer.jpg",
+    "year": "Junior",
+    "major": "Computer Science and Cognitive Science",
+    "linkedin": "https://www.linkedin.com/in/sameerjiandani/",
+    "class": "Founding",
+    "status": "Active",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Esha Pai",
+    "position": "Member",
+    "image": "/headshots/Alpha/Esha.jpg",
+    "year": "Sophomore",
+    "major": "Computer Science and Biomathematics",
+    "linkedin": "https://www.linkedin.com/in/eshapai/",
+    "class": "Beta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Priya Rana",
+    "position": "Member",
+    "image": "/headshots/Alpha/Priya.jpg",
+    "year": "Sophomore",
+    "major": "Computer Science and Mathematics",
+    "linkedin": "https://www.linkedin.com/in/prana24/",
+    "class": "Beta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Jayden Shah",
+    "position": "Member",
+    "image": "/headshots/Alpha/Jayden.jpg",
+    "year": "Sophomore",
+    "major": "Computer Science and Economics",
+    "linkedin": "https://www.linkedin.com/in/jaydenshah/",
+    "class": "Beta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": [
+      "Outreach"
+    ]
+  },
+  {
+    "name": "Raghul Srinivasan",
+    "position": "Member",
+    "image": "/headshots/Beta/Raghul.jpg",
+    "year": "Sophomore",
+    "major": "Data Science",
+    "linkedin": "https://www.linkedin.com/in/raghulkrishnasrinivasan/",
+    "class": "Beta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Gourika Dhiman",
+    "position": "VP of External Affairs",
+    "image": "/headshots/Beta/Gourika.jpg",
+    "year": "Sophomore",
+    "major": "Computer Science and Data Science",
+    "linkedin": "https://www.linkedin.com/in/gourikadhiman/",
+    "class": "Beta",
+    "status": "Active",
+    "executive_board": true,
+    "committees": [
+      "Outreach"
+    ]
+  },
+  {
+    "name": "Radha Ghate",
+    "position": "Member",
+    "image": "/headshots/Beta/Radha.jpg",
+    "year": "Sophomore",
+    "major": "Computer Science and Mathematics",
+    "linkedin": "https://www.linkedin.com/in/radhaghate/",
+    "class": "Beta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": [
+      "Outreach"
+    ]
+  },
+  {
+    "name": "Krisha Bhagat",
+    "position": "VP of Marketing",
+    "image": "/headshots/Beta/Krisha.jpg",
+    "year": "Sophomore",
+    "major": "BAIT and Finance",
+    "linkedin": "https://www.linkedin.com/in/krisha-bhagat-07b61127a/",
+    "class": "Beta",
+    "status": "Active",
+    "executive_board": true,
+    "committees": [
+      "Marketing"
+    ]
+  },
+  {
+    "name": "Jignasu Shah",
+    "position": "Member",
+    "image": "/headshots/Beta/Jignasu.jpg",
+    "year": "Sophomore",
+    "major": "Computer Engineering",
+    "linkedin": "https://www.linkedin.com/in/jignasu-shah/",
+    "class": "Beta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": [
+      "Outreach"
+    ]
+  },
+  {
+    "name": "Sujay Faldu",
+    "position": "Member",
+    "image": "/headshots/Beta/Sujay.jpg",
+    "year": "Sophomore",
+    "major": "Computer Science and Economics",
+    "linkedin": "https://www.linkedin.com/in/sujay-faldu/",
+    "class": "Beta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Heet Shah",
+    "position": "Member",
+    "image": "/headshots/Beta/Heet.jpg",
+    "year": "Sophomore",
+    "major": "Computer Science and Data Science",
+    "linkedin": "https://www.linkedin.com/in/heetshah15/",
+    "class": "Beta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": [
+      "Finance"
+    ]
+  },
+  {
+    "name": "Krish Maske",
+    "position": "VP of Tech Development",
+    "image": "/headshots/Beta/KrishM.jpg",
+    "year": "Sophomore",
+    "major": "Computer Science and Data Science",
+    "linkedin": "https://www.linkedin.com/in/krishmaske/",
+    "class": "Beta",
+    "status": "Active",
+    "executive_board": true,
+    "committees": [
+      "Tech"
+    ]
+  },
+  {
+    "name": "Gravit Bali",
+    "position": "VP of Finance",
+    "image": "/headshots/Beta/Gravit.jpg",
+    "year": "Sophomore",
+    "major": "Computer Science and Cognitive Science",
+    "linkedin": "https://www.linkedin.com/in/gravitbali/",
+    "class": "Beta",
+    "status": "Active",
+    "executive_board": true,
+    "committees": [
+      "Finance"
+    ]
+  },
+  {
+    "name": "Ethan Bingemann",
+    "position": "Member",
+    "image": "/headshots/Beta/Ethan.jpg",
+    "year": "Sophomore",
+    "major": "Computer Science",
+    "linkedin": "https://www.linkedin.com/in/ethan-bingemann/",
+    "class": "Beta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Abhiram Sajjala",
+    "position": "VP of Engagement",
+    "image": "/headshots/Beta/Abhiram.jpg",
+    "year": "Sophomore",
+    "major": "Mechanical Engineering",
+    "linkedin": "https://www.linkedin.com/in/abhiramsajjala/",
+    "class": "Beta",
+    "status": "Active",
+    "executive_board": true,
+    "committees": [
+      "Pledge"
+    ]
+  },
+  {
+    "name": "Kesha Patel",
+    "position": "Member",
+    "image": "/headshots/Beta/Kesha.jpg",
+    "year": "Sophomore",
+    "major": "BAIT and Finance",
+    "linkedin": "https://www.linkedin.com/in/kesha-patel-12r/",
+    "class": "Beta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": [
+      "Pledge"
+    ]
+  },
+  {
+    "name": "Kshiraj Gupta",
+    "position": "Member",
+    "image": "/headshots/Beta/Kshiraj.jpg",
+    "year": "Sophomore",
+    "major": "Computer Science and Data Science",
+    "linkedin": "https://www.linkedin.com/in/kshiraj-gupta/",
+    "class": "Beta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Darsh Sundar",
+    "position": "Member",
+    "image": "/headshots/Beta/Darsh.jpg",
+    "year": "Sophomore",
+    "major": "Computer Science",
+    "linkedin": "https://www.linkedin.com/in/darshsundar/",
+    "class": "Beta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": [
+      "Finance"
+    ]
+  },
+  {
+    "name": "Anusha Iyer",
+    "position": "Member",
+    "image": "/headshots/Gamma/Anusha.jpg",
+    "year": "Sophomore",
+    "major": "Computer Science and Math",
+    "linkedin": "https://www.linkedin.com/in/anusha--iyer",
+    "class": "Gamma",
+    "status": "Active",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Aaron Bansal",
+    "position": "VP of Prof Development",
+    "image": "/headshots/Gamma/Aaron.jpg",
+    "year": "Sophomore",
+    "major": "Computer Science and Math",
+    "linkedin": "https://www.linkedin.com/in/aaron-bansal",
+    "class": "Gamma",
+    "status": "Active",
+    "executive_board": true,
+    "committees": [
+      "Tech"
+    ]
+  },
+  {
+    "name": "Anant Gupta",
+    "position": "Member",
+    "image": "/headshots/Gamma/Anant.jpg",
+    "year": "Sophomore",
+    "major": "Computer Science and Data Science",
+    "linkedin": "https://www.linkedin.com/in/anantgupta123/",
+    "class": "Gamma",
+    "status": "Active",
+    "executive_board": false,
+    "committees": [
+      "Marketing"
+    ]
+  },
+  {
+    "name": "Atul Marichetty",
+    "position": "Member",
+    "image": "/headshots/Gamma/Atul.jpg",
+    "year": "Sophomore",
+    "major": "Computer Science and Math",
+    "linkedin": "https://www.linkedin.com/in/atul-marichetty-0a6636320/",
+    "class": "Gamma",
+    "status": "Active",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Arnav Venkata",
+    "position": "Member",
+    "image": "/headshots/Gamma/Arnav.jpg",
+    "year": "Sophomore",
+    "major": "Computer Science and Data Science",
+    "linkedin": "https://www.linkedin.com/in/arnav-venkata/",
+    "class": "Gamma",
+    "status": "Active",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Krish Bansal",
+    "position": "Vice President",
+    "image": "/headshots/Gamma/KrishB.jpg",
+    "year": "Sophomore",
+    "major": "Computer Engineering",
+    "linkedin": "https://www.linkedin.com/in/krish-bansal-44725b328/",
+    "class": "Gamma",
+    "status": "Active",
+    "executive_board": true,
+    "committees": []
+  },
+  {
+    "name": "Gokulraj Kumarassamy",
+    "position": "VP of Membership",
+    "image": "/headshots/Gamma/Gokulraj.jpg",
+    "year": "Sophomore",
+    "major": "Computer Science and Math",
+    "linkedin": "https://www.linkedin.com/in/gokulrajk1/",
+    "class": "Gamma",
+    "status": "Active",
+    "executive_board": true,
+    "committees": [
+      "Pledge"
+    ]
+  },
+  {
+    "name": "Aditya Velagapudi",
+    "position": "VP of Internal Ops",
+    "image": "/headshots/Gamma/Aditya.jpg",
+    "year": "Sophomore",
+    "major": "Computer Science and Business Analytics",
+    "linkedin": "https://www.linkedin.com/in/adityavelagapudi/",
+    "class": "Gamma",
+    "status": "Active",
+    "executive_board": true,
+    "committees": []
+  },
+  {
+    "name": "Godasrita Dintakurti",
+    "position": "Member",
+    "image": "/headshots/Delta/GODA.JPG",
+    "year": "Sophomore",
+    "major": "Computer Science",
+    "linkedin": "https://www.linkedin.com/in/godasrita-dintakurti/",
+    "class": "Delta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Anish Allada",
+    "position": "Member",
+    "image": "/headshots/Delta/Anish.JPG",
+    "year": "Freshman",
+    "major": "Computer Science and Data Science",
+    "linkedin": "https://www.linkedin.com/in/anish-allada/",
+    "class": "Delta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": [
+      "Tech"
+    ]
+  },
+  {
+    "name": "Jyothika Akkineni",
+    "position": "Member",
+    "image": "/headshots/Delta/Jyo.JPG",
+    "year": "Freshman",
+    "major": "Computer Science and Economics",
+    "linkedin": "https://www.linkedin.com/in/jyothikaakkineni/",
+    "class": "Delta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": [
+      "Pledge"
+    ]
+  },
+  {
+    "name": "Vedavyas Painoori",
+    "position": "Member",
+    "image": "/headshots/Delta/Ved.JPG",
+    "year": "Freshman",
+    "major": "Computer Science and Data Science",
+    "linkedin": "https://www.linkedin.com/in/vedavyas-painoori/",
+    "class": "Delta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": [
+      "Finance"
+    ]
+  },
+  {
+    "name": "Advitya Suri",
+    "position": "Member",
+    "image": "/headshots/Delta/ADI.JPG",
+    "year": "Sophomore",
+    "major": "Computer Science and Math",
+    "linkedin": "https://www.linkedin.com/in/advitya-suri/",
+    "class": "Delta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Srinidhi Pappu",
+    "position": "Member",
+    "image": "/headshots/Delta/Srinidhi.JPG",
+    "year": "Freshman",
+    "major": "Computer Science and Data Science",
+    "linkedin": "https://www.linkedin.com/in/srinidhi-pappu/",
+    "class": "Delta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": [
+      "Finance"
+    ]
+  },
+  {
+    "name": "Krish Patel",
+    "position": "Member",
+    "image": "/headshots/Delta/KrishP.JPG",
+    "year": "Freshman",
+    "major": "Computer Science and Math",
+    "linkedin": "https://www.linkedin.com/in/krish-pat/",
+    "class": "Delta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": [
+      "Tech"
+    ]
+  },
+  {
+    "name": "Anvi Khambadkone",
+    "position": "Member",
+    "image": "/headshots/Delta/Anvi.JPG",
+    "year": "Freshman",
+    "major": "Computer Science and Cognitive Science",
+    "linkedin": "https://www.linkedin.com/in/anvi-khambadkone/",
+    "class": "Delta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": [
+      "Pledge"
+    ]
+  },
+  {
+    "name": "Nayan Yadav",
+    "position": "Member",
+    "image": "/headshots/Delta/Nayan.JPG",
+    "year": "Sophomore",
+    "major": "Computer Engineering",
+    "linkedin": "https://www.linkedin.com/in/nayan-yadav-ny2006/",
+    "class": "Delta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": [
+      "Tech"
+    ]
+  },
+  {
+    "name": "Kaivalya Atigre",
+    "position": "Member",
+    "image": "/headshots/Delta/Kaiv.JPG",
+    "year": "Sophomore",
+    "major": "Computer Science",
+    "linkedin": "https://www.linkedin.com/in/kaivalya-atigre/",
+    "class": "Delta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": [
+      "Marketing"
+    ]
+  },
+  {
+    "name": "Mira Kehair",
+    "position": "Member",
+    "image": "/headshots/Delta/Mira.JPG",
+    "year": "Freshman",
+    "major": "Computer Science and Math",
+    "linkedin": "https://www.linkedin.com/in/mira-kehair-52a6613a9/",
+    "class": "Delta",
+    "status": "Active",
+    "executive_board": false,
+    "committees": [
+      "Outreach"
+    ]
+  },
+  {
+    "name": "Anushka Kondur",
+    "position": "Founding Class ",
+    "image": "/headshots/Founding/Anushka.jpg",
+    "year": "Grad 2025",
+    "major": "Former VP of Prof Development",
+    "linkedin": "https://www.linkedin.com/in/anushka-kondur/",
+    "class": "Founding",
+    "status": "Alumni",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Ananya Ahlawat",
+    "position": "Founding Class",
+    "image": "/headshots/Founding/Ananya.jpg",
+    "year": "Grad 2025",
+    "major": "Former VP of Marketing",
+    "linkedin": "https://www.linkedin.com/in/ananya-ahlawat/",
+    "class": "Founding",
+    "status": "Alumni",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Priyangshu Bhowmik",
+    "position": "Founding Class",
+    "image": "/headshots/Founding/Priyangshu.jpg",
+    "year": "Grad 2025",
+    "major": "Computer Science and Data Science",
+    "linkedin": "https://www.linkedin.com/in/priyangshu-bhowmik-4a6270262/",
+    "class": "Founding",
+    "status": "Alumni",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Manan Shah",
+    "position": "Founding Class",
+    "image": "/headshots/Founding/Manan.jpg",
+    "year": "Grad 2025",
+    "major": "Computer Science and Data Science",
+    "linkedin": "https://www.linkedin.com/in/manan-shah12/",
+    "class": "Founding",
+    "status": "Alumni",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Akash Puzhakkal",
+    "position": "Founding Class",
+    "image": "/headshots/Founding/Akash.jpg",
+    "year": "Grad 2025",
+    "major": "Computer Science",
+    "linkedin": "https://www.linkedin.com/in/akash-puzhakkal/",
+    "class": "Founding",
+    "status": "Alumni",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Ciera Simon",
+    "position": "Founding Class",
+    "image": "/headshots/Founding/Ciera.jpg",
+    "year": "Grad 2025",
+    "major": "Computer Science and Cognitive Science",
+    "linkedin": "https://www.linkedin.com/in/ciera-simon-65473b24b/",
+    "class": "Founding",
+    "status": "Alumni",
+    "executive_board": false,
+    "committees": []
+  },
+  {
+    "name": "Aishwarya Velagapudi",
+    "position": "Founding Class",
+    "image": "/headshots/Founding/Aishwarya.jpg",
+    "year": "Grad 2025",
+    "major": "BAIT",
+    "linkedin": "https://www.linkedin.com/in/aishwarya-velagapudi/",
+    "class": "Founding",
+    "status": "Alumni",
+    "executive_board": false,
+    "committees": []
+  }
+]

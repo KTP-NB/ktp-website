@@ -19,6 +19,7 @@ export default function Header() {
       { name: 'Home', href: '/' },
       { name: 'About Us', href: '/about' },
       { name: 'Rush', href: '/rush' },
+      { name: 'Spotlight', href: '/spotlight' },
       { name: 'Members', href: '/members' },
       { name: 'Contact us', href: '/contact' },
       { name: 'Gallery', href: '/gallery' },

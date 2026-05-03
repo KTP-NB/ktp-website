@@ -547,6 +547,9 @@ const allMembers = [
         name: "Godasrita Dintakurti",
         position: "Member",
         image: "/images/GODA.JPG",
+        cropPosition: "40% center",
+        cropScale: 1.65,
+        cropOrigin: "49% 32%",
         year: "Sophomore",
         major: "Computer Science",
         linkedin: "https://www.linkedin.com/in/godasrita-dintakurti/",
@@ -558,7 +561,10 @@ const allMembers = [
     {
         name: "Anish Allada",
         position: "Member",
-        image: "",
+        image: "/images/Anish.JPG",
+        cropPosition: "51% center",
+        cropScale: 1.65,
+        cropOrigin: "51% 32%",
         year: "Freshman",
         major: "Computer Science and Data Science",
         linkedin: "https://www.linkedin.com/in/anish-allada/",
@@ -573,6 +579,9 @@ const allMembers = [
         name: "Jyothika Akkineni",
         position: "Member",
         image: "/images/Jyo.JPG",
+        cropPosition: "35% center",
+        cropScale: 1.65,
+        cropOrigin: "51% 32%",
         year: "Freshman",
         major: "Computer Science and Economics",
         linkedin: "https://www.linkedin.com/in/jyothikaakkineni/",
@@ -587,6 +596,9 @@ const allMembers = [
         name: "Vedavyas Painoori",
         position: "Member",
         image: "/images/Ved.JPG",
+        cropPosition: "40% center",
+        cropScale: 1.65,
+        cropOrigin: "48% 32%",
         year: "Freshman",
         major: "Computer Science and Data Science",
         linkedin: "https://www.linkedin.com/in/vedavyas-painoori/",
@@ -601,6 +613,9 @@ const allMembers = [
         name: "Advitya Suri",
         position: "Member",
         image: "/images/ADI.JPG",
+        cropPosition: "50% center",
+        cropScale: 1.65,
+        cropOrigin: "52% 32%",
         year: "Sophomore",
         major: "Computer Science and Math",
         linkedin: "https://www.linkedin.com/in/advitya-suri/",
@@ -613,6 +628,9 @@ const allMembers = [
         name: "Srinidhi Pappu",
         position: "Member",
         image: "/images/Srinidhi.JPG",
+        cropPosition: "48% center",
+        cropScale: 1.65,
+        cropOrigin: "52% 32%",
         year: "Freshman",
         major: "Computer Science and Data Science",
         linkedin: "https://www.linkedin.com/in/srinidhi-pappu/",
@@ -627,6 +645,9 @@ const allMembers = [
         name: "Krish Patel",
         position: "Member",
         image: "/images/KrishP.JPG",
+        cropPosition: "49% center",
+        cropScale: 1.65,
+        cropOrigin: "49% 32%",
         year: "Freshman",
         major: "Computer Science and Math",
         linkedin: "https://www.linkedin.com/in/krish-pat/",
@@ -641,6 +662,9 @@ const allMembers = [
         name: "Anvi Khambadkone",
         position: "Member",
         image: "/images/Anvi.JPG",
+        cropPosition: "35% center",
+        cropScale: 1.65,
+        cropOrigin: "51% 32%",
         year: "Freshman",
         major: "Computer Science and Cognitive Science",
         linkedin: "https://www.linkedin.com/in/anvi-khambadkone/",
@@ -655,6 +679,9 @@ const allMembers = [
         name: "Nayan Yadav",
         position: "Member",
         image: "/images/Nayan.JPG",
+        cropPosition: "47% center",
+        cropScale: 1.65,
+        cropOrigin: "47% 32%",
         year: "Sophomore",
         major: "Computer Engineering",
         linkedin: "https://www.linkedin.com/in/nayan-yadav-ny2006/",
@@ -669,6 +696,9 @@ const allMembers = [
         name: "Kaivalya Atigre",
         position: "Member",
         image: "/images/Kaiv.JPG",
+        cropPosition: "47% center",
+        cropScale: 1.65,
+        cropOrigin: "47% 32%",
         year: "Sophomore",
         major: "Computer Science",
         linkedin: "https://www.linkedin.com/in/kaivalya-atigre/",
@@ -683,6 +713,9 @@ const allMembers = [
         name: "Mira Kehair",
         position: "Member",
         image: "/images/Mira.JPG",
+        cropPosition: "50% center",
+        cropScale: 1.65,
+        cropOrigin: "49% 32%",
         year: "Freshman",
         major: "Computer Science and Math",
         linkedin: "https://www.linkedin.com/in/mira-kehair-52a6613a9/",
@@ -803,7 +836,7 @@ const MemberCard = ({ member, onLinkedInClick }) => (
     >
       {/* IMAGE */}
         <Box
-        sx={{ height: 180, position: 'relative' }}
+        sx={{ height: 180, position: 'relative', overflow: 'hidden' }}
         onClick={() => onLinkedInClick(member.linkedin)}
         className="cursor-pointer"
         >
@@ -812,7 +845,12 @@ const MemberCard = ({ member, onLinkedInClick }) => (
             alt={member.name}
             fill
             sizes="220px"
-            style={{ objectFit: 'cover' }}
+            style={{
+                objectFit: 'cover',
+                objectPosition: member.cropPosition || 'center',
+                transform: member.cropScale ? `scale(${member.cropScale})` : undefined,
+                transformOrigin: member.cropOrigin || 'center',
+            }}
             priority={false}
         />
 
@@ -833,7 +871,7 @@ const MemberCard = ({ member, onLinkedInClick }) => (
 
 
       {/* TEXT */}
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ p: 2, position: 'relative', zIndex: 1 }}>
         <Typography fontWeight={600} fontSize={16}>
           {member.name}
         </Typography>

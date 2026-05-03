@@ -36,27 +36,27 @@ const whoAreWeImages = [
     '/photos for ktp website/IMG_3943.JPG',
 ];
 
-const highlightPosts = [
+const spotlightPreviewPosts = [
     {
-        header: 'Internship',
+        header: 'Chapter Events',
+        src: 'https://www.linkedin.com/embed/feed/update/urn:li:activity:7455643406304845824',
+        href: 'https://www.linkedin.com/posts/noahfox24_had-an-amazing-time-representing-guardian-activity-7455643406304845824-HTO0',
+        height: 645,
+        title: 'Chapter Events LinkedIn post',
+    },
+    {
+        header: 'Internships',
         src: 'https://www.linkedin.com/embed/feed/update/urn:li:share:7454530076777381888?collapsed=1',
         href: 'https://www.linkedin.com/feed/update/urn:li:share:7454530076777381888',
         height: 645,
         title: 'Internship LinkedIn post',
     },
     {
-        header: 'Hackathon',
+        header: 'Hackathons',
         src: 'https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7454658652143239169?collapsed=1',
         href: 'https://www.linkedin.com/feed/update/urn:li:ugcPost:7454658652143239169',
         height: 628,
         title: 'Hackathon LinkedIn post',
-    },
-    {
-        header: 'Program',
-        src: 'https://www.linkedin.com/embed/feed/update/urn:li:share:7456056574806142976?collapsed=1',
-        href: 'https://www.linkedin.com/feed/update/urn:li:share:7456056574806142976',
-        height: 531,
-        title: 'Program LinkedIn post',
     },
 ];
 
@@ -259,17 +259,23 @@ function CarouselSection() {
     );
 }
 
-function HighlightsSection() {
+function SpotlightPreviewSection() {
     return (
         <section className="px-6 lg:px-8 pb-16 lg:pb-20">
             <div className="mx-auto max-w-7xl rounded-3xl border border-blue-100/35 bg-[#dbe8ff]/28 backdrop-blur-xl shadow-[0_16px_45px_rgba(16,36,76,0.30)] p-8 md:p-10 lg:p-12">
-                <div>
-                    <p className="text-xs uppercase tracking-[0.2em] text-white font-semibold">KTP Highlights</p>
-                    <h2 className="mt-3 text-3xl sm:text-4xl font-black tracking-tight text-blue-200">Chapter Spotlight</h2>
+                <div className="flex flex-wrap items-end justify-between gap-4">
+                    <div>
+                        <p className="text-xs uppercase tracking-[0.2em] text-white font-semibold">KTP Highlights</p>
+                        <h2 className="mt-3 text-3xl sm:text-4xl font-black tracking-tight text-blue-200">Chapter Spotlight</h2>
+                    </div>
+                    <Link href="/spotlight" className="inline-flex items-center rounded-full bg-blue-600/90 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-500 transition">
+                        View All Spotlights
+                    </Link>
                 </div>
+
                 <div className="mt-8 overflow-x-auto touch-pan-x pretty-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
                     <div className="flex gap-8 xl:gap-12 xl:justify-center pb-4 snap-x snap-mandatory">
-                        {highlightPosts.map((post) => (
+                        {spotlightPreviewPosts.map((post) => (
                             <div key={post.src} className="snap-start min-w-[336px] flex-shrink-0">
                                 <h3 className="mb-3 text-lg font-bold text-white">{post.header}</h3>
                                 <div className="relative overflow-hidden rounded-2xl">
@@ -331,7 +337,7 @@ export default function Home() {
     return (
         <main className="min-h-screen text-foreground pb-8 overflow-x-hidden">
             <Hero />
-            <HighlightsSection />
+            <SpotlightPreviewSection />
             <CarouselSection />
             <NetworkSection />
         </main>

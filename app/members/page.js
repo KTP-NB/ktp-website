@@ -1,818 +1,19 @@
 'use client';
 
 import React from 'react';
-import { Container, Paper, Typography, Box } from '@mui/material';
+import { Container, Typography, Box } from '@mui/material';
 import {grey} from "@mui/material/colors";
-import NextImage from 'next/image';
 import {LinkedinIcon} from "lucide-react";
+import fallbackMembers from './allMembers.json';
 import Tabs from '../components/Tabs';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FadeIn from '@/components/FadeIn';
+import { supabase } from '@/lib/supabase';
+import { readCachedData, writeCachedData } from '@/lib/publicDataCache';
+import { MEMBERS_CACHE_KEY } from '@/lib/cacheKeys';
+import { greekLetters, memberProfileToCardMember } from './memberProfileMapper';
 
-
-const greekLetters = {
-    Alpha: "α",
-    Beta: "β",
-    Gamma: "Γ",
-    Delta: "δ",
-    Epsilon: "ε",
-    Zeta: "ζ",
-    Eta: "η",
-    Theta: "θ",
-    Iota: "ι",
-    Kappa: "κ",
-    Lambda: "λ",
-    Mu: "μ",
-    Nu: "ν",
-    Xi: "ξ",
-    Omicron: "ο",
-    Pi: "π",
-    Rho: "ρ",
-    Sigma: "σ",
-    Tau: "τ",
-    Upsilon: "υ",
-    Phi: "φ",
-    Chi: "χ",
-    Psi: "ψ",
-    Omega: "ω",
-    Founding: "★"
-};
-
-const allMembers = [
-    {
-        name: "Shriya Srinivasan",
-        position: "National President",
-        image: "/images/Shriya.jpg",
-        year: "Senior",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/shriyasrinivasans/",
-        class: "Founding",
-        status: "Active",
-        executive_board: true,
-        committees: []
-    },
-    {
-        name: "Srimathi Vadivel",
-        position: "President",
-        image: "/images/Srimathi.JPEG",
-        year: "Senior",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/srimathivadivel/",
-        class: "Founding",
-        status: "Active",
-        executive_board: true,
-        committees: []
-    },
-    {
-        name: "Yugal Shah",
-        position: "Vice President",
-        image: "/images/Yugal.png",
-        year: "Junior",
-        major: "Computer Science and Data Science",
-        linkedin: "https://www.linkedin.com/in/yugalnshah/",
-        class: "Alpha",
-        status: "Active",
-        executive_board: true,
-        committees: []
-    },
-    {
-        name: "Shiven Patel",
-        position: "VP of Prof Development",
-        image: "/images/Shiven.jpg",
-        year: "Junior",
-        major: "Computer Science and Data Science",
-        linkedin: "https://www.linkedin.com/in/shiven-patel123/",
-        class: "Alpha",
-        status: "Active",
-        executive_board: true,
-        committees: [
-            "Tech"
-        ]
-    },
-    {
-        name: "Krish Kharbanda",
-        position: "VP of Tech",
-        image: "/images/Krish.png",
-        year: "Junior",
-        major: "Computer Science and Mathematics",
-        linkedin: "https://www.linkedin.com/in/krishkharbanda/",
-        class: "Alpha",
-        status: "Active",
-        executive_board: true,
-        committees: [
-            "Tech"
-        ]
-    },
-    {
-        name: "Abirami Jayakumar",
-        position: "VP of Engagement",
-        image: "/images/Abirami.jpg",
-        year: "Junior",
-        major: "Computer Science and Mathematics",
-        linkedin: "https://www.linkedin.com/in/abiramijayakumar/",
-        class: "Alpha",
-        status: "Active",
-        executive_board: true,
-        committees: [
-            "Pledge"
-        ]
-    },
-    {
-        name: "Umair Siddiqui",
-        position: "VP of Finance",
-        image: "/images/Umair.jpg",
-        year: "Junior",
-        major: "Computer Science and Data Science",
-        linkedin: "https://www.linkedin.com/in/umairsiddiqui05/",
-        class: "Alpha",
-        status: "Active",
-        executive_board: true,
-        committees: [
-            "Finance"
-        ]
-    },
-    {
-        name: "Saatvik Kabra",
-        position: "VP of Membership",
-        image: "/images/Saatvik.jpg",
-        year: "Junior",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/saatvik-kabra",
-        class: "Alpha",
-        status: "Active",
-        executive_board: true,
-        committees: [
-            "Pledge"
-        ]
-    },
-    {
-        name: "Yash Singh",
-        position: "VP of External Affairs",
-        image: "/images/Yash.jpg",
-        year: "Junior",
-        major: "Computer Science and Data Science",
-        linkedin: "https://www.linkedin.com/in/yash-singh-b06a56295/",
-        class: "Alpha",
-        status: "Active",
-        executive_board: true,
-        committees: [
-            "Outreach"
-        ]
-    },
-    {
-        name: "Aditi Sreeganesh",
-        position: "VP of Marketing",
-        image: "/images/Aditi.jpg",
-        year: "Junior",
-        major: "Mathematics and Data Science",
-        linkedin: "https://www.linkedin.com/in/aditi-sreeganesh",
-        class: "Alpha",
-        status: "Active",
-        executive_board: true,
-        committees: [
-            "Marketing"
-        ]
-    },
-    {
-        name: "Akhil Thuremella",
-        position: "VP of Internal Ops",
-        image: "/images/Akhil.jpg",
-        year: "Senior",
-        major: "Computer Science and Data Science",
-        linkedin: "https://www.linkedin.com/in/akhil-thuremella",
-        class: "Alpha",
-        status: "Active",
-        executive_board: true,
-        committees: []
-    },
-    {
-        name: "Suhani Mehra",
-        position: "Member",
-        image: "/images/Suhani.jpg",
-        year: "Junior",
-        major: "Computer Science and Data Science",
-        linkedin: "https://www.linkedin.com/in/suhani-mehra/",
-        class: "Founding",
-        status: "Active",
-        executive_board: false,
-        committees: []
-    },
-    {
-        name: "Sameer Jiandani",
-        position: "Member",
-        image: "/images/Sameer.jpg",
-        year: "Junior",
-        major: "Computer Science and Cognitive Science",
-        linkedin: "https://www.linkedin.com/in/sameerjiandani/",
-        class: "Founding",
-        status: "Active",
-        executive_board: false,
-        committees: []
-    },
-    {
-        name: "Esha Pai",
-        position: "Member",
-        image: "/images/Esha.jpg",
-        year: "Sophomore",
-        major: "Computer Science and Biomathematics",
-        linkedin: "https://www.linkedin.com/in/eshapai/",
-        class: "Beta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Pledge"
-        ]
-    },
-    {
-        name: "Priya Rana",
-        position: "Member",
-        image: "/images/Priya.jpg",
-        year: "Sophomore",
-        major: "Computer Science and Mathematics",
-        linkedin: "https://www.linkedin.com/in/prana24/",
-        class: "Beta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Pledge"
-        ]
-    },
-    {
-        name: "Jayden Shah",
-        position: "Member",
-        image: "/images/Jayden.jpg",
-        year: "Sophomore",
-        major: "Computer Science and Economics",
-        linkedin: "https://www.linkedin.com/in/jaydenshah/",
-        class: "Beta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Outreach"
-        ]
-    },
-    {
-        name: "Raghul Srinivasan",
-        position: "Member",
-        image: "/images/Raghul.jpg",
-        year: "Sophomore",
-        major: "Data Science",
-        linkedin: "https://www.linkedin.com/in/raghulkrishnasrinivasan/",
-        class: "Beta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Finance"
-        ]
-    },
-    {
-        name: "Gourika Dhiman",
-        position: "Member",
-        image: "/images/Gourika.jpg",
-        year: "Sophomore",
-        major: "Computer Science and Data Science",
-        linkedin: "https://www.linkedin.com/in/gourikadhiman/",
-        class: "Beta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Outreach"
-        ]
-    },
-    {
-        name: "Radha Ghate",
-        position: "Member",
-        image: "/images/Radha.jpg",
-        year: "Sophomore",
-        major: "Computer Science and Mathematics",
-        linkedin: "https://www.linkedin.com/in/radhaghate/",
-        class: "Beta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Outreach"
-        ]
-    },
-    {
-        name: "Krisha Bhagat",
-        position: "Member",
-        image: "/images/Krisha.jpg",
-        year: "Sophomore",
-        major: "BAIT and Finance",
-        linkedin: "https://www.linkedin.com/in/krisha-bhagat-07b61127a/",
-        class: "Beta",
-        status: "Active",
-        executive_board: false,
-        committees: []
-    },
-    {
-        name: "Jignasu Shah",
-        position: "Member",
-        image: "/images/Jignasu.jpg",
-        year: "Sophomore",
-        major: "Computer Engineering",
-        linkedin: "https://www.linkedin.com/in/jignasu-shah/",
-        class: "Beta",
-        status: "Active",
-        executive_board: false,
-        committees: []
-    },
-    {
-        name: "Sujay Faldu",
-        position: "Member",
-        image: "/images/Sujay.jpg",
-        year: "Sophomore",
-        major: "Computer Science and Economics",
-        linkedin: "https://www.linkedin.com/in/sujay-faldu/",
-        class: "Beta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Finance"
-        ]
-    },
-    {
-        name: "Heet Shah",
-        position: "Member",
-        image: "/images/Heet.jpg",
-        year: "Sophomore",
-        major: "Computer Science and Data Science",
-        linkedin: "https://www.linkedin.com/in/heetshah15/",
-        class: "Beta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Finance"
-        ]
-    },
-    {
-        name: "Krish Maske",
-        position: "Member",
-        image: "/images/KrishM.jpg",
-        year: "Sophomore",
-        major: "Computer Science and Data Science",
-        linkedin: "https://www.linkedin.com/in/krishmaske/",
-        class: "Beta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Tech"
-        ]
-    },
-    {
-        name: "Gravit Bali",
-        position: "Member",
-        image: "/images/Gravit.jpg",
-        year: "Sophomore",
-        major: "Computer Science and Cognitive Science",
-        linkedin: "https://www.linkedin.com/in/gravitbali/",
-        class: "Beta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Tech"
-        ]
-    },
-    {
-        name: "Ethan Bingemann",
-        position: "Member",
-        image: "/images/Ethan.jpg",
-        year: "Sophomore",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/ethan-bingemann/",
-        class: "Beta",
-        status: "Active",
-        executive_board: false,
-        committees: []
-    },
-    {
-        name: "Abhiram Sajjala",
-        position: "Member",
-        image: "/images/Abhiram.jpg",
-        year: "Sophomore",
-        major: "Mechanical Engineering",
-        linkedin: "https://www.linkedin.com/in/abhiramsajjala/",
-        class: "Beta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Pledge"
-        ]
-    },
-    {
-        name: "Kesha Patel",
-        position: "Member",
-        image: "/images/Kesha.jpg",
-        year: "Sophomore",
-        major: "BAIT and Finance",
-        linkedin: "https://www.linkedin.com/in/kesha-patel-12r/",
-        class: "Beta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Marketing"
-        ]
-    },
-    {
-        name: "Kshiraj Gupta",
-        position: "Member",
-        image: "/images/Kshiraj.jpg",
-        year: "Sophomore",
-        major: "Computer Science and Data Science",
-        linkedin: "https://www.linkedin.com/in/kshiraj-gupta/",
-        class: "Beta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Tech"
-        ]
-    },
-    {
-        name: "Darsh Sundar",
-        position: "Member",
-        image: "/images/Darsh.jpg",
-        year: "Sophomore",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/darshsundar/",
-        class: "Beta",
-        status: "Active",
-        executive_board: false,
-        committees: []
-    },
-    {
-        name: "Anusha Iyer",
-        position: "Member",
-        image: "/images/Anusha.jpg",
-        year: "Sophomore",
-        major: "Computer Science and Math",
-        linkedin: "https://www.linkedin.com/in/anusha--iyer",
-        class: "Gamma",
-        status: "Active",
-        executive_board: false,
-        committees: []
-    },
-    {
-        name: "Aaron Bansal",
-        position: "Member",
-        image: "/images/Aaron.jpg",
-        year: "Sophomore",
-        major: "Computer Science and Math",
-        linkedin: "https://www.linkedin.com/in/aaron-bansal",
-        class: "Gamma",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Tech"
-        ]
-    },
-    {
-        name: "Anant Gupta",
-        position: "Member",
-        image: "/images/Anant.jpg",
-        year: "Sophomore",
-        major: "Computer Science and Data Science",
-        linkedin: "https://www.linkedin.com/in/anantgupta123/",
-        class: "Gamma",
-        status: "Active",
-        executive_board: false,
-        committees: []
-    },
-    {
-        name: "Atul Marichetty",
-        position: "Member",
-        image: "/images/Atul.jpg",
-        year: "Sophomore",
-        major: "Computer Science and Math",
-        linkedin: "https://www.linkedin.com/in/atul-marichetty-0a6636320/",
-        class: "Gamma",
-        status: "Active",
-        executive_board: false,
-        committees: []
-    },
-    {
-        name: "Arnav Venkata",
-        position: "Member",
-        image: "/images/Arnav.jpg",
-        year: "Sophomore",
-        major: "Computer Science and Data Science",
-        linkedin: "https://www.linkedin.com/in/arnav-venkata/",
-        class: "Gamma",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Finance"
-        ]
-    },
-    {
-        name: "Krish Bansal",
-        position: "Member",
-        image: "/images/KrishB.jpg",
-        year: "Sophomore",
-        major: "Computer Engineering",
-        linkedin: "https://www.linkedin.com/in/krish-bansal-44725b328/",
-        class: "Gamma",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Marketing"
-        ]
-    },
-    {
-        name: "Gokulraj Kumarassamy",
-        position: "Member",
-        image: "/images/Gokulraj.jpg",
-        year: "Sophomore",
-        major: "Computer Science and Math",
-        linkedin: "https://www.linkedin.com/in/gokulrajk1/",
-        class: "Gamma",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Pledge"
-        ]
-    },
-    {
-        name: "Aditya Velagapudi",
-        position: "Member",
-        image: "/images/Aditya.jpg",
-        year: "Sophomore",
-        major: "Computer Science and Business Analytics",
-        linkedin: "https://www.linkedin.com/in/adityavelagapudi/",
-        class: "Gamma",
-        status: "Active",
-        executive_board: false,
-        committees: []
-    },
-    {
-        name: "Godasrita Dintakurti",
-        position: "Member",
-        image: "/images/GODA.JPG",
-        cropPosition: "40% center",
-        cropScale: 1.65,
-        cropOrigin: "49% 32%",
-        year: "Sophomore",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/godasrita-dintakurti/",
-        class: "Delta",
-        status: "Active",
-        executive_board: false,
-        committees: []
-    },
-    {
-        name: "Anish Allada",
-        position: "Member",
-        image: "/images/Anish.JPG",
-        cropPosition: "51% center",
-        cropScale: 1.65,
-        cropOrigin: "51% 32%",
-        year: "Freshman",
-        major: "Computer Science and Data Science",
-        linkedin: "https://www.linkedin.com/in/anish-allada/",
-        class: "Delta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Tech"
-        ]
-    },
-    {
-        name: "Jyothika Akkineni",
-        position: "Member",
-        image: "/images/Jyo.JPG",
-        cropPosition: "35% center",
-        cropScale: 1.65,
-        cropOrigin: "51% 32%",
-        year: "Freshman",
-        major: "Computer Science and Economics",
-        linkedin: "https://www.linkedin.com/in/jyothikaakkineni/",
-        class: "Delta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Pledge"
-        ]
-    },
-    {
-        name: "Vedavyas Painoori",
-        position: "Member",
-        image: "/images/Ved.JPG",
-        cropPosition: "40% center",
-        cropScale: 1.65,
-        cropOrigin: "48% 32%",
-        year: "Freshman",
-        major: "Computer Science and Data Science",
-        linkedin: "https://www.linkedin.com/in/vedavyas-painoori/",
-        class: "Delta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Finance"
-        ]
-    },
-    {
-        name: "Advitya Suri",
-        position: "Member",
-        image: "/images/ADI.JPG",
-        cropPosition: "50% center",
-        cropScale: 1.65,
-        cropOrigin: "52% 32%",
-        year: "Sophomore",
-        major: "Computer Science and Math",
-        linkedin: "https://www.linkedin.com/in/advitya-suri/",
-        class: "Delta",
-        status: "Active",
-        executive_board: false,
-        committees: []
-    },
-    {
-        name: "Srinidhi Pappu",
-        position: "Member",
-        image: "/images/Srinidhi.JPG",
-        cropPosition: "48% center",
-        cropScale: 1.65,
-        cropOrigin: "52% 32%",
-        year: "Freshman",
-        major: "Computer Science and Data Science",
-        linkedin: "https://www.linkedin.com/in/srinidhi-pappu/",
-        class: "Delta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Finance"
-        ]
-    },
-    {
-        name: "Krish Patel",
-        position: "Member",
-        image: "/images/KrishP.JPG",
-        cropPosition: "49% center",
-        cropScale: 1.65,
-        cropOrigin: "49% 32%",
-        year: "Freshman",
-        major: "Computer Science and Math",
-        linkedin: "https://www.linkedin.com/in/krish-pat/",
-        class: "Delta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Tech"
-        ]
-    },
-    {
-        name: "Anvi Khambadkone",
-        position: "Member",
-        image: "/images/Anvi.JPG",
-        cropPosition: "35% center",
-        cropScale: 1.65,
-        cropOrigin: "51% 32%",
-        year: "Freshman",
-        major: "Computer Science and Cognitive Science",
-        linkedin: "https://www.linkedin.com/in/anvi-khambadkone/",
-        class: "Delta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Pledge"
-        ]
-    },
-    {
-        name: "Nayan Yadav",
-        position: "Member",
-        image: "/images/Nayan.JPG",
-        cropPosition: "47% center",
-        cropScale: 1.65,
-        cropOrigin: "47% 32%",
-        year: "Sophomore",
-        major: "Computer Engineering",
-        linkedin: "https://www.linkedin.com/in/nayan-yadav-ny2006/",
-        class: "Delta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Tech"
-        ]
-    },
-    {
-        name: "Kaivalya Atigre",
-        position: "Member",
-        image: "/images/Kaiv.JPG",
-        cropPosition: "47% center",
-        cropScale: 1.65,
-        cropOrigin: "47% 32%",
-        year: "Sophomore",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/kaivalya-atigre/",
-        class: "Delta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Marketing"
-        ]
-    },
-    {
-        name: "Mira Kehair",
-        position: "Member",
-        image: "/images/Mira.JPG",
-        cropPosition: "50% center",
-        cropScale: 1.65,
-        cropOrigin: "49% 32%",
-        year: "Freshman",
-        major: "Computer Science and Math",
-        linkedin: "https://www.linkedin.com/in/mira-kehair-52a6613a9/",
-        class: "Delta",
-        status: "Active",
-        executive_board: false,
-        committees: [
-            "Outreach"
-        ]
-    },
-    {
-        name: "Anushka Kondur",
-        position: "Founding Class ",
-        image: "/images/Anushka.jpg",
-        year: "Grad 2025",
-        major: "Former VP of Prof Development",
-        linkedin: "https://www.linkedin.com/in/anushka-kondur/",
-        class: "Founding",
-        status: "Alumni",
-        executive_board: false,
-        committees: []
-    },
-    {
-        name: "Ananya Ahlawat",
-        position: "Founding Class",
-        image: "/images/Ananya.jpg",
-        year: "Grad 2025",
-        major: "Former VP of Marketing",
-        linkedin: "https://www.linkedin.com/in/ananya-ahlawat/",
-        class: "Founding",
-        status: "Alumni",
-        executive_board: false,
-        committees: []
-    },
-    {
-        name: "Priyangshu Bhowmik",
-        position: "Founding Class",
-        image: "/images/Priyangshu.jpg",
-        year: "Grad 2025",
-        major: "Computer Science and Data Science",
-        linkedin: "https://www.linkedin.com/in/priyangshu-bhowmik-4a6270262/",
-        class: "Founding",
-        status: "Alumni",
-        executive_board: false,
-        committees: []
-    },
-    {
-        name: "Manan Shah",
-        position: "Founding Class",
-        image: "/images/Manan.jpg",
-        year: "Grad 2025",
-        major: "Computer Science and Data Science",
-        linkedin: "https://www.linkedin.com/in/manan-shah12/",
-        class: "Founding",
-        status: "Alumni",
-        executive_board: false,
-        committees: []
-    },
-    {
-        name: "Akash Puzhakkal",
-        position: "Founding Class",
-        image: "/images/Akash.jpg",
-        year: "Grad 2025",
-        major: "Computer Science",
-        linkedin: "https://www.linkedin.com/in/akash-puzhakkal/",
-        class: "Founding",
-        status: "Alumni",
-        executive_board: false,
-        committees: []
-    },
-    {
-        name: "Ciera Simon",
-        position: "Founding Class",
-        image: "/images/Ciera.jpg",
-        year: "Grad 2025",
-        major: "Computer Science and Cognitive Science",
-        linkedin: "https://www.linkedin.com/in/ciera-simon-65473b24b/",
-        class: "Founding",
-        status: "Alumni",
-        executive_board: false,
-        committees: []
-    },
-    {
-        name: "Aishwarya Velagapudi",
-        position: "Founding Class",
-        image: "/images/Aishwarya.jpg",
-        year: "Grad 2025",
-        major: "BAIT",
-        linkedin: "https://www.linkedin.com/in/aishwarya-velagapudi/",
-        class: "Founding",
-        status: "Alumni",
-        executive_board: false,
-        committees: []
-    }
-];
-
-
+const MEMBERS_CACHE_TTL_MS = 5 * 60 * 1000;
 
 
 const MemberCard = ({ member, onLinkedInClick }) => (
@@ -840,18 +41,17 @@ const MemberCard = ({ member, onLinkedInClick }) => (
         onClick={() => onLinkedInClick(member.linkedin)}
         className="cursor-pointer"
         >
-        <NextImage
+        <img
             src={member.image}
             alt={member.name}
-            fill
-            sizes="220px"
             style={{
+                width: '100%',
+                height: '100%',
                 objectFit: 'cover',
                 objectPosition: member.cropPosition || 'center',
                 transform: member.cropScale ? `scale(${member.cropScale})` : undefined,
                 transformOrigin: member.cropOrigin || 'center',
             }}
-            priority={false}
         />
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -889,7 +89,7 @@ const MemberCard = ({ member, onLinkedInClick }) => (
             fontWeight: 500,
           }}
         >
-          {member.position}
+          {member.status === 'Alumni' ? member.class : member.position}
         </Box>
       </Box>
     </Box>
@@ -899,6 +99,45 @@ const MemberCard = ({ member, onLinkedInClick }) => (
 
 export default function MembersPage() {
   const [activeTab, setActiveTab] = useState('Executive Board');
+  const [allMembers, setAllMembers] = useState(fallbackMembers);
+  const [loadingMembers, setLoadingMembers] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadMembers() {
+      const cachedMembers = readCachedData(MEMBERS_CACHE_KEY, MEMBERS_CACHE_TTL_MS);
+
+      if (cachedMembers) {
+        setAllMembers(cachedMembers);
+        setLoadingMembers(false);
+      }
+
+      const { data, error } = await supabase
+        .from('member_profiles')
+        .select('*')
+        .order('sort_order', { ascending: true });
+
+      if (!isMounted) return;
+
+      if (error) {
+        console.error('Failed to load member profiles from Supabase:', error);
+        setAllMembers(fallbackMembers);
+      } else {
+        const mappedMembers = (data || []).map(memberProfileToCardMember);
+        writeCachedData(MEMBERS_CACHE_KEY, mappedMembers);
+        setAllMembers(mappedMembers);
+      }
+
+      setLoadingMembers(false);
+    }
+
+    loadMembers();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleLinkedInClick = (url) => {
     if (url) window.open(url, '_blank', 'noopener,noreferrer');
@@ -929,23 +168,92 @@ export default function MembersPage() {
           mt={5}
           className="animate-fade-in"
         >
+        {loadingMembers && (
+          <Typography width="100%" align="center" sx={{ color: grey[300], mb: 3 }}>
+            Loading members...
+          </Typography>
+        )}
         {activeTab !== 'Committees' ? (
-        allMembers
-            .filter(m => {
-                if (activeTab === 'Executive Board') return m.executive_board;
-                if (activeTab === 'Active Members') return m.status === 'Active';
-                if (activeTab === 'Alumni') return m.status === 'Alumni';
-                return false;
-            })
-            .map((member, idx) => (
-                <MemberCard
-                    key={idx}
-                    member={member}
-                    onLinkedInClick={handleLinkedInClick}
-                />
-            ))
+          activeTab === 'Alumni' ? (
+            (() => {
+              const filtered = allMembers.filter(m => m.status === 'Alumni');
+
+              const grouped = filtered.reduce((acc, m) => {
+                const cls = m.class || 'Unknown';
+                if (!acc[cls]) acc[cls] = [];
+                acc[cls].push(m);
+                return acc;
+              }, {});
+
+              const baseOrder = Object.keys(greekLetters).filter(k => k !== 'Founding');
+              const orderedClasses = ['Founding', ...baseOrder];
+              const remaining = Object.keys(grouped).filter(k => !orderedClasses.includes(k)).sort();
+              const renderOrder = [...orderedClasses].reverse().concat(remaining.reverse());
+
+              return renderOrder.map((cls) => {
+                const list = grouped[cls];
+                if (!list || list.length === 0) return null;
+
+                return (
+                  <Box key={cls} width="100%" mb={8}>
+                    <Typography
+                      variant="h5"
+                      align="center"
+                      sx={{
+                        fontWeight: 700,
+                        mb: 3,
+                        letterSpacing: '0.02em',
+                      }}
+                    >
+                      {cls}
+                    </Typography>
+
+                    <Box display="flex" flexWrap="wrap" justifyContent="center">
+                      {list.map((member, idx) => (
+                        <MemberCard key={idx} member={member} onLinkedInClick={handleLinkedInClick} />
+                      ))}
+                    </Box>
+                  </Box>
+                );
+              });
+            })()
+          ) : activeTab === 'Active Members' ? (
+            (() => {
+              const filtered = allMembers.filter(m => m.status === 'Active');
+
+              const grouped = filtered.reduce((acc, m) => {
+                const cls = m.class || 'Unknown';
+                if (!acc[cls]) acc[cls] = [];
+                acc[cls].push(m);
+                return acc;
+              }, {});
+
+              const baseOrder = Object.keys(greekLetters).filter(k => k !== 'Founding');
+              const orderedClasses = ['Founding', ...baseOrder];
+              const remaining = Object.keys(grouped).filter(k => !orderedClasses.includes(k)).sort();
+              const renderOrder = [...orderedClasses].reverse().concat(remaining.reverse());
+
+              // Flatten members by class order (most recent class first) without class headings
+              const flattened = [];
+              renderOrder.forEach((cls) => {
+                const list = grouped[cls];
+                if (list && list.length) flattened.push(...list);
+              });
+
+              return flattened.map((member, idx) => (
+                <MemberCard key={idx} member={member} onLinkedInClick={handleLinkedInClick} />
+              ));
+            })()
+          ) : (
+            // Executive Board: flat list (no class grouping)
+            allMembers
+              .filter(m => m.executive_board)
+              .map((member, idx) => (
+                <MemberCard key={idx} member={member} onLinkedInClick={handleLinkedInClick} />
+              ))
+          )
         ) : (
-        ["Tech", "Finance", "Pledge", "Outreach", "Marketing"].map((committeeName) => {
+          ["Tech", "Finance", "Pledge", "Outreach", "Marketing"].map((committeeName) => {
             const committeeMembersList = allMembers.filter(m => m.committees.includes(committeeName));
             if (committeeMembersList.length === 0) return null;
             
@@ -980,7 +288,7 @@ export default function MembersPage() {
                     </Box>
                 </Box>
             );
-        })
+          })
         )}
 
         </Box>

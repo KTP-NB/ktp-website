@@ -278,7 +278,7 @@ function SpotlightPreviewSection() {
                         {spotlightPreviewPosts.map((post) => (
                             <div key={post.src} className="snap-start min-w-[336px] flex-shrink-0">
                                 <h3 className="mb-3 text-lg font-bold text-white">{post.header}</h3>
-                                <div className="relative overflow-hidden rounded-2xl">
+                                <div className="relative overflow-hidden rounded-xl border border-white/12 bg-white shadow-[0_14px_34px_rgba(12,28,62,0.26)] transition duration-300 hover:-translate-y-1 hover:scale-[1.015] hover:shadow-[0_22px_48px_rgba(12,28,62,0.36)]">
                                     <iframe
                                         src={post.src}
                                         height={Math.round(post.height * 2 / 3)}
@@ -286,14 +286,15 @@ function SpotlightPreviewSection() {
                                         frameBorder="0"
                                         allowFullScreen
                                         title={post.title}
-                                        className="block w-full"
+                                        className="block w-full bg-white"
                                     />
                                     <a
                                         href={post.href}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         aria-label={`Open ${post.header} LinkedIn post in a new tab`}
-                                        className="absolute inset-0"
+                                        title={`Open ${post.header} on LinkedIn`}
+                                        className="absolute right-2 top-2 z-10 h-11 w-20 rounded-md"
                                     />
                                 </div>
                             </div>
@@ -337,8 +338,8 @@ export default function Home() {
     return (
         <main className="min-h-screen text-foreground pb-8 overflow-x-hidden">
             <Hero />
-            <SpotlightPreviewSection />
             <CarouselSection />
+            <SpotlightPreviewSection />
             <NetworkSection />
         </main>
     );

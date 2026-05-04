@@ -1,14 +1,45 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Plus, Send } from 'lucide-react';
+import { Check, ChevronDown, Plus, Send } from 'lucide-react';
 import FadeIn from '@/components/FadeIn';
+import Tabs from '@/components/Tabs';
 import { useAuth } from '@/components/authprovider';
 import { supabase } from '@/lib/supabase';
 import { readCachedData, writeCachedData } from '@/lib/publicDataCache';
 
-const SPOTLIGHT_CACHE_KEY = 'ktp:spotlight_posts:v2';
+const SPOTLIGHT_CACHE_KEY = 'ktp:spotlight_posts:v4';
 const SPOTLIGHT_CACHE_TTL_MS = 5 * 60 * 1000;
+const SPOTLIGHT_CATEGORIES = [
+  { value: 'company', label: 'Company', aliases: ['company', 'internship'] },
+  { value: 'program', label: 'Program', aliases: ['program'] },
+  { value: 'event', label: 'Event', aliases: ['event', 'chapter'] },
+  { value: 'hackathon', label: 'Hackathon', aliases: ['hackathon'] },
+  { value: 'postgrad', label: 'Postgrad', aliases: ['postgrad', 'post-grad'] },
+];
+
+function getSpotlightCategory(value) {
+  const normalizedValue = String(value || '').toLowerCase();
+
+  return SPOTLIGHT_CATEGORIES.find(
+    (category) =>
+      category.value === normalizedValue ||
+      category.aliases.some((alias) => normalizedValue.includes(alias))
+  );
+}
+
+function getSpotlightCategoryLabel(value) {
+  return getSpotlightCategory(value)?.label || '';
+}
+
+function isSpotlightCategory(value) {
+  return Boolean(getSpotlightCategory(value));
+}
+
+function getSpotlightCategoryValueFromLabel(label) {
+  if (label === 'All') return 'all';
+  return SPOTLIGHT_CATEGORIES.find((category) => category.label === label)?.value || 'all';
+}
 
 function normalizeLinkedInEmbedUrl(value) {
   const trimmed = value.trim();
@@ -68,24 +99,33 @@ function getLinkedInPostUrlFromEmbedUrl(value) {
 }
 
 function SpotlightCard({ post }) {
+  const categoryLabel = getSpotlightCategoryLabel(post.category);
+
   const card = (
-    <article className="relative overflow-hidden rounded-xl border border-white/12 bg-white shadow-[0_14px_34px_rgba(12,28,62,0.26)] transition duration-300 hover:-translate-y-1 hover:scale-[1.015] hover:shadow-[0_22px_48px_rgba(12,28,62,0.36)]">
-      <iframe
-        src={post.embed_url}
-        title={post.title}
-        height={post.embed_height || 520}
-        frameBorder="0"
-        allowFullScreen
-        className="block w-full bg-white"
-      />
+    <article className="relative pt-4 transition duration-300 hover:-translate-y-1 hover:scale-[1.015]">
+      {categoryLabel && (
+        <span className="absolute right-4 top-5 z-20 rounded-full border border-blue-200/70 bg-blue-950 px-3 py-1 text-xs font-bold uppercase tracking-wide text-blue-50 shadow-lg shadow-black/20">
+          {categoryLabel}
+        </span>
+      )}
+      <div className="overflow-hidden rounded-xl border border-white/12 bg-white shadow-[0_14px_34px_rgba(12,28,62,0.26)] transition duration-300 hover:shadow-[0_22px_48px_rgba(12,28,62,0.36)]">
+        <iframe
+          src={post.embed_url}
+          title={categoryLabel || 'KTP Spotlight'}
+          height={post.embed_height || 520}
+          frameBorder="0"
+          allowFullScreen
+          className="block w-full bg-white"
+        />
+      </div>
       {post.post_url && (
         <a
           href={post.post_url}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={`Open ${post.title} on LinkedIn`}
-          title={`Open ${post.title} on LinkedIn`}
-          className="absolute right-2 top-2 z-10 h-11 w-20 rounded-md"
+          aria-label={`Open ${categoryLabel || 'spotlight'} on LinkedIn`}
+          title={`Open ${categoryLabel || 'spotlight'} on LinkedIn`}
+          className="absolute right-2 top-6 z-10 h-11 w-20 rounded-md"
         />
       )}
     </article>
@@ -98,8 +138,11 @@ function SpotlightSubmitForm({ onPostCreated }) {
   const { user, displayName } = useAuth();
   const [open, setOpen] = useState(false);
   const [iframeCode, setIframeCode] = useState('');
+  const [category, setCategory] = useState('');
+  const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState(null);
+  const showCategoryError = message?.text === 'Choose what this spotlight is for.';
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -114,6 +157,12 @@ function SpotlightSubmitForm({ onPostCreated }) {
       return;
     }
 
+    if (!isSpotlightCategory(category)) {
+      setMessage({ type: 'error', text: 'Choose what this spotlight is for.' });
+      setCategoryMenuOpen(true);
+      return;
+    }
+
     setSaving(true);
     setMessage(null);
 
@@ -123,10 +172,10 @@ function SpotlightSubmitForm({ onPostCreated }) {
         .insert({
           user_id: user.id,
           author_name: displayName || user.email?.split('@')[0] || 'KTP Member',
-          title: parsedEmbed.title || 'KTP Success',
           embed_url: normalizedEmbedUrl,
           embed_height: parsedEmbed.embedHeight,
           post_url: normalizedPostUrl,
+          category: getSpotlightCategoryLabel(category),
         })
         .select('*')
         .single();
@@ -135,6 +184,8 @@ function SpotlightSubmitForm({ onPostCreated }) {
 
       onPostCreated(data);
       setIframeCode('');
+      setCategory('');
+      setCategoryMenuOpen(false);
       setOpen(false);
     } catch (error) {
       setMessage({ type: 'error', text: error.message || 'Could not add spotlight post.' });
@@ -146,11 +197,54 @@ function SpotlightSubmitForm({ onPostCreated }) {
   if (!user) return null;
 
   return (
-    <section className="flex justify-end">
-      <div className="flex w-full max-w-4xl flex-col items-end gap-3 sm:flex-row sm:items-start sm:justify-end">
+    <section className="relative z-50 flex justify-end">
+      <div className="relative z-50 flex w-full max-w-4xl flex-col items-end gap-3 sm:flex-row sm:items-start sm:justify-end">
         {open && (
           <form onSubmit={onSubmit} className="w-full sm:max-w-3xl">
-            <div className="flex overflow-hidden rounded-full border border-white/15 bg-white/8 shadow-xl backdrop-blur-xl focus-within:border-blue-300">
+            <div className="flex flex-col overflow-visible rounded-2xl border border-white/15 bg-white/8 shadow-xl backdrop-blur-xl focus-within:border-blue-300 sm:flex-row sm:rounded-full">
+              <div className="relative z-50 min-w-44 border-b border-white/15 sm:border-b-0 sm:border-r">
+                <button
+                  type="button"
+                  onClick={() => setCategoryMenuOpen((current) => !current)}
+                  aria-expanded={categoryMenuOpen}
+                  aria-label="Spotlight category"
+                  className={`flex h-11 w-full items-center justify-between gap-3 rounded-t-2xl bg-blue-950/35 px-4 text-left text-sm font-semibold text-white outline-none transition hover:bg-white/10 focus:bg-white/10 sm:rounded-l-full sm:rounded-tr-none ${
+                    showCategoryError ? 'ring-2 ring-red-300/70' : ''
+                  }`}
+                >
+                  <span className={category ? 'text-white' : 'text-white/80'}>
+                    {getSpotlightCategoryLabel(category) || 'Looking for...'}
+                  </span>
+                  <ChevronDown size={16} className={`shrink-0 transition ${categoryMenuOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {categoryMenuOpen && (
+                  <div className="absolute left-0 top-full z-[100] mt-2 w-56 overflow-hidden rounded-xl border border-white/15 bg-slate-950/95 p-1 shadow-2xl shadow-black/45 backdrop-blur-xl">
+                    {SPOTLIGHT_CATEGORIES.map((option) => {
+                      const isSelected = category === option.value;
+
+                      return (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => {
+                            setCategory(option.value);
+                            setCategoryMenuOpen(false);
+                            setMessage(null);
+                          }}
+                          className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-semibold transition ${
+                            isSelected
+                              ? 'bg-blue-600 text-white shadow-sm'
+                              : 'text-white/80 hover:bg-white/10 hover:text-white'
+                          }`}
+                        >
+                          <span>{option.label}</span>
+                          {isSelected && <Check size={16} className="shrink-0" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
               <input
                 value={iframeCode}
                 onChange={(event) => setIframeCode(event.target.value)}
@@ -190,8 +284,12 @@ function SpotlightSubmitForm({ onPostCreated }) {
 
 export default function SpotlightPage() {
   const [posts, setPosts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
+  const filterTabs = useMemo(() => ['All', ...SPOTLIGHT_CATEGORIES.map((category) => category.label)], []);
+  const activeFilterTab =
+    selectedCategory === 'all' ? 'All' : getSpotlightCategoryLabel(selectedCategory);
 
   const sortedPosts = useMemo(
     () =>
@@ -202,6 +300,11 @@ export default function SpotlightPage() {
       }),
     [posts]
   );
+
+  const filteredPosts = useMemo(() => {
+    if (selectedCategory === 'all') return sortedPosts;
+    return sortedPosts.filter((post) => getSpotlightCategory(post.category)?.value === selectedCategory);
+  }, [selectedCategory, sortedPosts]);
 
   useEffect(() => {
     let isMounted = true;
@@ -267,21 +370,31 @@ export default function SpotlightPage() {
 
         <SpotlightSubmitForm onPostCreated={addPost} />
 
+        <div className="relative z-10 mt-8">
+          <Tabs
+            tabs={filterTabs}
+            active={activeFilterTab}
+            setActive={(tab) => setSelectedCategory(getSpotlightCategoryValueFromLabel(tab))}
+          />
+        </div>
+
         {loading && <p className="mt-8 text-white/70">Loading spotlight posts...</p>}
         {!loading && loadError && (
           <p className="mt-8 rounded-xl border border-red-300/25 bg-red-400/10 px-4 py-3 text-sm text-red-100">
             {loadError}
           </p>
         )}
-        {!loading && !loadError && sortedPosts.length === 0 && (
+        {!loading && !loadError && filteredPosts.length === 0 && (
           <p className="mt-8 rounded-xl border border-white/12 bg-white/6 px-5 py-4 text-center text-white/70">
-            No spotlight posts yet.
+            {selectedCategory === 'all'
+              ? 'No spotlight posts yet.'
+              : `No ${getSpotlightCategoryLabel(selectedCategory).toLowerCase()} spotlights yet.`}
           </p>
         )}
 
-        {sortedPosts.length > 0 && (
-          <section className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {sortedPosts.map((post) => (
+        {filteredPosts.length > 0 && (
+          <section className="relative z-0 mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {filteredPosts.map((post) => (
               <SpotlightCard key={post.id} post={post} />
             ))}
           </section>

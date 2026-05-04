@@ -6,6 +6,7 @@ const AuthCtx = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined); // undefined = loading
+  const [profileName, setProfileName] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -16,7 +17,14 @@ export function AuthProvider({ children }) {
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      const nextUser = session?.user ?? null;
+      setUser((currentUser) => {
+        if (currentUser?.id && nextUser?.id && currentUser.id === nextUser.id && currentUser.email === nextUser.email) {
+          return currentUser;
+        }
+
+        return nextUser;
+      });
     });
 
     return () => {
@@ -25,9 +33,42 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
+  useEffect(() => {
+    if (!user?.id) {
+      setProfileName(null);
+      return undefined;
+    }
+
+    let isMounted = true;
+
+    async function loadProfileName() {
+      const { data, error } = await supabase
+        .from('member_profiles')
+        .select('name')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (!isMounted) return;
+      setProfileName(error ? null : data?.name || null);
+    }
+
+    loadProfileName();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user?.id]);
+
   const value = useMemo(() => ({
     user,
     loading: user === undefined,
+    displayName:
+      profileName ||
+      user?.user_metadata?.full_name ||
+      user?.user_metadata?.name ||
+      user?.email?.split('@')[0] ||
+      '',
+    setProfileName,
     signOut: () => supabase.auth.signOut(),
     signIn: async (email, password) => {
       const formattedEmail = email.toLowerCase();
@@ -91,7 +132,7 @@ export function AuthProvider({ children }) {
       if (error) throw error;
       return data;
     },
-  }), [user]);
+  }), [user, profileName]);
 
   return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;
 }

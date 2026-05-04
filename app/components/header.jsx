@@ -10,7 +10,8 @@ import { useAuth } from '@/components/authprovider';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user, loading, signOut } = useAuth();
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const { user, loading, signOut, displayName } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -27,16 +28,20 @@ export default function Header() {
     []
   );
 
-  const navLinksWithStudy = useMemo(() => {
-    if (!loading && user) {
-      return [...navLinks, { name: 'Study Tools', href: '/study-tools' }];
-    }
-    return navLinks;
-  }, [navLinks, loading, user]);
+  const authRequiredLinks = useMemo(
+    () => [
+      { name: 'Study Tools', href: '/study-tools' },
+      { name: 'Profile', href: '/profile' },
+    ],
+    []
+  );
 
   const authLinks = !loading && user ? [] : [{ name: 'Login', href: '/login' }];
 
-  const handleNavigation = () => setMobileMenuOpen(false);
+  const handleNavigation = () => {
+    setMobileMenuOpen(false);
+    setAccountMenuOpen(false);
+  };
 
   return (
     <header className="absolute inset-x-0 top-0 z-50 bg-transparent">
@@ -67,7 +72,7 @@ export default function Header() {
         </div>
 
         <div className="hidden lg:flex justify-center gap-x-2">
-          {navLinksWithStudy.map((item) => {
+          {navLinks.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
@@ -92,13 +97,52 @@ export default function Header() {
         <div className="hidden lg:flex justify-end items-center gap-x-2">
           {!loading && user ? (
             <>
-              <span className="text-sm opacity-80">{user.email}</span>
-              <button
-                onClick={async () => { await signOut(); window.location.href = '/'; }}
-                className="text-base font-bold leading-6 text-white px-6 py-2.5 rounded-full border border-white/20 hover:bg-white/10 transition-all"
-              >
-                Sign out
-              </button>
+              <span className="max-w-[140px] truncate text-sm font-semibold opacity-90" title={displayName}>
+                {displayName}
+              </span>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setAccountMenuOpen((open) => !open)}
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/25 text-white transition hover:bg-white/10"
+                  aria-label="Open member menu"
+                  aria-expanded={accountMenuOpen}
+                >
+                  <Bars3Icon aria-hidden="true" className="h-6 w-6" />
+                </button>
+
+                {accountMenuOpen && (
+                  <div className="absolute right-0 mt-3 w-52 overflow-hidden rounded-2xl border border-white/15 bg-slate-900/95 p-2 shadow-2xl backdrop-blur-xl">
+                    {authRequiredLinks.map((item) => {
+                      const isActive = pathname === item.href;
+                      return (
+                        <Link
+                          key={item.name}
+                          href={item.href}
+                          onClick={handleNavigation}
+                          className={`block rounded-xl px-4 py-3 text-sm font-bold transition ${
+                            isActive
+                              ? 'bg-blue-600 text-white'
+                              : 'text-white hover:bg-white/10 hover:text-blue-200'
+                          }`}
+                        >
+                          {item.name}
+                        </Link>
+                      );
+                    })}
+                    <button
+                      onClick={async () => {
+                        setAccountMenuOpen(false);
+                        await signOut();
+                        window.location.href = '/';
+                      }}
+                      className="mt-1 block w-full rounded-xl px-4 py-3 text-left text-sm font-bold text-white transition hover:bg-white/10 hover:text-blue-200"
+                    >
+                      Sign out
+                    </button>
+                  </div>
+                )}
+              </div>
             </>
           ) : (
             authLinks.map((item) => (
@@ -147,7 +191,7 @@ export default function Header() {
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-700">
               <div className="space-y-2 py-6">
-                {navLinksWithStudy.map((item) => {
+                {navLinks.map((item) => {
                   const isActive = pathname === item.href;
                   return (
                     <Link
@@ -170,8 +214,25 @@ export default function Header() {
                 {!loading && user ? (
                   <>
                     <div className="px-3 py-2 text-base font-medium text-white/80">
-                      {user.email}
+                      {displayName}
                     </div>
+                    {authRequiredLinks.map((item) => {
+                      const isActive = pathname === item.href;
+                      return (
+                        <Link
+                          key={item.name}
+                          href={item.href}
+                          onClick={handleNavigation}
+                          className={`-mx-3 block rounded-full px-4 py-3 text-base font-bold leading-7 whitespace-nowrap transition-all ${
+                            isActive
+                              ? 'bg-blue-600 text-white'
+                              : 'text-white hover:bg-white/10'
+                          }`}
+                        >
+                          {item.name}
+                        </Link>
+                      );
+                    })}
                     <button
                       onClick={async () => { await signOut(); setMobileMenuOpen(false); window.location.href = '/'; }}
                       className="-mx-3 block w-full text-left rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-gray-700 hover:text-indigo-300"

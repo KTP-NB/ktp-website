@@ -9,7 +9,8 @@
     "class": "Founding",
     "status": "Alumni",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "shriya@srinivasans.com"
   },
   {
     "name": "Srimathi Vadivel",
@@ -21,7 +22,8 @@
     "class": "Founding",
     "status": "Alumni",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "srimathi.vadivel@gmail.com"
   },
   {
     "name": "Yugal Shah",
@@ -33,7 +35,8 @@
     "class": "Alpha",
     "status": "Active",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "yugals3305@gmail.com"
   },
   {
     "name": "Shiven Patel",
@@ -45,7 +48,8 @@
     "class": "Alpha",
     "status": "Alumni",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "shivenpatel217@gmail.com"
   },
   {
     "name": "Krish Kharbanda",
@@ -57,7 +61,8 @@
     "class": "Alpha",
     "status": "Alumni",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "kharbandakrish23@gmail.com"
   },
   {
     "name": "Abirami Jayakumar",
@@ -69,7 +74,8 @@
     "class": "Alpha",
     "status": "Active",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "jayakumarabirami4@gmail.com"
   },
   {
     "name": "Umair Siddiqui",
@@ -81,7 +87,8 @@
     "class": "Alpha",
     "status": "Active",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "umairsiddiqui2005@gmail.com"
   },
   {
     "name": "Saatvik Kabra",
@@ -93,7 +100,8 @@
     "class": "Alpha",
     "status": "Active",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "1saatvikkabra1@gmail.com"
   },
   {
     "name": "Yash Singh",
@@ -105,7 +113,8 @@
     "class": "Alpha",
     "status": "Active",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "yashisyoshi@gmail.com"
   },
   {
     "name": "Aditi Sreeganesh",
@@ -117,7 +126,8 @@
     "class": "Alpha",
     "status": "Active",
     "executive_board": true,
-    "committees": []
+    "committees": [],
+    "email": "adisree05@gmail.com"
   },
   {
     "name": "Akhil Thuremella",
@@ -129,7 +139,8 @@
     "class": "Alpha",
     "status": "Alumni",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "akhil.thuremella1@gmail.com"
   },
   {
     "name": "Suhani Mehra",
@@ -141,7 +152,8 @@
     "class": "Founding",
     "status": "Active",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "mehra.suhani03@gmail.com"
   },
   {
     "name": "Sameer Jiandani",
@@ -153,7 +165,8 @@
     "class": "Founding",
     "status": "Active",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": ""
   },
   {
     "name": "Esha Pai",
@@ -165,7 +178,8 @@
     "class": "Beta",
     "status": "Active",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "esha.pai254@gmail.com"
   },
   {
     "name": "Priya Rana",
@@ -177,7 +191,8 @@
     "class": "Beta",
     "status": "Active",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "priyarana7870@gmail.com"
   },
   {
     "name": "Jayden Shah",
@@ -191,7 +206,8 @@
     "executive_board": false,
     "committees": [
       "Outreach"
-    ]
+    ],
+    "email": "jaydenshah2024@gmail.com"
   },
   {
     "name": "Raghul Srinivasan",
@@ -203,7 +219,8 @@
     "class": "Beta",
     "status": "Active",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "rghlsri2345@gmail.com"
   },
   {
     "name": "Gourika Dhiman",
@@ -217,7 +234,8 @@
     "executive_board": true,
     "committees": [
       "Outreach"
-    ]
+    ],
+    "email": "gourikadhiman@gmail.com"
   },
   {
     "name": "Radha Ghate",
@@ -231,7 +249,8 @@
     "executive_board": false,
     "committees": [
       "Outreach"
-    ]
+    ],
+    "email": "radhaghate05@gmail.com"
   },
   {
     "name": "Krisha Bhagat",
@@ -245,7 +264,8 @@
     "executive_board": true,
     "committees": [
       "Marketing"
-    ]
+    ],
+    "email": "krishabhagat0246@gmail.com"
   },
   {
     "name": "Jignasu Shah",
@@ -259,7 +279,8 @@
     "executive_board": false,
     "committees": [
       "Outreach"
-    ]
+    ],
+    "email": "jignasu.shah06@gmail.com"
   },
   {
     "name": "Sujay Faldu",
@@ -271,7 +292,8 @@
     "class": "Beta",
     "status": "Active",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "sfaldu.24@gmail.com"
   },
   {
     "name": "Heet Shah",
@@ -285,7 +307,8 @@
     "executive_board": false,
     "committees": [
       "Finance"
-    ]
+    ],
+    "email": "heet9000@gmail.com"
   },
   {
     "name": "Krish Maske",
@@ -299,7 +322,8 @@
     "executive_board": true,
     "committees": [
       "Tech"
-    ]
+    ],
+    "email": "krishm.imp@gmail.com"
   },
   {
     "name": "Gravit Bali",
@@ -313,7 +337,8 @@
     "executive_board": true,
     "committees": [
       "Finance"
-    ]
+    ],
+    "email": "rzgravit@gmail.com"
   },
   {
     "name": "Ethan Bingemann",
@@ -325,7 +350,8 @@
     "class": "Beta",
     "status": "Active",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "etbingemann@gmail.com"
   },
   {
     "name": "Abhiram Sajjala",
@@ -339,7 +365,8 @@
     "executive_board": true,
     "committees": [
       "Pledge"
-    ]
+    ],
+    "email": "sajjalaabhiram@gmail.com"
   },
   {
     "name": "Kesha Patel",
@@ -353,7 +380,8 @@
     "executive_board": false,
     "committees": [
       "Pledge"
-    ]
+    ],
+    "email": "kesha2006patel@gmail.com"
   },
   {
     "name": "Kshiraj Gupta",
@@ -365,7 +393,8 @@
     "class": "Beta",
     "status": "Active",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": ""
   },
   {
     "name": "Darsh Sundar",
@@ -379,7 +408,8 @@
     "executive_board": false,
     "committees": [
       "Finance"
-    ]
+    ],
+    "email": "darshsundar007@gmail.com"
   },
   {
     "name": "Anusha Iyer",
@@ -391,7 +421,8 @@
     "class": "Gamma",
     "status": "Active",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "aiyer720@gmail.com"
   },
   {
     "name": "Aaron Bansal",
@@ -405,7 +436,8 @@
     "executive_board": true,
     "committees": [
       "Tech"
-    ]
+    ],
+    "email": "aaronbansal5@gmail.com"
   },
   {
     "name": "Anant Gupta",
@@ -419,7 +451,8 @@
     "executive_board": false,
     "committees": [
       "Marketing"
-    ]
+    ],
+    "email": "onantgupta@gmail.com"
   },
   {
     "name": "Atul Marichetty",
@@ -431,7 +464,8 @@
     "class": "Gamma",
     "status": "Active",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "atul.marichetty@gmail.com"
   },
   {
     "name": "Arnav Venkata",
@@ -443,7 +477,8 @@
     "class": "Gamma",
     "status": "Active",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "arnavvenkata1@gmail.com"
   },
   {
     "name": "Krish Bansal",
@@ -455,7 +490,8 @@
     "class": "Gamma",
     "status": "Active",
     "executive_board": true,
-    "committees": []
+    "committees": [],
+    "email": "krishkb06@gmail.com"
   },
   {
     "name": "Gokulraj Kumarassamy",
@@ -469,7 +505,8 @@
     "executive_board": true,
     "committees": [
       "Pledge"
-    ]
+    ],
+    "email": "gkumarassamy@gmail.com"
   },
   {
     "name": "Aditya Velagapudi",
@@ -481,7 +518,8 @@
     "class": "Gamma",
     "status": "Active",
     "executive_board": true,
-    "committees": []
+    "committees": [],
+    "email": "adityasv20@gmail.com"
   },
   {
     "name": "Godasrita Dintakurti",
@@ -493,7 +531,8 @@
     "class": "Delta",
     "status": "Active",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "godasrita.din@gmail.com"
   },
   {
     "name": "Anish Allada",
@@ -507,7 +546,8 @@
     "executive_board": false,
     "committees": [
       "Tech"
-    ]
+    ],
+    "email": "anishallada06@gmail.com"
   },
   {
     "name": "Jyothika Akkineni",
@@ -521,7 +561,8 @@
     "executive_board": false,
     "committees": [
       "Pledge"
-    ]
+    ],
+    "email": "akkineni.jyo@gmail.com"
   },
   {
     "name": "Vedavyas Painoori",
@@ -535,7 +576,8 @@
     "executive_board": false,
     "committees": [
       "Finance"
-    ]
+    ],
+    "email": "vedavyas.painoori17@gmail.com"
   },
   {
     "name": "Advitya Suri",
@@ -547,7 +589,8 @@
     "class": "Delta",
     "status": "Active",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": "advityas007@gmail.com"
   },
   {
     "name": "Srinidhi Pappu",
@@ -561,7 +604,8 @@
     "executive_board": false,
     "committees": [
       "Finance"
-    ]
+    ],
+    "email": "srinidhipappu2007@gmail.com"
   },
   {
     "name": "Krish Patel",
@@ -575,7 +619,8 @@
     "executive_board": false,
     "committees": [
       "Tech"
-    ]
+    ],
+    "email": "krish.arun.patel@gmail.com"
   },
   {
     "name": "Anvi Khambadkone",
@@ -589,7 +634,8 @@
     "executive_board": false,
     "committees": [
       "Pledge"
-    ]
+    ],
+    "email": "anvi.khambadkone@gmail.com"
   },
   {
     "name": "Nayan Yadav",
@@ -603,7 +649,8 @@
     "executive_board": false,
     "committees": [
       "Tech"
-    ]
+    ],
+    "email": "yadav.nayan2006@gmail.com"
   },
   {
     "name": "Kaivalya Atigre",
@@ -617,7 +664,8 @@
     "executive_board": false,
     "committees": [
       "Marketing"
-    ]
+    ],
+    "email": "kaivalya515@gmail.com"
   },
   {
     "name": "Mira Kehair",
@@ -631,7 +679,8 @@
     "executive_board": false,
     "committees": [
       "Outreach"
-    ]
+    ],
+    "email": "mira.kehair@gmail.com"
   },
   {
     "name": "Anushka Kondur",
@@ -643,7 +692,8 @@
     "class": "Founding",
     "status": "Alumni",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": ""
   },
   {
     "name": "Ananya Ahlawat",
@@ -655,7 +705,8 @@
     "class": "Founding",
     "status": "Alumni",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": ""
   },
   {
     "name": "Priyangshu Bhowmik",
@@ -667,7 +718,8 @@
     "class": "Founding",
     "status": "Alumni",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": ""
   },
   {
     "name": "Manan Shah",
@@ -679,7 +731,8 @@
     "class": "Founding",
     "status": "Alumni",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": ""
   },
   {
     "name": "Akash Puzhakkal",
@@ -691,7 +744,8 @@
     "class": "Founding",
     "status": "Alumni",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": ""
   },
   {
     "name": "Ciera Simon",
@@ -703,7 +757,8 @@
     "class": "Founding",
     "status": "Alumni",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": ""
   },
   {
     "name": "Aishwarya Velagapudi",
@@ -715,6 +770,7 @@
     "class": "Founding",
     "status": "Alumni",
     "executive_board": false,
-    "committees": []
+    "committees": [],
+    "email": ""
   }
 ]

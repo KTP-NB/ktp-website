@@ -1,44 +1,19 @@
 'use client';
 
 import React from 'react';
-import { Container, Paper, Typography, Box } from '@mui/material';
+import { Container, Typography, Box } from '@mui/material';
 import {grey} from "@mui/material/colors";
-import NextImage from 'next/image';
 import {LinkedinIcon} from "lucide-react";
-import allMembers from './allMembers.json';
+import fallbackMembers from './allMembers.json';
 import Tabs from '../components/Tabs';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FadeIn from '@/components/FadeIn';
+import { supabase } from '@/lib/supabase';
+import { readCachedData, writeCachedData } from '@/lib/publicDataCache';
+import { MEMBERS_CACHE_KEY } from '@/lib/cacheKeys';
+import { greekLetters, memberProfileToCardMember } from './memberProfileMapper';
 
-
-const greekLetters = {
-    Alpha: "Α",
-    Beta: "Β",
-    Gamma: "Γ",
-    Delta: "Δ",
-    Epsilon: "Ε",
-    Zeta: "Ζ",
-    Eta: "Η",
-    Theta: "Θ",
-    Iota: "Ι",
-    Kappa: "Κ",
-    Lambda: "Λ",
-    Mu: "Μ",
-    Nu: "Ν",
-    Xi: "Ξ",
-    Omicron: "Ο",
-    Pi: "Π",
-    Rho: "Ρ",
-    Sigma: "Σ",
-    Tau: "Τ",
-    Upsilon: "Υ",
-    Phi: "Φ",
-    Chi: "Χ",
-    Psi: "Ψ",
-    Omega: "Ω",
-    Founding: "★"
-};
-
+const MEMBERS_CACHE_TTL_MS = 5 * 60 * 1000;
 
 
 const MemberCard = ({ member, onLinkedInClick }) => (
@@ -66,18 +41,17 @@ const MemberCard = ({ member, onLinkedInClick }) => (
         onClick={() => onLinkedInClick(member.linkedin)}
         className="cursor-pointer"
         >
-        <NextImage
+        <img
             src={member.image}
             alt={member.name}
-            fill
-            sizes="220px"
             style={{
+                width: '100%',
+                height: '100%',
                 objectFit: 'cover',
                 objectPosition: member.cropPosition || 'center',
                 transform: member.cropScale ? `scale(${member.cropScale})` : undefined,
                 transformOrigin: member.cropOrigin || 'center',
             }}
-            priority={false}
         />
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -125,6 +99,45 @@ const MemberCard = ({ member, onLinkedInClick }) => (
 
 export default function MembersPage() {
   const [activeTab, setActiveTab] = useState('Executive Board');
+  const [allMembers, setAllMembers] = useState(fallbackMembers);
+  const [loadingMembers, setLoadingMembers] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadMembers() {
+      const cachedMembers = readCachedData(MEMBERS_CACHE_KEY, MEMBERS_CACHE_TTL_MS);
+
+      if (cachedMembers) {
+        setAllMembers(cachedMembers);
+        setLoadingMembers(false);
+      }
+
+      const { data, error } = await supabase
+        .from('member_profiles')
+        .select('*')
+        .order('sort_order', { ascending: true });
+
+      if (!isMounted) return;
+
+      if (error) {
+        console.error('Failed to load member profiles from Supabase:', error);
+        setAllMembers(fallbackMembers);
+      } else {
+        const mappedMembers = (data || []).map(memberProfileToCardMember);
+        writeCachedData(MEMBERS_CACHE_KEY, mappedMembers);
+        setAllMembers(mappedMembers);
+      }
+
+      setLoadingMembers(false);
+    }
+
+    loadMembers();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleLinkedInClick = (url) => {
     if (url) window.open(url, '_blank', 'noopener,noreferrer');
@@ -155,6 +168,11 @@ export default function MembersPage() {
           mt={5}
           className="animate-fade-in"
         >
+        {loadingMembers && (
+          <Typography width="100%" align="center" sx={{ color: grey[300], mb: 3 }}>
+            Loading members...
+          </Typography>
+        )}
         {activeTab !== 'Committees' ? (
           activeTab === 'Alumni' ? (
             (() => {

@@ -49,8 +49,12 @@ export default function GalleryPage() {
   const [offsetY, setOffsetY] = useState(0);
 
   useEffect(() => {
+    // Skip parallax on mobile to avoid scroll jank
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    if (isMobile) return;
+
     const handleScroll = () => setOffsetY(window.scrollY);
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 

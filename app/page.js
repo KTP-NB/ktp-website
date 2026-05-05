@@ -147,12 +147,12 @@ function Hero() {
                     <div className="hidden xl:block absolute left-[-4rem] top-[-4rem] bottom-[-4rem] w-64 pointer-events-none z-10">
                         <motion.div initial={{ opacity: 0, scale: 0.8, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.8, ease: "easeOut" }} className="absolute top-[10%] left-0">
                             <div className="relative w-[21.06rem] h-[15.66rem] rounded-2xl border border-blue-100/35 overflow-hidden shadow-2xl animate-float pointer-events-auto" style={{ '--rotation': '-6deg', transform: 'rotate(-6deg)' }}>
-                                <Image src={heroImages[0]} alt="KTP moment" fill sizes="338px" quality={85} className="object-cover" />
+                                <Image src={heroImages[0]} alt="KTP moment" fill sizes="338px" quality={100} className="object-cover" />
                             </div>
                         </motion.div>
                         <motion.div initial={{ opacity: 0, scale: 0.8, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.9, ease: "easeOut" }} className="absolute bottom-[9%] left-8">
                             <div className="relative w-[16.2rem] h-[16.2rem] rounded-2xl border border-blue-100/35 overflow-hidden shadow-2xl animate-float-slow pointer-events-auto" style={{ '--rotation': '4deg', transform: 'rotate(4deg)' }}>
-                                <Image src={heroImages[1]} alt="KTP moment" fill sizes="260px" quality={85} className="object-cover" />
+                                <Image src={heroImages[1]} alt="KTP moment" fill sizes="260px" quality={100} className="object-cover" />
                             </div>
                         </motion.div>
                     </div>
@@ -161,17 +161,17 @@ function Hero() {
                     <div className="hidden xl:block absolute right-[-4rem] top-[-4rem] bottom-[-4rem] w-80 pointer-events-none z-10">
                         <motion.div initial={{ opacity: 0, scale: 0.8, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.5, delay: 1.0, ease: "easeOut" }} className="absolute top-[8%] right-0">
                             <div className="relative w-[16.2rem] h-[16.2rem] rounded-2xl border border-blue-100/35 overflow-hidden shadow-2xl animate-float-slow pointer-events-auto" style={{ '--rotation': '8deg', transform: 'rotate(8deg)' }}>
-                                <Image src={heroImages[2]} alt="KTP moment" fill sizes="260px" quality={85} className="object-cover" />
+                                <Image src={heroImages[2]} alt="KTP moment" fill sizes="260px" quality={100} className="object-cover" />
                             </div>
                         </motion.div>
                         <motion.div initial={{ opacity: 0, scale: 0.8, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.5, delay: 1.1, ease: "easeOut" }} className="absolute top-[43%] right-[10rem] z-30">
                             <div className="relative right-[-1rem] w-[12.6rem] h-[9.9rem] rounded-2xl border border-blue-100/35 overflow-hidden shadow-2xl animate-float pointer-events-auto" style={{ '--rotation': '-1deg', transform: 'rotate(-1deg)' }}>
-                                <Image src={'/photos for ktp website/IMG_6731.JPG'} alt="KTP moment" fill sizes="202px" quality={85} className="object-cover" />
+                                <Image src={'/photos for ktp website/IMG_6731.JPG'} alt="KTP moment" fill sizes="202px" quality={100} className="object-cover" />
                             </div>
                         </motion.div>
                         <motion.div initial={{ opacity: 0, scale: 0.8, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.5, delay: 1.2, ease: "easeOut" }} className="absolute bottom-5 right-3">
                             <div className="relative bottom-[-1rem] w-[18rem] h-[13.5rem] rounded-3xl border border-blue-100/35 overflow-hidden shadow-2xl animate-float pointer-events-auto" style={{ '--rotation': '-5deg', transform: 'rotate(-5deg)' }}>
-                                <Image src={heroImages[3]} alt="KTP moment" fill sizes="288px" quality={85} className="object-cover" />
+                                <Image src={heroImages[3]} alt="KTP moment" fill sizes="288px" quality={100} className="object-cover" />
                             </div>
                         </motion.div>
                     </div>
@@ -182,12 +182,12 @@ function Hero() {
                         <div className="xl:hidden flex gap-4 mb-12">
                              <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.8 }}>
                                 <div className="relative w-[8.1rem] h-[10.8rem] sm:w-[9.9rem] sm:h-[13.5rem] rounded-xl border border-blue-100/35 overflow-hidden shadow-xl animate-float" style={{ '--rotation': '-4deg', transform: 'rotate(-4deg)' }}>
-                                    <Image src={heroImages[0]} alt="KTP moment" fill sizes="(max-width: 640px) 130px, 158px" quality={85} priority className="object-cover" />
+                                    <Image src={heroImages[0]} alt="KTP moment" fill sizes="(max-width: 640px) 130px, 158px" quality={100} priority className="object-cover" />
                                 </div>
                             </motion.div>
                             <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.9 }}>
                                 <div className="relative w-[8.1rem] h-[10.8rem] sm:w-[9.9rem] sm:h-[13.5rem] rounded-xl border border-blue-100/35 overflow-hidden shadow-xl animate-float-slow mt-10" style={{ '--rotation': '3deg', transform: 'rotate(3deg)' }}>
-                                    <Image src={heroImages[1]} alt="KTP moment" fill sizes="(max-width: 640px) 130px, 158px" quality={85} className="object-cover" />
+                                    <Image src={heroImages[1]} alt="KTP moment" fill sizes="(max-width: 640px) 130px, 158px" quality={100} className="object-cover" />
                                 </div>
                             </motion.div>
                         </div>
@@ -238,12 +238,12 @@ function Hero() {
                         <div className="hidden sm:flex xl:hidden gap-4 mt-12">
                              <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 1.0 }}>
                                 <div className="relative w-[8.1rem] h-[10.8rem] sm:w-[9.9rem] sm:h-[13.5rem] rounded-xl border border-blue-100/35 overflow-hidden shadow-xl animate-float-slow" style={{ '--rotation': '5deg', transform: 'rotate(5deg)' }}>
-                                    <Image src={heroImages[2]} alt="KTP moment" fill sizes="158px" quality={85} className="object-cover" />
+                                    <Image src={heroImages[2]} alt="KTP moment" fill sizes="158px" quality={100} className="object-cover" />
                                 </div>
                             </motion.div>
                             <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 1.1 }}>
                                 <div className="relative w-[8.1rem] h-[10.8rem] sm:w-[9.9rem] sm:h-[13.5rem] rounded-xl border border-blue-100/35 overflow-hidden shadow-xl animate-float mt-10" style={{ '--rotation': '-6deg', transform: 'rotate(-6deg)' }}>
-                                    <Image src={heroImages[3]} alt="KTP moment" fill sizes="158px" quality={85} className="object-cover" />
+                                    <Image src={heroImages[3]} alt="KTP moment" fill sizes="158px" quality={100} className="object-cover" />
                                 </div>
                             </motion.div>
                         </div>
@@ -275,7 +275,7 @@ function CarouselSection() {
                     <div className="flex gap-6 pb-4 snap-x snap-mandatory">
                         {carouselImages.map((src, i) => (
                             <div key={src + i} className="relative snap-start min-w-[260px] md:min-w-[320px] lg:min-w-[360px] h-56 rounded-2xl overflow-hidden border border-blue-100/35 shadow-[0_16px_36px_rgba(18,40,82,0.34)] backdrop-blur-md bg-white/10 flex-shrink-0">
-                                <Image src={src} alt="KTP photo" width={720} height={480} sizes="(max-width: 768px) 260px, (max-width: 1024px) 320px, 360px" quality={85} className="object-cover w-full h-full" />
+                                <Image src={src} alt="KTP photo" width={720} height={480} sizes="(max-width: 768px) 260px, (max-width: 1024px) 320px, 360px" quality={100} className="object-cover w-full h-full" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#112347]/18 via-transparent to-white/10" />
                             </div>
                         ))}
@@ -287,7 +287,6 @@ function CarouselSection() {
 }
 
 function SpotlightPreviewSection() {
-    const isDesktop = useIsDesktop();
 
     return (
         <section className="px-6 lg:px-8 pb-16 lg:pb-20">
@@ -307,8 +306,7 @@ function SpotlightPreviewSection() {
                         {spotlightPreviewPosts.map((post) => (
                             <div key={post.src} className="snap-start min-w-[min(336px,calc(100vw-6rem))] flex-shrink-0">
                                 <h3 className="mb-3 text-lg font-bold text-white">{post.header}</h3>
-                                {isDesktop ? (
-                                    <div className="relative overflow-hidden rounded-xl border border-white/12 bg-white shadow-[0_14px_34px_rgba(12,28,62,0.26)] transition duration-300 hover:-translate-y-1 hover:scale-[1.015] hover:shadow-[0_22px_48px_rgba(12,28,62,0.36)]">
+                                <div className="relative overflow-hidden rounded-xl border border-white/12 bg-white shadow-[0_14px_34px_rgba(12,28,62,0.26)] transition duration-300 hover:-translate-y-1 hover:scale-[1.015] hover:shadow-[0_22px_48px_rgba(12,28,62,0.36)]">
                                         <iframe
                                             src={post.src}
                                             height={Math.round(post.height * 2 / 3)}
@@ -328,16 +326,6 @@ function SpotlightPreviewSection() {
                                             className="absolute right-2 top-2 z-10 h-11 w-20 rounded-md"
                                         />
                                     </div>
-                                ) : (
-                                    <a
-                                        href={post.href}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex h-28 items-center justify-center rounded-xl border border-white/15 bg-blue-950/45 px-5 text-center text-sm font-bold text-white shadow-[0_14px_34px_rgba(12,28,62,0.22)]"
-                                    >
-                                        Open on LinkedIn
-                                    </a>
-                                )}
                             </div>
                         ))}
                     </div>

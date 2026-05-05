@@ -130,7 +130,7 @@ export default function RushPage() {
             alt="Kappa Theta Pi Brothers"
             fill
             sizes="100vw"
-            quality={65}
+            quality={85}
             priority
             className="object-cover object-center"
           />
@@ -335,7 +335,7 @@ function EventImage({ event }) {
                 alt={event.title}
                 fill
                 sizes="(max-width: 768px) calc(100vw - 6rem), 380px"
-                quality={65}
+                quality={85}
                 loading="lazy"
                 className="object-cover"
               />

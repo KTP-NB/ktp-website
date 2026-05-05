@@ -1,22 +1,38 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 export default function MouseGlow() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Detect mobile/low-power devices and skip heavy GPU effects
+    const mq = window.matchMedia("(max-width: 768px)");
+    setIsMobile(mq.matches);
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  // Skip entirely on mobile — these blur orbs are too GPU-heavy for Safari/mobile
+  if (isMobile) return null;
+
   return (
     <>
       <style>{`
         @keyframes drift1 {
-          0%   { transform: translate(10vw, 20vh); }
-          25%  { transform: translate(60vw, 10vh); }
-          50%  { transform: translate(70vw, 60vh); }
-          75%  { transform: translate(20vw, 70vh); }
-          100% { transform: translate(10vw, 20vh); }
+          0%   { transform: translate(10vw, 20vh) translate(-50%, -50%); }
+          25%  { transform: translate(60vw, 10vh) translate(-50%, -50%); }
+          50%  { transform: translate(70vw, 60vh) translate(-50%, -50%); }
+          75%  { transform: translate(20vw, 70vh) translate(-50%, -50%); }
+          100% { transform: translate(10vw, 20vh) translate(-50%, -50%); }
         }
         @keyframes drift2 {
-          0%   { transform: translate(75vw, 55vh); }
-          25%  { transform: translate(25vw, 75vh); }
-          50%  { transform: translate(15vw, 25vh); }
-          75%  { transform: translate(65vw, 15vh); }
-          100% { transform: translate(75vw, 55vh); }
+          0%   { transform: translate(75vw, 55vh) translate(-50%, -50%); }
+          25%  { transform: translate(25vw, 75vh) translate(-50%, -50%); }
+          50%  { transform: translate(15vw, 25vh) translate(-50%, -50%); }
+          75%  { transform: translate(65vw, 15vh) translate(-50%, -50%); }
+          100% { transform: translate(75vw, 55vh) translate(-50%, -50%); }
         }
         .glow-orb-1 {
           position: fixed;
@@ -30,7 +46,6 @@ export default function MouseGlow() {
           animation: drift1 18s ease-in-out infinite;
           will-change: transform;
           mix-blend-mode: screen;
-          translate: -50% -50%;
         }
         .glow-orb-2 {
           position: fixed;
@@ -44,7 +59,6 @@ export default function MouseGlow() {
           animation: drift2 24s ease-in-out infinite;
           will-change: transform;
           mix-blend-mode: screen;
-          translate: -50% -50%;
         }
       `}</style>
       <div aria-hidden="true" className="glow-orb-1" />

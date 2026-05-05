@@ -17,7 +17,7 @@ export default function GalleryGridClient({ images = [], initialLoad = 20 }) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {visible.map((src, idx) => (
           <div key={idx} className="w-full h-48 sm:h-56 md:h-48 lg:h-56 relative rounded overflow-hidden bg-gray-100">
-            <Image src={src} alt={`gallery-${idx}`} fill sizes="(max-width: 768px) 50vw, 25vw" style={{ objectFit: 'cover' }} loading="lazy" />
+            <Image src={src} alt={`gallery-${idx}`} fill sizes="(max-width: 768px) 45vw, 25vw" quality={65} style={{ objectFit: 'cover' }} loading="lazy" />
           </div>
         ))}
       </div>

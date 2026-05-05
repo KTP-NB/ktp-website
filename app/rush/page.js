@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import FadeIn from "@/components/FadeIn";
 
 /* =========================
@@ -28,7 +29,7 @@ const events = [
     title: "Informational #2",
     date: "Wednesday, January 28th • 9:00-10:00 PM",
     location: "TBD",
-    image: "/images/homepicture3.jpg",
+    image: "/images/homepicture3.JPG",
     description:
       "Join us again for an overview of what it means to be a brother of Kappa Theta Pi. Meet members, learn about rush, and ask questions in an open discussion format.",
   },
@@ -36,7 +37,7 @@ const events = [
     title: "Paint the Set",
     date: "Thursday, January 29th • 9:00–10:00 PM",
     location: "TBD",
-    image: "/images/homepicture2.jpg",
+    image: "/images/homepicture2.JPG",
     description:
       "A fun, low-pressure paint-and-sip event to create art and get to know the brothers.",
   },
@@ -87,30 +88,51 @@ const faqs = [
    ========================= */
 export default function RushPage() {
   const [offsetY, setOffsetY] = useState(0);
+  const isDesktop = useIsDesktop();
   const dots = useLoadingDots();
 
 
   useEffect(() => {
-    const handleScroll = () => setOffsetY(window.scrollY);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    if (!isDesktop) {
+      setOffsetY(0);
+      return undefined;
+    }
+
+    let frame = null;
+    const handleScroll = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(() => {
+        setOffsetY(window.scrollY);
+        frame = null;
+      });
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, [isDesktop]);
 
   return (
     <div className="min-h-screen">
       <FadeIn>
 
       {/* ================= HERO ================= */}
-      <section className="relative h-[70vh] min-h-[950px] w-full overflow-hidden pb-30">
+      <section className="relative h-[78svh] min-h-[620px] w-full overflow-hidden pb-30 md:h-[70vh] md:min-h-[950px]">
         {/* Parallax background */}
         <div
           className="absolute inset-0"
           style={{ transform: `translateY(${offsetY * 0.35}px)` }}
         >
-          <img
+          <Image
             src="/images/homepicture9.jpeg"
             alt="Kappa Theta Pi Brothers"
-            className="h-full w-full object-cover object-center"
+            fill
+            sizes="100vw"
+            quality={65}
+            priority
+            className="object-cover object-center"
           />
         </div>
 
@@ -152,7 +174,7 @@ export default function RushPage() {
       about Kappa Theta Pi, our values, and our community.
     </p>
 
-    <div className="mt-8 flex justify-center gap-4">
+    <div className="mt-8 flex flex-wrap justify-center gap-4">
       <a
         href="http://forms.gle/knCAtjQDVHZ6KkRCA"
         className="rounded-full bg-blue-500 px-8 py-3 text-white font-medium hover:bg-blue-400 transition"
@@ -189,93 +211,26 @@ export default function RushPage() {
 
 
   <div className="max-w-7xl mx-auto px-6">
-    <div className="relative space-y-24">
+    <div className="relative space-y-12 md:space-y-24">
       {/* Center line */}
-      <div className="absolute left-1/2 top-0 h-full w-[2px] bg-blue-200 -translate-x-1/2" />
+      <div className="absolute left-4 top-0 h-full w-[2px] bg-blue-200 md:left-1/2 md:-translate-x-1/2" />
 
       {events.map((event, idx) => {
         const isLeft = idx % 2 === 0;
 
         return (
-          <div key={idx} className="grid grid-cols-[1fr_auto_1fr] items-center gap-12">
+          <div key={idx} className="grid grid-cols-[auto_1fr] items-start gap-x-6 gap-y-5 md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-12">
             {/* LEFT COLUMN */}
-            <div className={`flex justify-${isLeft ? "end" : "start"}`}>
+            <div className={`order-2 col-start-2 flex md:order-none md:col-start-auto ${isLeft ? "md:justify-end" : "md:justify-start"}`}>
               {isLeft ? (
                                 
-                <div className="w-[420px]  rounded-2xl bg-white/90 backdrop-blur-md border border-white/40 shadow-[0_18px_50px_rgba(0,0,0,0.18)] p-6">
-                  <div className="text-[11px] tracking-[0.18em] uppercase text-slate-500">
-                    Event Details
-                  </div>
-
-                  <h3 className="mt-2 text-lg font-semibold text-slate-900">
-                    {event.title}
-                  </h3>
-
-                  <p className="text-sm text-slate-600 mt-1">{event.date}</p>
-                  <p className="text-sm text-slate-500">{event.location}</p>
-
-                  {event.description && (
-                    <p className="mt-4 text-sm text-slate-700 leading-relaxed">
-                      {event.description}
-                    </p>
-                  )}
-
-                  {/* optional CTAs if you added them */}
-                  {event.ctas?.length > 0 && (
-                    <div className="mt-5 flex flex-wrap gap-3">
-                      {event.ctas.map((cta) => (
-                        <a
-                          key={cta.href}
-                          href={cta.href}
-                          className={
-                            cta.variant === "primary"
-                              ? "rounded-full bg-slate-900 px-5 py-2.5 text-white text-sm font-medium hover:bg-slate-800 transition"
-                              : "rounded-full border border-slate-300 px-5 py-2.5 text-slate-800 text-sm font-medium hover:bg-slate-50 transition"
-                          }
-                        >
-                          {cta.label}
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <EventDetails event={event} />
 
 
 
 
               ) : (
-              <div className="relative w-[420px]">
-                {/* subtle spotlight */}
-
-                {/* outer frame */}
-                <div className="rounded-[18px] bg-[#0b0f1c] p-[10px] shadow-[0_30px_80px_rgba(0,0,0,0.45)]">
-                  {/* inner metallic lip */}
-                  <div className="rounded-[14px] p-[2px] bg-gradient-to-r from-white/30 via-white/10 to-white/30">
-                    {/* mat board */}
-                    <div className="rounded-[12px] bg-[#f8fafc] p-4">
-                      {/* photo */}
-                      <div className="overflow-hidden rounded-[10px] bg-black">
-                        <img
-                          src={event.image}
-                          alt={event.title}
-                          className="w-[380px] h-[240px] object-cover"
-                        />
-                      </div>
-
-                      {/* exhibit label */}
-                      <div className="mt-3">
-                        <div className="text-[10px] tracking-[0.22em] uppercase text-slate-400">
-                          Night Palooza Exhibition
-                        </div>
-                        <div className="text-sm font-medium text-slate-700">
-                          {event.title}
-                        </div>
-                        
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <EventImage event={event} />
 
 
 
@@ -284,85 +239,19 @@ export default function RushPage() {
             </div>
 
             {/* TIMELINE DOT */}
-            <div className="relative z-10">
+            <div className="relative z-10 order-1 col-start-1 row-span-2 mt-3 md:order-none md:col-start-auto md:row-span-1 md:mt-0">
               <div className="w-4 h-4 bg-blue-600 rounded-full ring-4 ring-blue-100" />
             </div>
 
             {/* RIGHT COLUMN */}
-            <div className={`flex justify-${isLeft ? "start" : "end"}`}>
+            <div className={`order-3 col-start-2 flex md:order-none md:col-start-auto ${isLeft ? "md:justify-start" : "md:justify-end"}`}>
               {isLeft ? (
 
-              <div className="relative w-[420px]">
-                {/* subtle spotlight */}
-
-                {/* outer frame */}
-                <div className="rounded-[18px] bg-[#0b0f1c] p-[10px] shadow-[0_30px_80px_rgba(0,0,0,0.45)]">
-                  {/* inner metallic lip */}
-                  <div className="rounded-[14px] p-[2px] bg-gradient-to-r from-white/30 via-white/10 to-white/30">
-                    {/* mat board */}
-                    <div className="rounded-[12px] bg-[#f8fafc] p-4">
-                      {/* photo */}
-                      <div className="overflow-hidden rounded-[10px] bg-black">
-                        <img
-                          src={event.image}
-                          alt={event.title}
-                          className="w-[380px] h-[240px] object-cover"
-                        />
-                      </div>
-
-                      {/* exhibit label */}
-                      <div className="mt-3">
-                        <div className="text-[10px] tracking-[0.22em] uppercase text-slate-400">
-                          Night Palooza Exhibition
-                        </div>
-                        <div className="text-sm font-medium text-slate-700">
-                          {event.title}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <EventImage event={event} />
                                 ) : (
                            
                                 
-                <div className="w-[420px]  rounded-2xl bg-white/90 backdrop-blur-md border border-white/40 shadow-[0_18px_50px_rgba(0,0,0,0.18)] p-6">
-                  <div className="text-[11px] tracking-[0.18em] uppercase text-slate-500">
-                    Event Details
-                  </div>
-
-                  <h3 className="mt-2 text-lg font-semibold text-slate-900">
-                    {event.title}
-                  </h3>
-
-                  <p className="text-sm text-slate-600 mt-1">{event.date}</p>
-                  <p className="text-sm text-slate-500">{event.location}</p>
-
-                  {event.description && (
-                    <p className="mt-4 text-sm text-slate-700 leading-relaxed">
-                      {event.description}
-                    </p>
-                  )}
-
-                  {/* optional CTAs if you added them */}
-                  {event.ctas?.length > 0 && (
-                    <div className="mt-5 flex flex-wrap gap-3">
-                      {event.ctas.map((cta) => (
-                        <a
-                          key={cta.href}
-                          href={cta.href}
-                          className={
-                            cta.variant === "primary"
-                              ? "rounded-full bg-slate-900 px-5 py-2.5 text-white text-sm font-medium hover:bg-slate-800 transition"
-                              : "rounded-full border border-slate-300 px-5 py-2.5 text-slate-800 text-sm font-medium hover:bg-slate-50 transition"
-                          }
-                        >
-                          {cta.label}
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <EventDetails event={event} />
 
                 
               )}
@@ -378,9 +267,9 @@ export default function RushPage() {
 
 
       {/* ================= FAQ ================= */}
-      <section id="faq" className="bg-slate-50 py-28">
+      <section id="faq" className="bg-slate-50 py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center text-gray-900 mb-14">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-10 md:mb-14">
             Frequently Asked Questions
           </h2>
 
@@ -388,6 +277,81 @@ export default function RushPage() {
         </div>
       </section>
       </FadeIn>
+    </div>
+  );
+}
+
+function EventDetails({ event }) {
+  return (
+    <div className="w-full rounded-2xl bg-white/90 backdrop-blur-md border border-white/40 shadow-[0_18px_50px_rgba(0,0,0,0.18)] p-5 md:w-[420px] md:p-6">
+                  <div className="text-[11px] tracking-[0.18em] uppercase text-slate-500">
+                    Event Details
+                  </div>
+
+                  <h3 className="mt-2 text-lg font-semibold text-slate-900">
+                    {event.title}
+                  </h3>
+
+                  <p className="text-sm text-slate-600 mt-1">{event.date}</p>
+                  <p className="text-sm text-slate-500">{event.location}</p>
+
+                  {event.description && (
+                    <p className="mt-4 text-sm text-slate-700 leading-relaxed">
+                      {event.description}
+                    </p>
+                  )}
+
+                  {/* optional CTAs if you added them */}
+                  {event.ctas?.length > 0 && (
+                    <div className="mt-5 flex flex-wrap gap-3">
+                      {event.ctas.map((cta) => (
+                        <a
+                          key={cta.href}
+                          href={cta.href}
+                          className={
+                            cta.variant === "primary"
+                              ? "rounded-full bg-slate-900 px-5 py-2.5 text-white text-sm font-medium hover:bg-slate-800 transition"
+                              : "rounded-full border border-slate-300 px-5 py-2.5 text-slate-800 text-sm font-medium hover:bg-slate-50 transition"
+                          }
+                        >
+                          {cta.label}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+  );
+}
+
+function EventImage({ event }) {
+  return (
+    <div className="relative w-full md:w-[420px]">
+      <div className="rounded-[18px] bg-[#0b0f1c] p-[10px] shadow-[0_30px_80px_rgba(0,0,0,0.45)]">
+        <div className="rounded-[14px] p-[2px] bg-gradient-to-r from-white/30 via-white/10 to-white/30">
+          <div className="rounded-[12px] bg-[#f8fafc] p-3 md:p-4">
+            <div className="relative aspect-[19/12] overflow-hidden rounded-[10px] bg-black">
+              <Image
+                src={event.image}
+                alt={event.title}
+                fill
+                sizes="(max-width: 768px) calc(100vw - 6rem), 380px"
+                quality={65}
+                loading="lazy"
+                className="object-cover"
+              />
+            </div>
+
+            <div className="mt-3">
+              <div className="text-[10px] tracking-[0.22em] uppercase text-slate-400">
+                Night Palooza Exhibition
+              </div>
+              <div className="text-sm font-medium text-slate-700">
+                {event.title}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -457,5 +421,31 @@ function useLoadingDots() {
   }, []);
 
   return dots;
+}
+
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 768px)");
+    const update = () => setIsDesktop(query.matches);
+
+    update();
+    if (query.addEventListener) {
+      query.addEventListener("change", update);
+    } else {
+      query.addListener(update);
+    }
+
+    return () => {
+      if (query.removeEventListener) {
+        query.removeEventListener("change", update);
+      } else {
+        query.removeListener(update);
+      }
+    };
+  }, []);
+
+  return isDesktop;
 }
 

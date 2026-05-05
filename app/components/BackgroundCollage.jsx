@@ -3,7 +3,7 @@
 import Image from 'next/image';
 
 const IMAGES = [
-  '/images/bg1.JPG',
+  '/images/bg1.jpg',
   '/images/bg3.png',
   '/images/bg4.jpeg',
   '/images/bg5.jpeg',
@@ -51,6 +51,8 @@ export default function BackgroundCollage() {
               alt=""
               width={p.w}
               height={p.w}
+              sizes={`${p.w}px`}
+              quality={65}
               className="rounded-xl"
               priority={i < 2}
             />

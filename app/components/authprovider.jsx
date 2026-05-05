@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { hasSupabaseConfig, supabase } from '@/lib/supabase';
 
 const AuthCtx = createContext(null);
 
@@ -9,6 +9,11 @@ export function AuthProvider({ children }) {
   const [profileName, setProfileName] = useState(null);
 
   useEffect(() => {
+    if (!hasSupabaseConfig) {
+      setUser(null);
+      return undefined;
+    }
+
     let isMounted = true;
 
     supabase.auth.getSession().then(({ data }) => {
@@ -34,7 +39,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (!user?.id) {
+    if (!hasSupabaseConfig || !user?.id) {
       setProfileName(null);
       return undefined;
     }
@@ -69,8 +74,12 @@ export function AuthProvider({ children }) {
       user?.email?.split('@')[0] ||
       '',
     setProfileName,
-    signOut: () => supabase.auth.signOut(),
+    signOut: () => (hasSupabaseConfig ? supabase.auth.signOut() : Promise.resolve()),
     signIn: async (email, password) => {
+      if (!hasSupabaseConfig) {
+        throw new Error('Authentication is not configured.');
+      }
+
       const formattedEmail = email.toLowerCase();
 
       // 1. Attempt standard Supabase login
@@ -125,6 +134,10 @@ export function AuthProvider({ children }) {
       throw error;
     },
     resetPassword: async (email) => {
+      if (!hasSupabaseConfig) {
+        throw new Error('Authentication is not configured.');
+      }
+
       const { data, error } = await supabase.auth.resetPasswordForEmail(email.toLowerCase(), {
         redirectTo: `${window.location.origin}/update-password`,
       });

@@ -8,7 +8,7 @@ import fallbackMembers from './allMembers.json';
 import Tabs from '../components/Tabs';
 import { useEffect, useState } from 'react';
 import FadeIn from '@/components/FadeIn';
-import { supabase } from '@/lib/supabase';
+import { hasSupabaseConfig, supabase } from '@/lib/supabase';
 import { readCachedData, writeCachedData } from '@/lib/publicDataCache';
 import { MEMBERS_CACHE_KEY } from '@/lib/cacheKeys';
 import { greekLetters, memberProfileToCardMember } from './memberProfileMapper';
@@ -111,6 +111,11 @@ export default function MembersPage() {
       if (cachedMembers) {
         setAllMembers(cachedMembers);
         setLoadingMembers(false);
+      }
+
+      if (!hasSupabaseConfig) {
+        setLoadingMembers(false);
+        return;
       }
 
       const { data, error } = await supabase

@@ -53,3 +53,5 @@ credentials.json
 !.env.example
 
 leaks-report.json
+scripts/
+scripts/*

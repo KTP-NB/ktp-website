@@ -51,6 +51,8 @@ export default function BackgroundCollage() {
               alt=""
               width={p.w}
               height={p.w}
+              sizes={`${p.w}px`}
+              quality={65}
               className="rounded-xl"
               priority={i < 2}
             />

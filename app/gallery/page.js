@@ -82,7 +82,7 @@ export default function GalleryPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="rounded-3xl border border-blue-100/35 bg-[#dbe8ff]/28 backdrop-blur-xl p-5 sm:p-7">
-          <GalleryGridClient images={images} initialLoad={20} />
+          <GalleryGridClient images={images} initialLoad={8} />
         </div>
       </main>
       </FadeIn>

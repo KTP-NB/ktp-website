@@ -5,7 +5,7 @@ import { Check, ChevronDown, Plus, Send } from 'lucide-react';
 import FadeIn from '@/components/FadeIn';
 import Tabs from '@/components/Tabs';
 import { useAuth } from '@/components/authprovider';
-import { supabase } from '@/lib/supabase';
+import { hasSupabaseConfig, supabase } from '@/lib/supabase';
 import { readCachedData, writeCachedData } from '@/lib/publicDataCache';
 
 const SPOTLIGHT_CACHE_KEY = 'ktp:spotlight_posts:v4';
@@ -167,6 +167,10 @@ function SpotlightSubmitForm({ onPostCreated }) {
     setMessage(null);
 
     try {
+      if (!hasSupabaseConfig) {
+        throw new Error('Spotlight posting is not configured.');
+      }
+
       const { data, error } = await supabase
         .from('spotlight_posts')
         .insert({
@@ -316,6 +320,11 @@ export default function SpotlightPage() {
         setPosts(cachedPosts);
         setLoadError(null);
         setLoading(false);
+      }
+
+      if (!hasSupabaseConfig) {
+        setLoading(false);
+        return;
       }
 
       const { data, error } = await supabase

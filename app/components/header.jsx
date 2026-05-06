@@ -31,6 +31,7 @@ export default function Header() {
   const authRequiredLinks = useMemo(
     () => [
       { name: 'Study Tools', href: '/study-tools' },
+      { name: 'Admin Portal', href: '/admin' },
       { name: 'Profile', href: '/profile' },
     ],
     []

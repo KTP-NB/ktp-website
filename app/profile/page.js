@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Camera, Save } from 'lucide-react';
+import { Camera, Save, FileText, Upload, Trash2, ExternalLink } from 'lucide-react';
 import AuthGate from '@/components/authgate';
 import FadeIn from '@/components/FadeIn';
 import { useAuth } from '@/components/authprovider';
@@ -29,6 +29,8 @@ const emptyProfile = {
   linkedin_url: '',
   photo_url: '',
   photo_storage_path: '',
+  resume_url: '',
+  resume_storage_path: '',
 };
 
 function fileExtension(file) {
@@ -55,6 +57,9 @@ function ProfileEditor() {
   const [form, setForm] = useState(emptyProfile);
   const [photoFile, setPhotoFile] = useState(null);
   const [photoPreview, setPhotoPreview] = useState('');
+  const [uploadingResume, setUploadingResume] = useState(false);
+  const [deletingResume, setDeletingResume] = useState(false);
+  const [resumeMessage, setResumeMessage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState(null);
@@ -105,6 +110,8 @@ function ProfileEditor() {
           linkedin_url: data.linkedin_url || '',
           photo_url: data.photo_url || '',
           photo_storage_path: data.photo_storage_path || '',
+          resume_url: data.resume_url || '',
+          resume_storage_path: data.resume_storage_path || '',
         });
       }
 
@@ -155,6 +162,93 @@ function ProfileEditor() {
     };
   }
 
+  async function handleResumeUpload(file) {
+    if (!file || !user || !profileId) return;
+
+    setUploadingResume(true);
+    setResumeMessage(null);
+
+    try {
+      const extension = fileExtension(file);
+      const version = Date.now();
+      const RESUME_BUCKET = 'member-resumes';
+      const path = `resumes/${user.id}/${fileSafeName(form.name)}-resume.${extension}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from(RESUME_BUCKET)
+        .upload(path, file, {
+          contentType: file.type || 'application/pdf',
+          upsert: true,
+        });
+
+      if (uploadError) throw uploadError;
+
+      const resumeUrl = supabase.storage.from(RESUME_BUCKET).getPublicUrl(path).data.publicUrl;
+      const versionedUrl = `${resumeUrl}?v=${version}`;
+
+      // Update member_profiles with the resume info
+      const { error: updateError } = await supabase
+        .from('member_profiles')
+        .update({
+          resume_url: versionedUrl,
+          resume_storage_path: path,
+          resume_bucket: RESUME_BUCKET,
+        })
+        .eq('id', profileId)
+        .eq('user_id', user.id);
+
+      if (updateError) throw updateError;
+
+      // Remove old resume if path changed
+      if (form.resume_storage_path && form.resume_storage_path !== path) {
+        await supabase.storage.from(RESUME_BUCKET).remove([form.resume_storage_path]);
+      }
+
+      setForm((prev) => ({
+        ...prev,
+        resume_url: versionedUrl,
+        resume_storage_path: path,
+      }));
+      setResumeMessage({ type: 'success', text: 'Resume uploaded successfully.' });
+    } catch (err) {
+      setResumeMessage({ type: 'error', text: err.message || 'Failed to upload resume.' });
+    } finally {
+      setUploadingResume(false);
+    }
+  }
+
+  async function handleResumeDelete() {
+    if (!form.resume_storage_path || !profileId) return;
+    if (!confirm('Remove your resume? This cannot be undone.')) return;
+
+    setDeletingResume(true);
+    setResumeMessage(null);
+
+    try {
+      const RESUME_BUCKET = 'member-resumes';
+      const { error: removeError } = await supabase.storage
+        .from(RESUME_BUCKET)
+        .remove([form.resume_storage_path]);
+
+      if (removeError) throw removeError;
+
+      const { error: updateError } = await supabase
+        .from('member_profiles')
+        .update({ resume_url: null, resume_storage_path: null })
+        .eq('id', profileId)
+        .eq('user_id', user.id);
+
+      if (updateError) throw updateError;
+
+      setForm((prev) => ({ ...prev, resume_url: '', resume_storage_path: '' }));
+      setResumeMessage({ type: 'success', text: 'Resume removed.' });
+    } catch (err) {
+      setResumeMessage({ type: 'error', text: err.message || 'Failed to remove resume.' });
+    } finally {
+      setDeletingResume(false);
+    }
+  }
+
   async function onSubmit(event) {
     event.preventDefault();
     if (!profileId) return;
@@ -198,6 +292,8 @@ function ProfileEditor() {
         linkedin_url: data.linkedin_url || '',
         photo_url: data.photo_url || '',
         photo_storage_path: data.photo_storage_path || '',
+        resume_url: data.resume_url || '',
+        resume_storage_path: data.resume_storage_path || '',
       });
       setProfileName(data.name || null);
       setPhotoFile(null);
@@ -302,6 +398,79 @@ function ProfileEditor() {
             </button>
           </section>
         </form>
+
+        {/* ========== RESUME SECTION ========== */}
+        {profileId && (
+          <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl md:p-8">
+            <h2 className="text-xl font-bold mb-1">Resume</h2>
+            <p className="text-sm text-white/60 mb-6">Upload your resume as a PDF so leadership can review it.</p>
+
+            {form.resume_url ? (
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-600/20 border border-blue-400/20">
+                    <FileText size={22} className="text-blue-300" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-semibold truncate">Your Resume</p>
+                    <p className="text-xs text-white/50">PDF uploaded</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 shrink-0">
+                  <a
+                    href={form.resume_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-4 py-2.5 text-sm font-semibold transition hover:bg-white/10"
+                  >
+                    <ExternalLink size={16} />
+                    View
+                  </a>
+                  <button
+                    type="button"
+                    disabled={deletingResume}
+                    onClick={handleResumeDelete}
+                    className="inline-flex items-center gap-2 rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-2.5 text-sm font-semibold text-red-300 transition hover:bg-red-500/20 disabled:opacity-50"
+                  >
+                    <Trash2 size={16} />
+                    {deletingResume ? 'Removing...' : 'Remove'}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <label className={`inline-flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-white/25 px-5 py-3 font-semibold transition hover:bg-white/10 hover:border-white/40 ${uploadingResume ? 'opacity-50 pointer-events-none' : ''}`}>
+                  <Upload size={18} />
+                  {uploadingResume ? 'Uploading...' : 'Choose PDF to Upload'}
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    className="sr-only"
+                    disabled={uploadingResume}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleResumeUpload(file);
+                      e.target.value = '';
+                    }}
+                  />
+                </label>
+              </div>
+            )}
+
+            {resumeMessage && (
+              <p
+                className={`mt-4 rounded-xl px-4 py-3 text-sm ${
+                  resumeMessage.type === 'success'
+                    ? 'border border-emerald-300/25 bg-emerald-400/10 text-emerald-100'
+                    : 'border border-red-300/25 bg-red-400/10 text-red-100'
+                }`}
+              >
+                {resumeMessage.text}
+              </p>
+            )}
+          </div>
+        )}
       </FadeIn>
     </main>
   );

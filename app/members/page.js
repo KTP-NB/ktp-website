@@ -250,16 +250,37 @@ export default function MembersPage() {
               ));
             })()
           ) : (
-            // Executive Board: flat list (no class grouping)
-            allMembers
-              .filter(m => m.executive_board)
-              .map((member, idx) => (
-                <MemberCard key={idx} member={member} onLinkedInClick={handleLinkedInClick} />
-              ))
+            // Executive Board: ordered by position hierarchy
+            (() => {
+              const eboardOrder = [
+                'President', 'Vice President',
+                'VP of Prof Development', 'VP of Tech Development',
+                'VP of Membership', 'VP of Engagement',
+                'VP of Finance', 'VP of External Affairs',
+                'VP of Internal Ops', 'VP of Marketing',
+              ];
+              return allMembers
+                .filter(m => m.executive_board)
+                .sort((a, b) => {
+                  const ai = eboardOrder.indexOf(a.position);
+                  const bi = eboardOrder.indexOf(b.position);
+                  return (ai === -1 ? eboardOrder.length : ai) - (bi === -1 ? eboardOrder.length : bi);
+                })
+                .map((member, idx) => (
+                  <MemberCard key={idx} member={member} onLinkedInClick={handleLinkedInClick} />
+                ));
+            })()
           )
         ) : (
           ["Tech", "Finance", "Pledge", "Outreach", "Marketing"].map((committeeName) => {
-            const committeeMembersList = allMembers.filter(m => m.committees.includes(committeeName));
+            const committeeMembersList = allMembers
+              .filter(m => m.committees.includes(committeeName))
+              .sort((a, b) => {
+                // Eboard position holders first, then regular members
+                if (a.executive_board && !b.executive_board) return -1;
+                if (!a.executive_board && b.executive_board) return 1;
+                return 0;
+              });
             if (committeeMembersList.length === 0) return null;
             
             return (

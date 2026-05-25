@@ -1,12 +1,14 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { FileText, ExternalLink, Search, Users, Loader2, ShieldAlert, Settings } from 'lucide-react';
+import Link from 'next/link';
+import { FileText, ExternalLink, Search, Users, Loader2, ShieldAlert, Settings, Plus, Clock, ListChecks } from 'lucide-react';
 import AuthGate from '@/components/authgate';
 import FadeIn from '@/components/FadeIn';
 import Tabs from '@/components/Tabs';
 import { useAuth } from '@/components/authprovider';
 import { hasSupabaseConfig, supabase } from '@/lib/supabase';
+import { api } from '@/lib/coderank/clientFetch';
 
 /* ─── Positions that grant Admin Portal access ─── */
 const ADMIN_POSITIONS = [
@@ -106,7 +108,7 @@ function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('Resumes');
 
   // Add more tab names here as you build out the admin portal
-  const tabs = ['Resumes'];
+  const tabs = ['Resumes', 'CodeRank'];
 
   return (
     <main className="min-h-screen px-4 pb-20 pt-28 text-white md:pt-36">
@@ -127,10 +129,7 @@ function AdminDashboard() {
         {/* Tab Content */}
         <div className="mt-8">
           {activeTab === 'Resumes' && <ResumesPanel />}
-          {/* Add more panels here:
-              {activeTab === 'Analytics' && <AnalyticsPanel />}
-              {activeTab === 'Settings' && <SettingsPanel />}
-          */}
+          {activeTab === 'CodeRank' && <CodeRankPanel />}
         </div>
       </FadeIn>
     </main>
@@ -428,4 +427,90 @@ function ResumesPanel() {
       )}
     </div>
   );
+}
+
+/* ─── CodeRank Panel ─── */
+function CodeRankPanel() {
+  const [assessments, setAssessments] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    api('/api/coderank/admin/assessments')
+      .then((r) => setAssessments(r.assessments || []))
+      .catch((e) => setError(e.message));
+  }, []);
+
+  return (
+    <div>
+      <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold mb-1">
+            Coding Assessments
+          </h2>
+          <p className="text-white/50 text-sm">Build NeetCode-style assessments and monitor member performance.</p>
+        </div>
+        <Link
+          href="/admin/coderank/new"
+          className="inline-flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-500 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-blue-600/30 transition"
+        >
+          <Plus size={16} /> New Assessment
+        </Link>
+      </div>
+
+      {error && (
+        <div className="rounded-xl border border-red-300/25 bg-red-400/10 px-5 py-4 text-sm text-red-100 mb-4">{error}</div>
+      )}
+
+      {assessments === null && !error && (
+        <div className="flex justify-center py-20">
+          <Loader2 className="w-10 h-10 text-white/60 animate-spin" />
+        </div>
+      )}
+
+      {assessments && assessments.length === 0 && (
+        <div className="py-16 text-center rounded-2xl border border-white/10 bg-white/[0.02]">
+          <p className="text-white/60 mb-4">No assessments created yet.</p>
+          <Link href="/admin/coderank/new" className="inline-flex items-center gap-2 text-blue-300 hover:text-blue-200 font-bold">
+            <Plus size={14} /> Create the first one
+          </Link>
+        </div>
+      )}
+
+      {assessments && assessments.length > 0 && (
+        <div className="space-y-3">
+          {assessments.map((a) => (
+            <Link
+              key={a.id}
+              href={`/admin/coderank/${a.id}`}
+              className="block rounded-xl border border-white/10 bg-white/5 p-4 hover:bg-white/10 hover:border-white/20 transition"
+            >
+              <div className="flex items-center justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-bold truncate">{a.title}</h3>
+                    {a.published ? (
+                      <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-emerald-400/15 text-emerald-200 border border-emerald-400/30">Published</span>
+                    ) : (
+                      <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-white/10 text-white/60 border border-white/15">Draft</span>
+                    )}
+                  </div>
+                  {a.description && <p className="text-xs text-white/50 line-clamp-1 mb-1">{a.description}</p>}
+                  <div className="flex flex-wrap gap-3 text-xs text-white/40">
+                    <span className="flex items-center gap-1"><ListChecks size={12}/>{(a.cr_assessment_questions || []).length} problems</span>
+                    <span className="flex items-center gap-1"><Clock size={12}/>{formatTimeLimit(a.time_limit_minutes)}</span>
+                    <span>{(a.cr_assignments || []).length} assignment{(a.cr_assignments || []).length === 1 ? '' : 's'}</span>
+                  </div>
+                </div>
+                <ExternalLink size={16} className="text-white/40 shrink-0" />
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function formatTimeLimit(minutes) {
+  return Number(minutes) > 0 ? `${minutes} min` : 'No time limit';
 }

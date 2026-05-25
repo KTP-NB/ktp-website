@@ -55,3 +55,9 @@ credentials.json
 leaks-report.json
 scripts/
 scripts/*
+!scripts/
+!scripts/import_coderank_bank.js
+!scripts/check_coderank_images.js
+
+neetcode150.json
+150_images/

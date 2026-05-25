@@ -69,29 +69,151 @@
 /* =========================
    CUSTOM SCROLLBAR
    ========================= */
-.pretty-scrollbar {
+* {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  scrollbar-color: rgba(191, 219, 254, 0.42) rgba(15, 35, 66, 0.35);
 }
 
-.pretty-scrollbar::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
+html {
+  scrollbar-gutter: stable;
 }
 
-.pretty-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
+.pretty-scrollbar {
+  scrollbar-gutter: stable;
 }
 
-.pretty-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  border: 2px solid transparent;
+*::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(15, 35, 66, 0.35);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(191, 219, 254, 0.42);
+  border-radius: 999px;
+  border: 3px solid rgba(15, 35, 66, 0.35);
   background-clip: padding-box;
 }
 
-.pretty-scrollbar:hover::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.3);
+*:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(219, 234, 254, 0.62);
+}
+
+*::-webkit-scrollbar-button {
+  display: none;
+  height: 0;
+  width: 0;
+}
+
+input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline-grid;
+  place-content: center;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  cursor: pointer;
+  border: 1px solid rgba(191, 219, 254, 0.5);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.05)),
+    rgba(15, 35, 66, 0.48);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 6px 16px rgba(4, 12, 26, 0.14);
+  vertical-align: middle;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+input[type="checkbox"] {
+  border-radius: 0.3rem;
+}
+
+input[type="radio"] {
+  border-radius: 999px;
+}
+
+input[type="checkbox"]::before,
+input[type="radio"]::before {
+  content: "";
+  transform: scale(0);
+  transition: transform 140ms ease;
+}
+
+input[type="checkbox"]::before {
+  width: 0.62rem;
+  height: 0.62rem;
+  clip-path: polygon(14% 44%, 0 60%, 38% 100%, 100% 18%, 84% 4%, 36% 68%);
+  background: white;
+}
+
+input[type="radio"]::before {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: white;
+}
+
+input[type="checkbox"]:checked,
+input[type="radio"]:checked {
+  border-color: rgba(147, 197, 253, 0.95);
+  background:
+    linear-gradient(135deg, rgba(96, 165, 250, 0.95), rgba(37, 99, 235, 0.95)),
+    #2563eb;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 0 0 3px rgba(59, 130, 246, 0.18),
+    0 8px 18px rgba(4, 12, 26, 0.2);
+}
+
+input[type="checkbox"]:checked::before,
+input[type="radio"]:checked::before {
+  transform: scale(1);
+}
+
+input[type="checkbox"]:hover,
+input[type="radio"]:hover {
+  border-color: rgba(219, 234, 254, 0.75);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 0 0 3px rgba(191, 219, 254, 0.1),
+    0 8px 18px rgba(4, 12, 26, 0.18);
+}
+
+input[type="checkbox"]:focus-visible,
+input[type="radio"]:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 0 0 4px rgba(147, 197, 253, 0.26),
+    0 8px 18px rgba(4, 12, 26, 0.2);
+}
+
+input[type="checkbox"]:disabled,
+input[type="radio"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
 }
 
 /* =========================
@@ -99,4 +221,22 @@
    ========================= */
 body * {
   font-family: inherit !important;
+}
+
+.monaco-editor .mtk,
+.monaco-editor .view-line,
+.monaco-editor .view-line span,
+.monaco-editor .line-numbers {
+  font-family: Consolas, "Courier New", monospace !important;
+}
+
+.monaco-editor .codicon,
+.monaco-editor .codicon::before,
+.monaco-editor .codicon[class*="codicon-"] {
+  font-family: codicon !important;
+}
+
+.monaco-editor .margin,
+.monaco-editor .monaco-editor-background {
+  transition: background-color 120ms ease;
 }

@@ -5,6 +5,7 @@ import { Camera, Save, FileText, Upload, Trash2, ExternalLink } from 'lucide-rea
 import AuthGate from '@/components/authgate';
 import FadeIn from '@/components/FadeIn';
 import { useAuth } from '@/components/authprovider';
+import { useConfirmToast } from '@/components/ConfirmToast';
 import { supabase } from '@/lib/supabase';
 import { clearCachedData } from '@/lib/publicDataCache';
 import { MEMBERS_CACHE_KEY } from '@/lib/cacheKeys';
@@ -63,6 +64,7 @@ function ProfileEditor() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState(null);
+  const { confirm, confirmationToast } = useConfirmToast();
 
   const canEditPosition = user?.email?.toLowerCase() === MEMBER_POSITION_ADMIN_EMAIL;
   const visibleFields = useMemo(
@@ -219,7 +221,13 @@ function ProfileEditor() {
 
   async function handleResumeDelete() {
     if (!form.resume_storage_path || !profileId) return;
-    if (!confirm('Remove your resume? This cannot be undone.')) return;
+    const ok = await confirm({
+      title: 'Remove resume?',
+      message: 'This cannot be undone.',
+      confirmLabel: 'Remove',
+      tone: 'danger',
+    });
+    if (!ok) return;
 
     setDeletingResume(true);
     setResumeMessage(null);
@@ -331,6 +339,7 @@ function ProfileEditor() {
 
   return (
     <main className="min-h-screen px-4 pb-20 pt-28 text-white md:pt-36">
+      {confirmationToast}
       <FadeIn className="mx-auto w-full max-w-5xl">
         <div className="mb-10">
           <h1 className="text-4xl font-black tracking-tight sm:text-5xl">Profile</h1>

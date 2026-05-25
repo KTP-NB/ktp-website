@@ -1,6 +1,7 @@
 'use client';
 
 import AuthGate from "@/components/authgate";
+import { useConfirmToast } from "@/components/ConfirmToast";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase, supabaseBucket } from "@/lib/supabase";
 import { FolderOpen, FileText, File, Home, ChevronRight, ExternalLink, Loader2, Upload, FolderPlus, MoreVertical, Trash2 } from "lucide-react";
@@ -60,6 +61,7 @@ export default function StudyToolsPage() {
   const [creatingFolder, setCreatingFolder] = useState(false);
   const [openMenuId, setOpenMenuId] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+  const { confirm, confirmationToast } = useConfirmToast();
   const fileInputRef = useRef(null);
 
   const loadCurrentPath = useCallback(() => {
@@ -158,7 +160,13 @@ export default function StudyToolsPage() {
   }
 
   async function handleDeleteFile(fullPath) {
-    if (!confirm("Delete this file? This cannot be undone.")) return;
+    const ok = await confirm({
+      title: "Delete file?",
+      message: "This cannot be undone.",
+      confirmLabel: "Delete",
+      tone: "danger",
+    });
+    if (!ok) return;
     setOpenMenuId(null);
     setDeletingId(fullPath);
     setError(null);
@@ -174,7 +182,13 @@ export default function StudyToolsPage() {
   }
 
   async function handleDeleteFolder(fullPath) {
-    if (!confirm("Delete this folder and everything inside it? This cannot be undone.")) return;
+    const ok = await confirm({
+      title: "Delete folder?",
+      message: "This will delete the folder and everything inside it. This cannot be undone.",
+      confirmLabel: "Delete folder",
+      tone: "danger",
+    });
+    if (!ok) return;
     setOpenMenuId(null);
     setDeletingId(fullPath);
     setError(null);
@@ -193,6 +207,7 @@ export default function StudyToolsPage() {
 
   return (
     <AuthGate>
+      {confirmationToast}
       <div className="max-w-4xl mx-auto px-6 pt-28 pb-10">
         <h1 className="text-3xl font-bold mb-2">Study Materials</h1>
         <p className="opacity-80 mb-8 text-sm">

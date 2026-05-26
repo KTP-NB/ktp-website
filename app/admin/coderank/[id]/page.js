@@ -102,6 +102,7 @@ function AssessmentMonitor() {
       });
       const serverPublished = result?.assessment?.published ?? next;
       setData((d) => d ? { ...d, assessment: { ...d.assessment, ...(result?.assessment || {}), published: serverPublished } } : d);
+      router.refresh();
     } catch (e) {
       setError(e.message);
       setData((d) => d ? { ...d, assessment: { ...d.assessment, published: !next } } : d);
@@ -177,10 +178,21 @@ function AssessmentMonitor() {
         method: 'PUT',
         body: JSON.stringify({ assignments }),
       });
+      const normalizedAssignments = assignments.map((assignment) => ({
+        assigned_to_type: assignment.type,
+        assigned_to_value: assignment.type === 'all' ? null : assignment.value,
+      }));
       const r = await api(`/api/coderank/admin/assessments/${id}/results`);
-      setData(r);
+      setData({
+        ...r,
+        assessment: {
+          ...r.assessment,
+          cr_assignments: normalizedAssignments,
+        },
+      });
       setEditing(false);
       setEditDraft(null);
+      router.refresh();
     } catch (e) { setError(e.message); } finally { setBusy(false); }
   }
 

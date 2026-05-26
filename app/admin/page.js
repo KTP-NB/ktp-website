@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { FileText, ExternalLink, Search, Users, Loader2, ShieldAlert, Settings, Plus, Clock, ListChecks } from 'lucide-react';
 import AuthGate from '@/components/authgate';
@@ -436,11 +436,18 @@ function CodeRankPanel() {
   const [assessments, setAssessments] = useState(null);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const loadAssessments = useCallback(() => {
+    setError(null);
     api('/api/coderank/admin/assessments')
       .then((r) => setAssessments(r.assessments || []))
       .catch((e) => setError(e.message));
   }, []);
+
+  useEffect(() => {
+    loadAssessments();
+    window.addEventListener('focus', loadAssessments);
+    return () => window.removeEventListener('focus', loadAssessments);
+  }, [loadAssessments]);
 
   return (
     <div>

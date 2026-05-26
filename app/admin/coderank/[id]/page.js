@@ -62,6 +62,13 @@ function AssessmentMonitor() {
   useEffect(() => {
     if (!authorized) return;
     refresh();
+    const interval = setInterval(refresh, 15000);
+    const onFocus = () => refresh();
+    window.addEventListener('focus', onFocus);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('focus', onFocus);
+    };
   }, [authorized, refresh]);
 
   useEffect(() => {
@@ -87,12 +94,12 @@ function AssessmentMonitor() {
     setError(null);
     setData((d) => d ? { ...d, assessment: { ...d.assessment, published: next } } : d);
     try {
-      await api(`/api/coderank/admin/assessments/${id}`, {
+      const result = await api(`/api/coderank/admin/assessments/${id}`, {
         method: 'PATCH',
         body: JSON.stringify({ published: next }),
       });
-      const r = await api(`/api/coderank/admin/assessments/${id}/results`);
-      setData(r);
+      const serverPublished = result?.assessment?.published ?? next;
+      setData((d) => d ? { ...d, assessment: { ...d.assessment, ...(result?.assessment || {}), published: serverPublished } } : d);
     } catch (e) {
       setError(e.message);
       setData((d) => d ? { ...d, assessment: { ...d.assessment, published: !next } } : d);

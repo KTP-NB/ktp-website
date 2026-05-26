@@ -49,10 +49,11 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Assessment deadline has passed' }, { status: 409 });
   }
 
+  const userPledgeClass = String(profile?.pledge_class || '').trim().toLowerCase();
   const isAssigned = (assessment.cr_assignments || []).some(
     (a) =>
       a.assigned_to_type === 'all' ||
-      (a.assigned_to_type === 'pledge_class' && a.assigned_to_value === profile?.pledge_class) ||
+      (a.assigned_to_type === 'pledge_class' && userPledgeClass && String(a.assigned_to_value || '').trim().toLowerCase() === userPledgeClass) ||
       (a.assigned_to_type === 'user' && a.assigned_to_value === auth.user.id),
   );
   if (!isAssigned) {

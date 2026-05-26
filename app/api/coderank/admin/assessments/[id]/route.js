@@ -129,14 +129,23 @@ export async function DELETE(request, { params }) {
   if (attemptIds.length) {
     const { error: subErr } = await service.from('cr_submissions').delete().in('attempt_id', attemptIds);
     if (subErr) return NextResponse.json({ error: subErr.message }, { status: 500 });
-    const { error: monErr } = await service.from('cr_monitoring_events').delete().in('attempt_id', attemptIds);
-    if (monErr && !/relation .* does not exist/i.test(monErr.message)) {
-      return NextResponse.json({ error: monErr.message }, { status: 500 });
+  }
+
+  const monByAssessment = await service.from('cr_monitoring_events').delete().eq('assessment_id', params.id);
+  if (monByAssessment.error && !/relation .* does not exist|column .* does not exist/i.test(monByAssessment.error.message)) {
+    return NextResponse.json({ error: monByAssessment.error.message }, { status: 500 });
+  }
+  if (attemptIds.length) {
+    const { error: monAttErr } = await service.from('cr_monitoring_events').delete().in('attempt_id', attemptIds);
+    if (monAttErr && !/relation .* does not exist/i.test(monAttErr.message)) {
+      return NextResponse.json({ error: monAttErr.message }, { status: 500 });
     }
     const { error: attDelErr } = await service.from('cr_attempts').delete().in('id', attemptIds);
     if (attDelErr) return NextResponse.json({ error: attDelErr.message }, { status: 500 });
   }
 
+  const { error: attByAssessmentErr } = await service.from('cr_attempts').delete().eq('assessment_id', params.id);
+  if (attByAssessmentErr) return NextResponse.json({ error: attByAssessmentErr.message }, { status: 500 });
   const { error: assignErr } = await service.from('cr_assignments').delete().eq('assessment_id', params.id);
   if (assignErr) return NextResponse.json({ error: assignErr.message }, { status: 500 });
   const { error: aqErr } = await service.from('cr_assessment_questions').delete().eq('assessment_id', params.id);

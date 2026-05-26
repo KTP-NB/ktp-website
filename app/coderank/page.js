@@ -21,9 +21,15 @@ function CodeRankDashboard() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    api('/api/coderank/assigned')
-      .then((r) => setAssessments(r.assessments || []))
-      .catch((e) => setError(e.message));
+    let cancelled = false;
+    const load = () =>
+      api('/api/coderank/assigned')
+        .then((r) => { if (!cancelled) setAssessments(r.assessments || []); })
+        .catch((e) => { if (!cancelled) setError(e.message); });
+    load();
+    const onFocus = () => load();
+    window.addEventListener('focus', onFocus);
+    return () => { cancelled = true; window.removeEventListener('focus', onFocus); };
   }, []);
 
   return (

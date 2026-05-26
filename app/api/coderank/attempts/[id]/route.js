@@ -39,6 +39,9 @@ export async function GET(request, { params }) {
     await service.from('cr_attempts').update({ status: 'submitted', submitted_at: new Date().toISOString() }).eq('id', params.id);
     attempt.status = 'submitted';
     attempt.submitted_at = new Date().toISOString();
+  } else if (!attempt.status || attempt.status === 'not_started') {
+    await service.from('cr_attempts').update({ status: 'in_progress' }).eq('id', params.id);
+    attempt.status = 'in_progress';
   }
 
   const order = Array.isArray(attempt.question_order) ? attempt.question_order : [];

@@ -18,13 +18,19 @@ export async function GET(request, { params }) {
     .from('cr_assessments')
     .select(`
       id, title, description, time_limit_minutes, max_submissions_per_question, published, publish_at, due_at, randomize_question_order, random_question_count, random_question_difficulties, random_question_categories,
-      cr_assessment_questions ( question_id, ordinal, points, cr_questions(slug,title,difficulty,function_metadata,use_runtime_harness) ),
-      cr_assignments ( id, assigned_to_type, assigned_to_value )
+      cr_assessment_questions ( question_id, ordinal, points, cr_questions(slug,title,difficulty,function_metadata,use_runtime_harness) )
     `)
     .eq('id', params.id)
     .maybeSingle();
   if (aErr) return NextResponse.json({ error: aErr.message }, { status: 500 });
   if (!assessment) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+  const { data: assignments, error: assnErr } = await service
+    .from('cr_assignments')
+    .select('id, assigned_to_type, assigned_to_value')
+    .eq('assessment_id', params.id);
+  if (assnErr) return NextResponse.json({ error: assnErr.message }, { status: 500 });
+  assessment.cr_assignments = assignments || [];
 
   const { data: attempts, error: atErr } = await service
     .from('cr_attempts')

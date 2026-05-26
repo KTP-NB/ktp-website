@@ -87,7 +87,10 @@ export async function PATCH(request, { params }) {
     .maybeSingle();
   if (currentErr) return NextResponse.json({ error: currentErr.message }, { status: 500 });
   if (!current) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-  if (current.due_at && new Date(current.due_at) <= new Date()) {
+  const isExpired = current.due_at && new Date(current.due_at) <= new Date();
+  const allowedWhenExpired = new Set(['published', 'due_at']);
+  const touchesRestricted = Object.keys(update).some((k) => !allowedWhenExpired.has(k));
+  if (isExpired && touchesRestricted) {
     return NextResponse.json({ error: 'Expired assessments cannot be edited.' }, { status: 409 });
   }
 
@@ -115,6 +118,30 @@ export async function DELETE(request, { params }) {
   if (auth.error) return auth.error;
 
   const service = getServiceClient();
+
+  const { data: attempts, error: attemptsErr } = await service
+    .from('cr_attempts')
+    .select('id')
+    .eq('assessment_id', params.id);
+  if (attemptsErr) return NextResponse.json({ error: attemptsErr.message }, { status: 500 });
+  const attemptIds = (attempts || []).map((a) => a.id);
+
+  if (attemptIds.length) {
+    const { error: subErr } = await service.from('cr_submissions').delete().in('attempt_id', attemptIds);
+    if (subErr) return NextResponse.json({ error: subErr.message }, { status: 500 });
+    const { error: monErr } = await service.from('cr_monitoring_events').delete().in('attempt_id', attemptIds);
+    if (monErr && !/relation .* does not exist/i.test(monErr.message)) {
+      return NextResponse.json({ error: monErr.message }, { status: 500 });
+    }
+    const { error: attDelErr } = await service.from('cr_attempts').delete().in('id', attemptIds);
+    if (attDelErr) return NextResponse.json({ error: attDelErr.message }, { status: 500 });
+  }
+
+  const { error: assignErr } = await service.from('cr_assignments').delete().eq('assessment_id', params.id);
+  if (assignErr) return NextResponse.json({ error: assignErr.message }, { status: 500 });
+  const { error: aqErr } = await service.from('cr_assessment_questions').delete().eq('assessment_id', params.id);
+  if (aqErr) return NextResponse.json({ error: aqErr.message }, { status: 500 });
+
   const { error } = await service.from('cr_assessments').delete().eq('id', params.id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true });

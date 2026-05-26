@@ -18,34 +18,39 @@ export async function GET(request) {
 
   const service = getServiceClient();
 
-  // Fetch all published assessments, then filter by assignment.
-  const { data: assignments, error: aErr } = await service
-    .from('cr_assignments')
+  const { data: published, error: pErr } = await service
+    .from('cr_assessments')
     .select(`
-      id, assigned_to_type, assigned_to_value,
-      cr_assessments (
-        id, title, description, time_limit_minutes,
-        max_submissions_per_question, published, publish_at, due_at, randomize_question_order, random_question_count, random_question_difficulties, random_question_categories, created_at,
-        cr_assessment_questions ( question_id, ordinal )
-      )
-    `);
+      id, title, description, time_limit_minutes,
+      max_submissions_per_question, published, publish_at, due_at, randomize_question_order, random_question_count, random_question_difficulties, random_question_categories, created_at,
+      cr_assessment_questions ( question_id, ordinal ),
+      cr_assignments ( assigned_to_type, assigned_to_value )
+    `)
+    .eq('published', true);
+  if (pErr) return NextResponse.json({ error: pErr.message }, { status: 500 });
 
-  if (aErr) return NextResponse.json({ error: aErr.message }, { status: 500 });
+  const { data: userAttempts } = await service
+    .from('cr_attempts')
+    .select('assessment_id')
+    .eq('user_id', auth.user.id);
+  const attemptedIds = new Set((userAttempts || []).map((a) => a.assessment_id));
 
+  const userPledgeClass = normalize(profile?.pledge_class);
   const seen = new Map();
-  for (const a of assignments || []) {
-    const asmt = a.cr_assessments;
-    if (!asmt || !asmt.published) continue;
-    const now = new Date();
+  const now = new Date();
+  for (const asmt of published || []) {
+    if (!asmt.published) continue;
     if (asmt.publish_at && new Date(asmt.publish_at) > now) continue;
     if (asmt.due_at && new Date(asmt.due_at) <= now) continue;
 
-    const match =
+    const assignments = asmt.cr_assignments || [];
+    const matchAssignment = assignments.some((a) =>
       a.assigned_to_type === 'all' ||
-      (a.assigned_to_type === 'pledge_class' && a.assigned_to_value === profile?.pledge_class) ||
-      (a.assigned_to_type === 'user' && a.assigned_to_value === auth.user.id);
+      (a.assigned_to_type === 'pledge_class' && normalize(a.assigned_to_value) === userPledgeClass && userPledgeClass) ||
+      (a.assigned_to_type === 'user' && a.assigned_to_value === auth.user.id),
+    );
 
-    if (match && !seen.has(asmt.id)) {
+    if ((matchAssignment || attemptedIds.has(asmt.id)) && !seen.has(asmt.id)) {
       seen.set(asmt.id, asmt);
     }
   }
@@ -82,5 +87,9 @@ export async function GET(request) {
   }));
 
   return NextResponse.json({ assessments: out });
+}
+
+function normalize(value) {
+  return String(value || '').trim().toLowerCase();
 }
 

@@ -82,15 +82,21 @@ function AssessmentMonitor() {
 
   async function togglePublish() {
     if (!data) return;
+    const next = !data.assessment.published;
     setBusy(true);
+    setError(null);
+    setData((d) => d ? { ...d, assessment: { ...d.assessment, published: next } } : d);
     try {
       await api(`/api/coderank/admin/assessments/${id}`, {
         method: 'PATCH',
-        body: JSON.stringify({ published: !data.assessment.published }),
+        body: JSON.stringify({ published: next }),
       });
       const r = await api(`/api/coderank/admin/assessments/${id}/results`);
       setData(r);
-    } catch (e) { setError(e.message); } finally { setBusy(false); }
+    } catch (e) {
+      setError(e.message);
+      setData((d) => d ? { ...d, assessment: { ...d.assessment, published: !next } } : d);
+    } finally { setBusy(false); }
   }
 
   async function makeUnlimited() {

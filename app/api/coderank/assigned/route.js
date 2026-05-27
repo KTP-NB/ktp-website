@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import { requireUser, getProfile, canTakeCodeRankAssessment } from '@/lib/coderank/auth';
 import { getServiceClient } from '@/lib/coderank/supabaseServer';
+import { withNoStore } from '@/lib/coderank/noStore';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
+export const runtime = 'nodejs';
 
 /**
  * List assessments visible to the current member, with their attempt state.
@@ -13,7 +17,7 @@ export async function GET(request) {
 
   const profile = await getProfile(auth.user.id);
   if (!canTakeCodeRankAssessment(profile)) {
-    return NextResponse.json({ assessments: [] });
+    return withNoStore(NextResponse.json({ assessments: [] }));
   }
 
   const service = getServiceClient();
@@ -119,7 +123,7 @@ export async function GET(request) {
   }));
 
   if (debug) {
-    return NextResponse.json({
+    return withNoStore(NextResponse.json({
       assessments: out,
       debug: {
         user_id: auth.user.id,
@@ -130,10 +134,10 @@ export async function GET(request) {
         filtered_out: filteredOut,
         final_ids: [...seen.keys()],
       },
-    });
+    }));
   }
 
-  return NextResponse.json({ assessments: out });
+  return withNoStore(NextResponse.json({ assessments: out }));
 }
 
 function normalize(value) {

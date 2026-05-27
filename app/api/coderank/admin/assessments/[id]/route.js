@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/coderank/auth';
 import { getServiceClient } from '@/lib/coderank/supabaseServer';
+import { withNoStore } from '@/lib/coderank/noStore';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
+export const runtime = 'nodejs';
 
 export async function GET(request, { params }) {
   const auth = await requireAdmin(request);
@@ -39,8 +43,8 @@ export async function GET(request, { params }) {
     }
     return NextResponse.json({ error: message }, { status: 500 });
   }
-  if (!assessment) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-  return NextResponse.json({ assessment });
+  if (!assessment) return withNoStore(NextResponse.json({ error: 'Not found' }, { status: 404 }));
+  return withNoStore(NextResponse.json({ assessment }));
 }
 
 export async function PATCH(request, { params }) {
@@ -110,7 +114,7 @@ export async function PATCH(request, { params }) {
       .eq('assessment_id', params.id)
       .eq('status', 'in_progress');
   }
-  return NextResponse.json({ assessment: data });
+  return withNoStore(NextResponse.json({ assessment: data }));
 }
 
 export async function DELETE(request, { params }) {
@@ -153,5 +157,5 @@ export async function DELETE(request, { params }) {
 
   const { error } = await service.from('cr_assessments').delete().eq('id', params.id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ ok: true });
+  return withNoStore(NextResponse.json({ ok: true }));
 }

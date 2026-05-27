@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/coderank/auth';
 import { getServiceClient } from '@/lib/coderank/supabaseServer';
+import { withNoStore } from '@/lib/coderank/noStore';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
+export const runtime = 'nodejs';
 
 /**
  * Per-member detailed results for one assessment.
@@ -180,7 +184,7 @@ export async function GET(request, { params }) {
     return String(an).localeCompare(String(bn));
   });
 
-  return NextResponse.json({ assessment, results: rows });
+  return withNoStore(NextResponse.json({ assessment, results: rows }));
 }
 
 function assignedUsersForAssessment(assessment, profiles) {

@@ -66,10 +66,17 @@ function AssessmentMonitor() {
     refresh();
     const interval = setInterval(refresh, 15000);
     const onFocus = () => refresh();
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') refresh();
+    };
     window.addEventListener('focus', onFocus);
+    window.addEventListener('pageshow', onFocus);
+    document.addEventListener('visibilitychange', onVisibility);
     return () => {
       clearInterval(interval);
       window.removeEventListener('focus', onFocus);
+      window.removeEventListener('pageshow', onFocus);
+      document.removeEventListener('visibilitychange', onVisibility);
     };
   }, [authorized, refresh]);
 
@@ -207,7 +214,7 @@ function AssessmentMonitor() {
     setBusy(true);
     try {
       await api(`/api/coderank/admin/assessments/${id}`, { method: 'DELETE' });
-      router.push('/admin');
+      router.replace('/admin?tab=CodeRank');
     } catch (e) { setError(e.message); setBusy(false); }
   }
 
@@ -232,7 +239,7 @@ function AssessmentMonitor() {
     <main className="min-h-screen px-4 pb-20 pt-28 text-white md:pt-36">
       {confirmationToast}
       <FadeIn className="mx-auto max-w-7xl">
-        <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white mb-6">
+        <Link href="/admin?tab=CodeRank" className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white mb-6">
           <ArrowLeft size={16}/>Back to Admin Portal
         </Link>
 

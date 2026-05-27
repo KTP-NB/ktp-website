@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/coderank/auth';
 import { getServiceClient } from '@/lib/coderank/supabaseServer';
+import { withNoStore } from '@/lib/coderank/noStore';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
+export const runtime = 'nodejs';
 
 export async function GET(request) {
   const auth = await requireAdmin(request);
@@ -19,8 +23,8 @@ export async function GET(request) {
     `)
     .order('created_at', { ascending: false });
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ assessments: data });
+  if (error) return withNoStore(NextResponse.json({ error: error.message }, { status: 500 }));
+  return withNoStore(NextResponse.json({ assessments: data }));
 }
 
 export async function POST(request) {
@@ -110,6 +114,6 @@ export async function POST(request) {
     if (aErr) return NextResponse.json({ error: aErr.message }, { status: 500 });
   }
 
-  return NextResponse.json({ assessment }, { status: 201 });
+  return withNoStore(NextResponse.json({ assessment }, { status: 201 }));
 }
 

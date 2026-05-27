@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/coderank/auth';
 import { getServiceClient } from '@/lib/coderank/supabaseServer';
+import { withNoStore } from '@/lib/coderank/noStore';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
+export const runtime = 'nodejs';
 
 // PUT replaces the full assignment list.
 // Body: { assignments: [{ type: 'all' | 'pledge_class' | 'user', value?: string }] }
@@ -49,5 +53,5 @@ export async function PUT(request, { params }) {
     if (insErr) return NextResponse.json({ error: insErr.message }, { status: 500 });
   }
 
-  return NextResponse.json({ ok: true, count: assignments.length });
+  return withNoStore(NextResponse.json({ ok: true, count: assignments.length }));
 }

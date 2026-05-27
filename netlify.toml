@@ -3,3 +3,36 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+# CodeRank assessment data must never be served from the Netlify edge cache.
+# Pages render a client shell that fetches live data, and API routes return
+# live database results. Forcing no-store at the CDN guarantees publish /
+# unpublish / delete changes show up without a redeploy.
+
+[[headers]]
+  for = "/coderank"
+  [headers.values]
+    Cache-Control = "no-store, no-cache, must-revalidate, proxy-revalidate"
+
+[[headers]]
+  for = "/coderank/*"
+  [headers.values]
+    Cache-Control = "no-store, no-cache, must-revalidate, proxy-revalidate"
+
+[[headers]]
+  for = "/admin"
+  [headers.values]
+    Cache-Control = "no-store, no-cache, must-revalidate, proxy-revalidate"
+
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    Cache-Control = "no-store, no-cache, must-revalidate, proxy-revalidate"
+
+[[headers]]
+  for = "/api/coderank/*"
+  [headers.values]
+    Cache-Control = "no-store, no-cache, must-revalidate, proxy-revalidate"
+    Pragma = "no-cache"
+    Expires = "0"
+    Surrogate-Control = "no-store"

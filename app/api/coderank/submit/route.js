@@ -78,12 +78,19 @@ export async function POST(request) {
     return NextResponse.json({ error: `Submission limit (${maxSubs}) reached` }, { status: 429 });
   }
 
-  // Fetch ALL test cases (visible + hidden).
-  const { data: tests, error: tErr } = await service
-    .from('cr_test_cases')
-    .select('id, stdin, expected_stdout, is_hidden, ordinal')
-    .eq('question_id', question_id)
-    .order('ordinal');
+  // Fetch ALL test cases (visible + hidden) and the question's judge metadata.
+  const [{ data: tests, error: tErr }, { data: questionRow }] = await Promise.all([
+    service
+      .from('cr_test_cases')
+      .select('id, stdin, expected_stdout, is_hidden, ordinal')
+      .eq('question_id', question_id)
+      .order('ordinal'),
+    service
+      .from('cr_questions')
+      .select('slug, function_metadata')
+      .eq('id', question_id)
+      .maybeSingle(),
+  ]);
   if (tErr) return NextResponse.json({ error: tErr.message }, { status: 500 });
 
   if (!tests || tests.length === 0) {
@@ -91,7 +98,7 @@ export async function POST(request) {
   }
 
   // Grade with hidden details persisted for admins; the client response below still filters them out.
-  const report = await gradeSubmission({ language, code, tests, revealHidden: true });
+  const report = await gradeSubmission({ language, code, tests, revealHidden: true, question: questionRow });
 
   const score = report.total > 0
     ? Math.round((report.passed / report.total) * points)

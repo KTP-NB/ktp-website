@@ -19,11 +19,18 @@ export async function POST(request, { params }) {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   if (!submission) return NextResponse.json({ error: 'Submission not found' }, { status: 404 });
 
-  const { data: tests, error: tErr } = await service
-    .from('cr_test_cases')
-    .select('id, stdin, expected_stdout, is_hidden, ordinal')
-    .eq('question_id', submission.question_id)
-    .order('ordinal');
+  const [{ data: tests, error: tErr }, { data: questionRow }] = await Promise.all([
+    service
+      .from('cr_test_cases')
+      .select('id, stdin, expected_stdout, is_hidden, ordinal')
+      .eq('question_id', submission.question_id)
+      .order('ordinal'),
+    service
+      .from('cr_questions')
+      .select('slug, function_metadata')
+      .eq('id', submission.question_id)
+      .maybeSingle(),
+  ]);
 
   if (tErr) return NextResponse.json({ error: tErr.message }, { status: 500 });
   const report = await gradeSubmission({
@@ -31,6 +38,7 @@ export async function POST(request, { params }) {
     code: submission.code,
     tests: tests || [],
     revealHidden: true,
+    question: questionRow,
   });
 
   return NextResponse.json({ report });

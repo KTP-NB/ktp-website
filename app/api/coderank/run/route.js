@@ -55,13 +55,20 @@ export async function POST(request) {
     .maybeSingle();
   if (!aq) return NextResponse.json({ error: 'Question is not part of this assessment' }, { status: 400 });
 
-  // Fetch visible test cases (NEVER hidden).
-  const { data: visibleTests, error: tErr } = await service
-    .from('cr_test_cases')
-    .select('id, stdin, expected_stdout, is_hidden, ordinal')
-    .eq('question_id', question_id)
-    .eq('is_hidden', false)
-    .order('ordinal');
+  // Fetch the question's judge metadata in parallel with the tests.
+  const [{ data: visibleTests, error: tErr }, { data: questionRow }] = await Promise.all([
+    service
+      .from('cr_test_cases')
+      .select('id, stdin, expected_stdout, is_hidden, ordinal')
+      .eq('question_id', question_id)
+      .eq('is_hidden', false)
+      .order('ordinal'),
+    service
+      .from('cr_questions')
+      .select('slug, function_metadata')
+      .eq('id', question_id)
+      .maybeSingle(),
+  ]);
   if (tErr) return NextResponse.json({ error: tErr.message }, { status: 500 });
 
   const tests = [...(visibleTests || [])];
@@ -76,7 +83,7 @@ export async function POST(request) {
     });
   }
 
-  const report = await gradeSubmission({ language, code, tests, revealHidden: false });
+  const report = await gradeSubmission({ language, code, tests, revealHidden: false, question: questionRow });
 
   // Mark the custom-input result as "n/a" instead of pass/fail
   if (custom_stdin) {

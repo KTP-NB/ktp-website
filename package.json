@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "coderank:import-bank": "node scripts/import_coderank_bank.js"
+    "coderank:import-bank": "node scripts/import_coderank_bank.js",
+    "coderank:validate-harnesses": "node --env-file=.env scripts/coderank/validate_harnesses.mjs",
+    "coderank:validate-harnesses-offline": "node scripts/coderank/validate_harnesses.mjs --from-inventory",
+    "test:judge": "node --test lib/coderank/judge/__tests__/judge.test.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",

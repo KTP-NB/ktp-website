@@ -316,11 +316,9 @@ function ResumesPanel() {
               </h2>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {activeWithResume.map((member) => (
-                  <a
+                  <Link
                     key={member.id}
-                    href={member.resume_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={`/admin/members/${member.id}`}
                     className="group flex items-center gap-4 rounded-xl border border-white/10 bg-white/5 p-4 transition-all duration-200 hover:bg-white/10 hover:border-white/20 hover:-translate-y-0.5 hover:shadow-lg"
                   >
                     {/* Avatar */}
@@ -346,7 +344,7 @@ function ResumesPanel() {
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-600/20 border border-blue-400/20 group-hover:bg-blue-600/30 transition">
                       <ExternalLink size={16} className="text-blue-300" />
                     </div>
-                  </a>
+                  </Link>
                 ))}
               </div>
             </section>
@@ -360,9 +358,10 @@ function ResumesPanel() {
               </h2>
               <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {activeWithoutResume.map((member) => (
-                  <div
+                  <Link
                     key={member.id}
-                    className="flex items-center gap-4 rounded-xl border border-white/5 bg-white/[0.02] p-4 opacity-50"
+                    href={`/admin/members/${member.id}`}
+                    className="group flex items-center gap-4 rounded-xl border border-white/5 bg-white/[0.02] p-4 opacity-60 transition-all duration-200 hover:opacity-100 hover:bg-white/5 hover:border-white/15"
                   >
                     <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border border-white/10 bg-white/5">
                       <img
@@ -380,7 +379,7 @@ function ResumesPanel() {
                       </p>
                     </div>
                     <span className="text-xs text-white/30 shrink-0">No resume</span>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </section>
@@ -395,18 +394,17 @@ function ResumesPanel() {
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {alumniList.map((member) => {
                   const hasResume = !!member.resume_url;
-                  const CardWrapper = hasResume ? 'a' : 'div';
-                  const wrapperProps = hasResume ? {
-                    href: member.resume_url,
-                    target: "_blank",
-                    rel: "noopener noreferrer",
-                    className: "group flex items-center gap-4 rounded-xl border border-white/10 bg-white/5 p-4 transition-all duration-200 hover:bg-white/10 hover:border-white/20 hover:-translate-y-0.5 hover:shadow-lg"
-                  } : {
-                    className: "flex items-center gap-4 rounded-xl border border-white/5 bg-white/[0.02] p-4 opacity-50"
-                  };
 
                   return (
-                    <CardWrapper key={member.id} {...wrapperProps}>
+                    <Link
+                      key={member.id}
+                      href={`/admin/members/${member.id}`}
+                      className={
+                        hasResume
+                          ? "group flex items-center gap-4 rounded-xl border border-white/10 bg-white/5 p-4 transition-all duration-200 hover:bg-white/10 hover:border-white/20 hover:-translate-y-0.5 hover:shadow-lg"
+                          : "group flex items-center gap-4 rounded-xl border border-white/5 bg-white/[0.02] p-4 opacity-60 transition-all duration-200 hover:opacity-100 hover:bg-white/5 hover:border-white/15"
+                      }
+                    >
                       <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border border-white/10 bg-white/5">
                         <img
                           src={member.photo_url || '/ktp-icon.png'}
@@ -429,7 +427,7 @@ function ResumesPanel() {
                       ) : (
                         <span className="text-xs text-white/30 shrink-0">No resume</span>
                       )}
-                    </CardWrapper>
+                    </Link>
                   );
                 })}
               </div>

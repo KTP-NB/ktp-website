@@ -13,8 +13,9 @@ import {
 } from 'lucide-react';
 import AuthGate from '@/components/authgate';
 import { useConfirmToast } from '@/components/ConfirmToast';
-import { api, coderankBackendApi } from '@/lib/coderank/clientFetch';
+import { api } from '@/lib/coderank/clientFetch';
 import { generateHarness } from '@/lib/coderank/harness';
+import { getProfile } from '@/lib/coderank/harnessRegistry';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false,
@@ -114,12 +115,19 @@ function executableCodeForEditor(editorCode, starter, language) {
   return editorCode;
 }
 
-// Per-question feature flag for the runtime-harness path. When a question opts
-// in (use_runtime_harness = true AND function_metadata populated), we skip the
-// legacy executableCodeForEditor() path entirely and let lib/coderank/harness.js
-// wrap the user's bare snippet at runtime. This lets us flip individual
-// questions over without touching in-flight attempts on others.
+// Harness assembly. The per-question harness registry (lib/coderank/harnessRegistry.js)
+// is the source of truth: it maps the slug to an explicit execution-kind PROFILE
+// and lib/coderank/harness.js wraps the user's bare snippet accordingly. We guard
+// with looksLikeStandaloneHarness so that during the migration window — before
+// seed_profiles.mjs has replaced a question's baked starter_code with the bare
+// snippet — an editor still showing a full baked program falls back to the legacy
+// splice path instead of being double-wrapped.
 function prepareCodeForExecution({ editorCode, starter, language, question }) {
+  const profile = question?.slug ? getProfile(question.slug) : null;
+  if (profile && !looksLikeStandaloneHarness(editorCode, language)) {
+    return generateHarness({ language, bareSnippet: editorCode, profile });
+  }
+  // Fallbacks for questions not yet in the registry (or mid-migration).
   if (question?.use_runtime_harness && question?.function_metadata) {
     const meta = question.function_metadata;
     return generateHarness({
@@ -1087,7 +1095,7 @@ function CodingWorkspace({
     try {
       logRuntimeHarnessFields(question, language, 'run');
       const executableCode = prepareCodeForExecution({ editorCode: currentEditorCode(), starter: starters[language], language, question });
-      const { report } = await coderankBackendApi('/api/run', {
+      const { report } = await api('/api/coderank/run', {
         method: 'POST',
         body: JSON.stringify({
           attempt_id: attempt.id,
@@ -1128,7 +1136,7 @@ function CodingWorkspace({
     try {
       logRuntimeHarnessFields(question, language, autoSubmit ? 'auto-submit-current' : 'submit-current');
       const executableCode = prepareCodeForExecution({ editorCode: currentEditorCode(), starter: starters[language], language, question });
-      const result = await coderankBackendApi('/api/submit', {
+      const result = await api('/api/coderank/submit', {
         method: 'POST',
         body: JSON.stringify({
           attempt_id: attempt.id,
@@ -1192,7 +1200,7 @@ function CodingWorkspace({
       language: draft.language,
       question: draft.question,
     });
-    const result = await coderankBackendApi('/api/submit', {
+    const result = await api('/api/coderank/submit', {
       method: 'POST',
       body: JSON.stringify({
         attempt_id: attempt.id,

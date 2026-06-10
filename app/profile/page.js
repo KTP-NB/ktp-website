@@ -52,6 +52,15 @@ function publicUrlFor(path, version) {
   return version ? `${url}?v=${version}` : url;
 }
 
+function formatDate(value) {
+  if (!value) return null;
+  try {
+    return new Date(value).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+  } catch {
+    return null;
+  }
+}
+
 function ProfileEditor() {
   const { user, setProfileName } = useAuth();
   const [profileId, setProfileId] = useState(null);
@@ -61,6 +70,7 @@ function ProfileEditor() {
   const [uploadingResume, setUploadingResume] = useState(false);
   const [deletingResume, setDeletingResume] = useState(false);
   const [resumeMessage, setResumeMessage] = useState(null);
+  const [resumeNotes, setResumeNotes] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState(null);
@@ -115,6 +125,17 @@ function ProfileEditor() {
           resume_url: data.resume_url || '',
           resume_storage_path: data.resume_storage_path || '',
         });
+
+        // Resume feedback written by admins (RLS limits this to the member's own row).
+        const { data: notesRow } = await supabase
+          .from('member_resume_notes')
+          .select('notes, updated_at')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (isMounted && notesRow?.notes) {
+          setResumeNotes(notesRow);
+        }
       }
 
       setLoading(false);
@@ -477,6 +498,17 @@ function ProfileEditor() {
               >
                 {resumeMessage.text}
               </p>
+            )}
+
+            {/* Resume feedback from leadership (read-only) */}
+            {resumeNotes?.notes && (
+              <div className="mt-6 rounded-xl border border-amber-300/20 bg-amber-400/[0.06] p-5">
+                <h3 className="text-sm font-bold text-amber-200 mb-2">Resume Feedback</h3>
+                <p className="text-sm text-white/80 whitespace-pre-wrap">{resumeNotes.notes}</p>
+                {formatDate(resumeNotes.updated_at) && (
+                  <p className="mt-3 text-xs text-white/40">Last updated {formatDate(resumeNotes.updated_at)}</p>
+                )}
+              </div>
             )}
           </div>
         )}

@@ -8,7 +8,7 @@ import { useParams, useRouter } from 'next/navigation';
 import {
   ArrowLeft, Loader2, ShieldAlert, Eye, EyeOff, Trash2,
   CheckCircle2, XCircle, AlertTriangle, Users, Play,
-  Clock, Pencil, Save, Layers, Search,
+  Clock, Pencil, Save, Layers, Search, Trophy, LogIn, Flag,
 } from 'lucide-react';
 import AuthGate from '@/components/authgate';
 import FadeIn from '@/components/FadeIn';
@@ -37,6 +37,7 @@ function AssessmentMonitor() {
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
   const [viewing, setViewing] = useState(null);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editDraft, setEditDraft] = useState(null);
   const [members, setMembers] = useState([]);
@@ -256,6 +257,12 @@ function AssessmentMonitor() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowLeaderboard(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm bg-amber-400/10 border border-amber-300/25 text-amber-100 hover:bg-amber-400/20"
+            >
+              <Trophy size={14}/>Top 3
+            </button>
             {!assessmentExpired && (
               <button
                 onClick={startEditing}
@@ -499,6 +506,8 @@ function AssessmentMonitor() {
                   <Th>Score</Th>
                   <Th>Solved</Th>
                   <Th>Time</Th>
+                  <Th>Started</Th>
+                  <Th>Finished</Th>
                 </tr>
               </thead>
               <tbody>
@@ -519,6 +528,8 @@ function AssessmentMonitor() {
                     <td className="px-3 py-2.5 font-bold">{r.total_score}/{r.possible_score}</td>
                     <td className="px-3 py-2.5">{r.questions_completed}/{r.questions_total}</td>
                     <td className="px-3 py-2.5 text-xs">{formatDuration(r.time_taken_seconds)}</td>
+                    <td className="px-3 py-2.5 text-xs whitespace-nowrap text-white/70">{formatTimestamp(r.started_at)}</td>
+                    <td className="px-3 py-2.5 text-xs whitespace-nowrap text-white/70">{formatTimestamp(r.submitted_at)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -533,6 +544,15 @@ function AssessmentMonitor() {
           assessment={a}
           questions={questions}
           onClose={() => setViewing(null)}
+        />
+      )}
+
+      {showLeaderboard && (
+        <Leaderboard
+          rows={rows}
+          assessment={a}
+          onClose={() => setShowLeaderboard(false)}
+          onSelect={(row) => { setShowLeaderboard(false); if (row.attempt_id) setViewing(row); }}
         />
       )}
     </main>
@@ -613,6 +633,10 @@ function SubmissionViewer({ row, assessment, questions, onClose }) {
                 <Stat label="Score" value={`${row.total_score}/${row.possible_score}`} />
                 <Stat label="Solved" value={`${row.questions_completed}/${row.questions_total}`} />
                 <Stat label="Time" value={formatDuration(row.time_taken_seconds)} />
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Stat label="Started" value={formatTimestamp(row.started_at)} />
+                <Stat label="Finished" value={formatTimestamp(row.submitted_at)} />
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
                 <div className="mb-3 flex items-center justify-between gap-3">
@@ -833,4 +857,99 @@ function formatDuration(seconds) {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
   return `${m}m ${String(s).padStart(2, '0')}s`;
+}
+
+function formatTimestamp(value) {
+  if (!value) return '—';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '—';
+  return date.toLocaleString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    second: '2-digit',
+  });
+}
+
+function rankAttempts(rows) {
+  return (rows || [])
+    .filter((r) => (r.status === 'submitted' || r.status === 'expired') && r.submitted_at)
+    .sort((a, b) => {
+      // Highest score wins, then most solved, then fastest time, then earliest finish.
+      if (b.total_score !== a.total_score) return b.total_score - a.total_score;
+      if (b.questions_completed !== a.questions_completed) return b.questions_completed - a.questions_completed;
+      const at = a.time_taken_seconds ?? Infinity;
+      const bt = b.time_taken_seconds ?? Infinity;
+      if (at !== bt) return at - bt;
+      return new Date(a.submitted_at) - new Date(b.submitted_at);
+    });
+}
+
+function Leaderboard({ rows, assessment, onClose, onSelect }) {
+  const top = rankAttempts(rows).slice(0, 3);
+  const medals = ['🥇', '🥈', '🥉'];
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur flex items-center justify-center p-4" onClick={onClose}>
+      <div className="pretty-scrollbar w-full max-w-3xl overflow-hidden rounded-2xl border border-white/15 bg-[#0b1426] shadow-2xl shadow-black/45 max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-white/10 bg-[#0b1426]/95 px-5 py-4 backdrop-blur">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-amber-200/80">
+              <Trophy size={14}/> Top performers
+            </div>
+            <div className="mt-1 text-lg font-black">{assessment.title}</div>
+            <div className="text-sm text-white/50">Ranked by score, then problems solved, then fastest time.</div>
+          </div>
+          <button onClick={onClose} className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-2xl leading-none text-white/60 transition hover:bg-white/10 hover:text-white">×</button>
+        </div>
+        <div className="pretty-scrollbar max-h-[calc(90vh-92px)] overflow-y-auto p-5">
+          {top.length === 0 ? (
+            <div className="py-12 text-center text-white/50">No one has submitted this assessment yet.</div>
+          ) : (
+            <div className="space-y-3">
+              {top.map((r, idx) => (
+                <button
+                  key={r.attempt_id || r.user_id}
+                  type="button"
+                  onClick={() => onSelect(r)}
+                  className={`flex w-full flex-col gap-3 rounded-2xl border p-4 text-left transition sm:flex-row sm:items-center ${
+                    idx === 0
+                      ? 'border-amber-300/40 bg-amber-400/[0.08] hover:bg-amber-400/[0.14]'
+                      : 'border-white/10 bg-white/[0.035] hover:bg-white/[0.06]'
+                  }`}
+                >
+                  <div className="flex items-center gap-3 sm:w-56 sm:shrink-0">
+                    <span className="text-3xl leading-none">{medals[idx]}</span>
+                    <div className="min-w-0">
+                      <div className="truncate text-base font-black">{r.profile?.name || r.user_id.slice(0, 8)}</div>
+                      <div className="truncate text-xs text-white/45">{r.profile?.pledge_class || 'Member'}</div>
+                    </div>
+                  </div>
+                  <div className="grid flex-1 grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-4">
+                    <LbStat label="Score" value={`${r.total_score}/${r.possible_score}`} />
+                    <LbStat label="Solved" value={`${r.questions_completed}/${r.questions_total}`} />
+                    <LbStat label="Time" value={formatDuration(r.time_taken_seconds)} />
+                    <LbStat label="Flags" value={r.monitoring?.left_count || 0} />
+                    <LbStat label="Started" value={formatTimestamp(r.started_at)} className="col-span-2" icon={<LogIn size={11}/>} />
+                    <LbStat label="Finished" value={formatTimestamp(r.submitted_at)} className="col-span-2" icon={<Flag size={11}/>} />
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LbStat({ label, value, className = '', icon = null }) {
+  return (
+    <div className={className}>
+      <div className="flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-white/40">{icon}{label}</div>
+      <div className="mt-0.5 text-sm font-bold text-white/90">{value}</div>
+    </div>
+  );
 }

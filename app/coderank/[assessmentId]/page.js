@@ -103,7 +103,11 @@ function AssessmentStart() {
               Coding Assessment
             </div>
             <h1 className="text-3xl sm:text-4xl font-black mb-3">{p.title}</h1>
-            {p.description && <p className="text-white/70 mb-6">{p.description}</p>}
+            {p.description && (
+              <div className="mb-6 whitespace-pre-wrap break-words text-white/70 leading-relaxed">
+                <RichText text={p.description} />
+              </div>
+            )}
 
             <div className="grid grid-cols-3 gap-3 mb-8">
               <Stat icon={<FileCode size={18}/>} label="Problems" value={p.question_count} />
@@ -279,6 +283,18 @@ function CountdownBadge({ expiresAt, status, unlimited = false }) {
       <Clock size={14} className="inline -mt-0.5 mr-1.5"/>{display}
     </span>
   );
+}
+
+// Render author text verbatim (line breaks + spacing preserved by the parent's
+// whitespace-pre-wrap) with only **bold** applied. We intentionally avoid full
+// markdown so literal numbering like "1." and blank-line spacing stay as typed.
+function RichText({ text }) {
+  const parts = String(text || '').split(/(\*\*[\s\S]+?\*\*)/g);
+  return parts.map((part, i) => {
+    const match = /^\*\*([\s\S]+)\*\*$/.exec(part);
+    if (match) return <strong key={i} className="font-bold text-white">{match[1]}</strong>;
+    return <span key={i}>{part}</span>;
+  });
 }
 
 function formatTimeLimit(minutes) {

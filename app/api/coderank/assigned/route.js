@@ -120,7 +120,7 @@ export async function GET(request) {
     ...asmt,
     question_count: (attemptsById.get(asmt.id)?.question_order || []).length || (asmt.random_question_count || (asmt.cr_assessment_questions || []).length),
     attempt: attemptsById.get(asmt.id) || null,
-  }));
+  })).sort((a, b) => releaseTime(b) - releaseTime(a));
 
   if (debug) {
     return withNoStore(NextResponse.json({
@@ -138,6 +138,14 @@ export async function GET(request) {
   }
 
   return withNoStore(NextResponse.json({ assessments: out }));
+}
+
+// Newest-first ordering: use the release date (publish_at when scheduled,
+// otherwise when the assessment was created).
+function releaseTime(asmt) {
+  const value = asmt?.publish_at || asmt?.created_at;
+  const time = value ? new Date(value).getTime() : 0;
+  return Number.isNaN(time) ? 0 : time;
 }
 
 function normalize(value) {

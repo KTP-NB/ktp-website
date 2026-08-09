@@ -144,7 +144,7 @@ export default function RushPage() {
 
          
           <h1 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-[1.1] drop-shadow-2xl mb-4 text-center text-white">
-            Spring 2026 Rush{" "}
+            Fall 2026 Rush{" "}
             <span className="opacity">
                 Loading{dots}
               </span>

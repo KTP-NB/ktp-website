@@ -7,6 +7,7 @@ const AuthCtx = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined); // undefined = loading
   const [profileName, setProfileName] = useState(null);
+  const [accessRole, setAccessRole] = useState(null);
 
   useEffect(() => {
     if (!hasSupabaseConfig) {
@@ -18,11 +19,18 @@ export function AuthProvider({ children }) {
 
     supabase.auth.getSession().then(({ data }) => {
       if (!isMounted) return;
-      setUser(data.session?.user ?? null);
+      const nextUser = data.session?.user ?? null;
+      setUser(nextUser);
+      if (nextUser?.user_metadata?.must_set_password && window.location.pathname !== '/update-password') {
+        window.location.replace('/update-password');
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       const nextUser = session?.user ?? null;
+      if (nextUser?.user_metadata?.must_set_password && window.location.pathname !== '/update-password') {
+        setTimeout(() => window.location.replace('/update-password'), 0);
+      }
       setUser((currentUser) => {
         if (currentUser?.id && nextUser?.id && currentUser.id === nextUser.id && currentUser.email === nextUser.email) {
           return currentUser;
@@ -41,6 +49,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (!hasSupabaseConfig || !user?.id) {
       setProfileName(null);
+      setAccessRole(null);
       return undefined;
     }
 
@@ -49,12 +58,13 @@ export function AuthProvider({ children }) {
     async function loadProfileName() {
       const { data, error } = await supabase
         .from('member_profiles')
-        .select('name')
+        .select('name,access_role')
         .eq('user_id', user.id)
         .maybeSingle();
 
       if (!isMounted) return;
       setProfileName(error ? null : data?.name || null);
+      setAccessRole(error ? null : data?.access_role || 'member');
     }
 
     loadProfileName();
@@ -74,6 +84,8 @@ export function AuthProvider({ children }) {
       user?.email?.split('@')[0] ||
       '',
     setProfileName,
+    accessRole,
+    hasAdminAccess: ['manager', 'admin', 'super_admin'].includes(accessRole),
     signOut: () => (hasSupabaseConfig ? supabase.auth.signOut() : Promise.resolve()),
     signIn: async (email, password) => {
       if (!hasSupabaseConfig) {
@@ -145,7 +157,7 @@ export function AuthProvider({ children }) {
       if (error) throw error;
       return data;
     },
-  }), [user, profileName]);
+  }), [user, profileName, accessRole]);
 
   return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;
 }

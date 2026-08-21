@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Build-time placeholders only; production credentials remain in the host environment.
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-key
+      NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET: ci
+      SUPABASE_SERVICE_ROLE_KEY: ci-placeholder-key
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test judge
+        run: npm run test:judge
+
+      - name: Test harness
+        run: npm run test:harness
+
+      - name: Build
+        run: npm run build

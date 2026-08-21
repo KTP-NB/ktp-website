@@ -6,15 +6,14 @@ import AuthGate from '@/components/authgate';
 import FadeIn from '@/components/FadeIn';
 import { useAuth } from '@/components/authprovider';
 import { useConfirmToast } from '@/components/ConfirmToast';
+import ProfileSectionNav from '@/components/ProfileSectionNav';
+import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { clearCachedData } from '@/lib/publicDataCache';
 import { MEMBERS_CACHE_KEY } from '@/lib/cacheKeys';
 
-const MEMBER_POSITION_ADMIN_EMAIL = 'kharbandakrish23@gmail.com';
-
 const editableFields = [
   { name: 'name', label: 'Name', type: 'text', required: true },
-  { name: 'position', label: 'Position', type: 'text' },
   { name: 'graduation_year', label: 'Year', type: 'text' },
   { name: 'major', label: 'Major', type: 'text' },
   { name: 'minors', label: 'Minor(s)', type: 'text' },
@@ -62,6 +61,8 @@ function formatDate(value) {
 }
 
 function ProfileEditor() {
+  const searchParams = useSearchParams();
+  const showResume = searchParams.get('tab') === 'resume';
   const { user, setProfileName } = useAuth();
   const [profileId, setProfileId] = useState(null);
   const [form, setForm] = useState(emptyProfile);
@@ -76,11 +77,7 @@ function ProfileEditor() {
   const [message, setMessage] = useState(null);
   const { confirm, confirmationToast } = useConfirmToast();
 
-  const canEditPosition = user?.email?.toLowerCase() === MEMBER_POSITION_ADMIN_EMAIL;
-  const visibleFields = useMemo(
-    () => editableFields.filter((field) => canEditPosition || field.name !== 'position'),
-    [canEditPosition]
-  );
+  const visibleFields = editableFields;
 
   const displayPhoto = useMemo(
     () => photoPreview || form.photo_url || '/ktp-icon.png',
@@ -298,10 +295,6 @@ function ProfileEditor() {
         ...(uploadedPhoto || {}),
       };
 
-      if (canEditPosition) {
-        updates.position = form.position.trim() || null;
-      }
-
       const { data, error } = await supabase
         .from('member_profiles')
         .update(updates)
@@ -363,10 +356,13 @@ function ProfileEditor() {
       {confirmationToast}
       <FadeIn className="mx-auto w-full max-w-5xl">
         <div className="mb-10">
-          <h1 className="text-4xl font-black tracking-tight sm:text-5xl">Profile</h1>
+          <h1 className="text-4xl font-black tracking-tight sm:text-5xl">Member Account</h1>
           <p className="mt-2 text-white/70">{user.email}</p>
         </div>
 
+        <ProfileSectionNav />
+
+        {!showResume && (
         <form
           onSubmit={onSubmit}
           className="grid gap-8 rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl md:grid-cols-[280px_1fr] md:p-8"
@@ -428,10 +424,11 @@ function ProfileEditor() {
             </button>
           </section>
         </form>
+        )}
 
         {/* ========== RESUME SECTION ========== */}
-        {profileId && (
-          <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl md:p-8">
+        {showResume && profileId && (
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl md:p-8">
             <h2 className="text-xl font-bold mb-1">Resume</h2>
             <p className="text-sm text-white/60 mb-6">Upload your resume as a PDF so leadership can review it.</p>
 

@@ -11,7 +11,7 @@ import { useAuth } from '@/components/authprovider';
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
-  const { user, loading, signOut, displayName } = useAuth();
+  const { user, loading, signOut, displayName, hasAdminAccess } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -32,10 +32,10 @@ export default function Header() {
     () => [
       { name: 'Study Tools', href: '/study-tools' },
       { name: 'CodeRank', href: '/coderank' },
-      { name: 'Admin Portal', href: '/admin' },
-      { name: 'Profile', href: '/profile' },
+      ...(hasAdminAccess ? [{ name: 'Admin Portal', href: '/admin' }] : []),
+      { name: 'Member Account', href: '/profile' },
     ],
-    []
+    [hasAdminAccess]
   );
 
   const authLinks = !loading && user ? [] : [{ name: 'Login', href: '/login' }];

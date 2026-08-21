@@ -1,26 +1,27 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState, useMemo } from 'react';
-import Link from 'next/link';
-import { FileText, ExternalLink, Search, Users, Loader2, ShieldAlert, Settings, Plus, Clock, ListChecks } from 'lucide-react';
-import AuthGate from '@/components/authgate';
-import FadeIn from '@/components/FadeIn';
-import Tabs from '@/components/Tabs';
-import { useAuth } from '@/components/authprovider';
-import { hasSupabaseConfig, supabase } from '@/lib/supabase';
-import { api } from '@/lib/coderank/clientFetch';
-
-/* ─── Positions that grant Admin Portal access ─── */
-const ADMIN_POSITIONS = [
-  'vp of tech development',
-  'vp of prof development',
-];
-
-function hasAdminAccess(position) {
-  if (!position) return false;
-  const pos = position.toLowerCase();
-  return ADMIN_POSITIONS.some((admin) => pos.includes(admin));
-}
+import { useCallback, useEffect, useState, useMemo } from "react";
+import Link from "next/link";
+import {
+  FileText,
+  ExternalLink,
+  Search,
+  Users,
+  Loader2,
+  ShieldAlert,
+  Settings,
+  Plus,
+  Clock,
+  ListChecks,
+} from "lucide-react";
+import AuthGate from "@/components/authgate";
+import FadeIn from "@/components/FadeIn";
+import Tabs from "@/components/Tabs";
+import { useAuth } from "@/components/authprovider";
+import { hasSupabaseConfig, supabase } from "@/lib/supabase";
+import { api } from "@/lib/coderank/clientFetch";
+import ApplicationTrackerPanel from "./ApplicationTrackerPanel";
+import MemberManagementPanel from "./MemberManagementPanel";
 
 /* ─── Main Export ─── */
 export default function AdminPortalPage() {
@@ -34,48 +35,26 @@ export default function AdminPortalPage() {
 /* ─── Admin Portal Shell ─── */
 function AdminPortal() {
   const { user } = useAuth();
-  const [userPosition, setUserPosition] = useState(null);
+  const [adminProfile, setAdminProfile] = useState(null);
   const [checkingAccess, setCheckingAccess] = useState(true);
 
   useEffect(() => {
     if (!user?.id) return;
-    if (!hasSupabaseConfig) {
-      setCheckingAccess(false);
-      return;
-    }
-
     let isMounted = true;
-
-    async function checkPosition() {
-      // Try by user_id first
-      let { data } = await supabase
-        .from('member_profiles')
-        .select('position')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      // Fallback: try by email if user_id didn't match
-      if (!data && user.email) {
-        const { data: emailData } = await supabase
-          .from('member_profiles')
-          .select('position')
-          .eq('email', user.email)
-          .maybeSingle();
-        data = emailData;
-      }
-
-      if (!isMounted) return;
-
-      console.log('[Admin Portal] Position check:', { position: data?.position });
-      setUserPosition(data?.position || null);
-      setCheckingAccess(false);
-    }
-
-    checkPosition();
-    return () => { isMounted = false; };
+    api("/api/admin/me")
+      .then((result) => {
+        if (isMounted) setAdminProfile(result.profile);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (isMounted) setCheckingAccess(false);
+      });
+    return () => {
+      isMounted = false;
+    };
   }, [user?.id, user?.email]);
 
-  const isAuthorized = useMemo(() => hasAdminAccess(userPosition), [userPosition]);
+  const isAuthorized = Boolean(adminProfile);
 
   if (checkingAccess) {
     return (
@@ -92,42 +71,57 @@ function AdminPortal() {
           <ShieldAlert size={48} className="mx-auto mb-4 text-red-400" />
           <h1 className="text-2xl font-bold mb-2">Access Restricted</h1>
           <p className="text-white/60 mb-4">
-            The Admin Portal is only accessible to executive board members with VP or President positions.
+            Your account does not have an administrative role or scoped
+            management permission.
           </p>
-
         </FadeIn>
       </main>
     );
   }
 
-  return <AdminDashboard />;
+  return <AdminDashboard adminProfile={adminProfile} />;
 }
 
 /* ─── Admin Dashboard (tabbed layout — add more tabs later) ─── */
 // Add more tab names here as you build out the admin portal
-const ADMIN_TABS = ['Resumes', 'CodeRank'];
+const TAB_PERMISSIONS = {
+  "Member Management": "members.manage",
+  Resumes: "resumes.manage",
+  CodeRank: "coderank.manage",
+  "Application Tracker": "applications.manage",
+};
 
-function AdminDashboard() {
-  const tabs = ADMIN_TABS;
-  const [activeTab, setActiveTab] = useState('Resumes');
+function AdminDashboard({ adminProfile }) {
+  const tabs = useMemo(
+    () => Object.keys(TAB_PERMISSIONS).filter(
+      (tab) => ["admin", "super_admin"].includes(adminProfile.access_role) ||
+        adminProfile.manager_permissions?.includes(TAB_PERMISSIONS[tab]),
+    ),
+    [adminProfile.access_role, adminProfile.manager_permissions],
+  );
+  const [activeTab, setActiveTab] = useState(tabs[0]);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    const param = new URLSearchParams(window.location.search).get('tab');
-    if (ADMIN_TABS.includes(param)) setActiveTab(param);
+    const param = new URLSearchParams(window.location.search).get("tab");
+    if (tabs.includes(param)) setActiveTab(param);
     setHydrated(true);
-  }, []);
+  }, [tabs]);
 
   useEffect(() => {
     if (!hydrated) return;
     const url = new URL(window.location.href);
-    if (activeTab === 'Resumes') {
-      url.searchParams.delete('tab');
+    if (activeTab === tabs[0]) {
+      url.searchParams.delete("tab");
     } else {
-      url.searchParams.set('tab', activeTab);
+      url.searchParams.set("tab", activeTab);
     }
-    window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
-  }, [activeTab, hydrated]);
+    window.history.replaceState(
+      null,
+      "",
+      `${url.pathname}${url.search}${url.hash}`,
+    );
+  }, [activeTab, hydrated, tabs]);
 
   return (
     <main className="min-h-screen px-4 pb-20 pt-28 text-white md:pt-36">
@@ -147,8 +141,12 @@ function AdminDashboard() {
 
         {/* Tab Content */}
         <div className="mt-8">
-          {activeTab === 'Resumes' && <ResumesPanel />}
-          {activeTab === 'CodeRank' && <CodeRankPanel />}
+          {activeTab === "Member Management" && (
+            <MemberManagementPanel viewerRole={adminProfile.access_role} />
+          )}
+          {activeTab === "Resumes" && <ResumesPanel />}
+          {activeTab === "CodeRank" && <CodeRankPanel />}
+          {activeTab === "Application Tracker" && <ApplicationTrackerPanel />}
         </div>
       </FadeIn>
     </main>
@@ -160,18 +158,18 @@ function ResumesPanel() {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [search, setSearch] = useState('');
-  const [filterClass, setFilterClass] = useState('all');
+  const [search, setSearch] = useState("");
+  const [filterClass, setFilterClass] = useState("all");
   const [classDropdownOpen, setClassDropdownOpen] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (!event.target.closest('.class-dropdown-container')) {
+      if (!event.target.closest(".class-dropdown-container")) {
         setClassDropdownOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -184,10 +182,12 @@ function ResumesPanel() {
       setError(null);
 
       const { data, error: fetchError } = await supabase
-        .from('member_profiles')
-        .select('id, name, position, pledge_class, member_status, graduation_year, major, resume_url, resume_storage_path, photo_url, sort_order')
-        .order('sort_order', { ascending: true })
-        .order('name', { ascending: true });
+        .from("member_profiles")
+        .select(
+          "id, name, position, pledge_class, member_status, graduation_year, major, resume_url, resume_storage_path, photo_url, sort_order",
+        )
+        .order("sort_order", { ascending: true })
+        .order("name", { ascending: true });
 
       if (!isMounted) return;
 
@@ -201,18 +201,22 @@ function ResumesPanel() {
     }
 
     loadMembers();
-    return () => { isMounted = false; };
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const pledgeClasses = useMemo(() => {
     const classes = new Set();
-    members.forEach((m) => { if (m.pledge_class) classes.add(m.pledge_class); });
-    return ['all', ...Array.from(classes).sort()];
+    members.forEach((m) => {
+      if (m.pledge_class) classes.add(m.pledge_class);
+    });
+    return ["all", ...Array.from(classes).sort()];
   }, [members]);
 
   const filtered = useMemo(() => {
     return members.filter((m) => {
-      if (filterClass !== 'all' && m.pledge_class !== filterClass) return false;
+      if (filterClass !== "all" && m.pledge_class !== filterClass) return false;
       if (search) {
         const q = search.toLowerCase();
         const nameMatch = m.name?.toLowerCase().includes(q);
@@ -224,16 +228,23 @@ function ResumesPanel() {
     });
   }, [members, search, filterClass]);
 
-  const activeWithResume = filtered.filter((m) => m.resume_url && m.member_status !== 'Alumni');
-  const activeWithoutResume = filtered.filter((m) => !m.resume_url && m.member_status !== 'Alumni');
-  const alumniList = filtered.filter((m) => m.member_status === 'Alumni');
+  const activeWithResume = filtered.filter(
+    (m) => m.resume_url && m.member_status !== "Alumni",
+  );
+  const activeWithoutResume = filtered.filter(
+    (m) => !m.resume_url && m.member_status !== "Alumni",
+  );
+  const alumniList = filtered.filter((m) => m.member_status === "Alumni");
 
   return (
     <div>
       {/* Controls */}
       <div className="mb-6 flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40" />
+          <Search
+            size={18}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40"
+          />
           <input
             type="text"
             placeholder="Search by name, major, or position..."
@@ -249,10 +260,25 @@ function ResumesPanel() {
             onClick={() => setClassDropdownOpen(!classDropdownOpen)}
             className="w-full sm:w-auto flex items-center justify-between gap-3 rounded-xl border border-white/15 bg-white/5 pl-4 pr-3 py-3 text-white outline-none transition focus:border-blue-300 hover:bg-white/10 min-w-[160px]"
           >
-            <span className="truncate">{filterClass === 'all' ? 'All Classes' : filterClass}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`text-white/50 transition-transform ${classDropdownOpen ? 'rotate-180' : ''}`}><path d="m6 9 6 6 6-6"/></svg>
+            <span className="truncate">
+              {filterClass === "all" ? "All Classes" : filterClass}
+            </span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={`text-white/50 transition-transform ${classDropdownOpen ? "rotate-180" : ""}`}
+            >
+              <path d="m6 9 6 6 6-6" />
+            </svg>
           </button>
-          
+
           {classDropdownOpen && (
             <div className="absolute right-0 z-50 mt-2 w-full sm:w-48 origin-top-right rounded-2xl border border-white/10 bg-[#0f172a] p-2 shadow-xl ring-1 ring-black ring-opacity-5">
               <div className="max-h-64 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
@@ -267,11 +293,11 @@ function ResumesPanel() {
                       }}
                       className={`block w-full text-left rounded-xl px-4 py-2.5 text-sm font-bold transition ${
                         isActive
-                          ? 'bg-blue-600 text-white'
-                          : 'text-white hover:bg-white/10 hover:text-blue-200'
+                          ? "bg-blue-600 text-white"
+                          : "text-white hover:bg-white/10 hover:text-blue-200"
                       }`}
                     >
-                      {cls === 'all' ? 'All Classes' : cls}
+                      {cls === "all" ? "All Classes" : cls}
                     </button>
                   );
                 })}
@@ -289,7 +315,9 @@ function ResumesPanel() {
         </div>
         <div className="flex items-center gap-2 rounded-xl border border-emerald-400/20 bg-emerald-400/5 px-4 py-2.5 text-sm">
           <FileText size={16} className="text-emerald-300" />
-          <span className="text-emerald-200">{filtered.filter(m => m.resume_url).length} resumes uploaded</span>
+          <span className="text-emerald-200">
+            {filtered.filter((m) => m.resume_url).length} resumes uploaded
+          </span>
         </div>
       </div>
 
@@ -324,7 +352,7 @@ function ResumesPanel() {
                     {/* Avatar */}
                     <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border border-white/15 bg-white/5">
                       <img
-                        src={member.photo_url || '/ktp-icon.png'}
+                        src={member.photo_url || "/ktp-icon.png"}
                         alt={member.name}
                         className="h-full w-full object-cover"
                       />
@@ -336,7 +364,7 @@ function ResumesPanel() {
                       <p className="text-xs text-white/50 truncate">
                         {[member.member_status, member.pledge_class]
                           .filter(Boolean)
-                          .join(' · ')}
+                          .join(" · ")}
                       </p>
                     </div>
 
@@ -365,7 +393,7 @@ function ResumesPanel() {
                   >
                     <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border border-white/10 bg-white/5">
                       <img
-                        src={member.photo_url || '/ktp-icon.png'}
+                        src={member.photo_url || "/ktp-icon.png"}
                         alt={member.name}
                         className="h-full w-full object-cover"
                       />
@@ -375,10 +403,12 @@ function ResumesPanel() {
                       <p className="text-xs text-white/40 truncate">
                         {[member.member_status, member.pledge_class]
                           .filter(Boolean)
-                          .join(' · ') || '—'}
+                          .join(" · ") || "—"}
                       </p>
                     </div>
-                    <span className="text-xs text-white/30 shrink-0">No resume</span>
+                    <span className="text-xs text-white/30 shrink-0">
+                      No resume
+                    </span>
                   </Link>
                 ))}
               </div>
@@ -407,17 +437,19 @@ function ResumesPanel() {
                     >
                       <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border border-white/10 bg-white/5">
                         <img
-                          src={member.photo_url || '/ktp-icon.png'}
+                          src={member.photo_url || "/ktp-icon.png"}
                           alt={member.name}
                           className="h-full w-full object-cover grayscale opacity-80"
                         />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="font-semibold truncate text-white/80">{member.name}</p>
+                        <p className="font-semibold truncate text-white/80">
+                          {member.name}
+                        </p>
                         <p className="text-xs text-white/40 truncate">
                           {[member.member_status, member.pledge_class]
                             .filter(Boolean)
-                            .join(' · ') || '—'}
+                            .join(" · ") || "—"}
                         </p>
                       </div>
                       {hasResume ? (
@@ -425,7 +457,9 @@ function ResumesPanel() {
                           <ExternalLink size={16} className="text-white/60" />
                         </div>
                       ) : (
-                        <span className="text-xs text-white/30 shrink-0">No resume</span>
+                        <span className="text-xs text-white/30 shrink-0">
+                          No resume
+                        </span>
                       )}
                     </Link>
                   );
@@ -453,7 +487,7 @@ function CodeRankPanel() {
 
   const loadAssessments = useCallback(() => {
     setError(null);
-    api('/api/coderank/admin/assessments')
+    api("/api/coderank/admin/assessments")
       .then((r) => setAssessments(r.assessments || []))
       .catch((e) => setError(e.message));
   }, []);
@@ -462,17 +496,17 @@ function CodeRankPanel() {
     loadAssessments();
 
     const onVisibility = () => {
-      if (document.visibilityState === 'visible') loadAssessments();
+      if (document.visibilityState === "visible") loadAssessments();
     };
 
-    window.addEventListener('focus', loadAssessments);
-    window.addEventListener('pageshow', loadAssessments);
-    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener("focus", loadAssessments);
+    window.addEventListener("pageshow", loadAssessments);
+    document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
-      window.removeEventListener('focus', loadAssessments);
-      window.removeEventListener('pageshow', loadAssessments);
-      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener("focus", loadAssessments);
+      window.removeEventListener("pageshow", loadAssessments);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [loadAssessments]);
 
@@ -480,10 +514,10 @@ function CodeRankPanel() {
     <div>
       <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold mb-1">
-            Coding Assessments
-          </h2>
-          <p className="text-white/50 text-sm">Build NeetCode-style assessments and monitor member performance.</p>
+          <h2 className="text-xl font-bold mb-1">Coding Assessments</h2>
+          <p className="text-white/50 text-sm">
+            Build NeetCode-style assessments and monitor member performance.
+          </p>
         </div>
         <Link
           href="/admin/coderank/new"
@@ -494,7 +528,9 @@ function CodeRankPanel() {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-300/25 bg-red-400/10 px-5 py-4 text-sm text-red-100 mb-4">{error}</div>
+        <div className="rounded-xl border border-red-300/25 bg-red-400/10 px-5 py-4 text-sm text-red-100 mb-4">
+          {error}
+        </div>
       )}
 
       {assessments === null && !error && (
@@ -506,7 +542,10 @@ function CodeRankPanel() {
       {assessments && assessments.length === 0 && (
         <div className="py-16 text-center rounded-2xl border border-white/10 bg-white/[0.02]">
           <p className="text-white/60 mb-4">No assessments created yet.</p>
-          <Link href="/admin/coderank/new" className="inline-flex items-center gap-2 text-blue-300 hover:text-blue-200 font-bold">
+          <Link
+            href="/admin/coderank/new"
+            className="inline-flex items-center gap-2 text-blue-300 hover:text-blue-200 font-bold"
+          >
             <Plus size={14} /> Create the first one
           </Link>
         </div>
@@ -525,16 +564,33 @@ function CodeRankPanel() {
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-bold truncate">{a.title}</h3>
                     {a.published ? (
-                      <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-emerald-400/15 text-emerald-200 border border-emerald-400/30">Published</span>
+                      <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-emerald-400/15 text-emerald-200 border border-emerald-400/30">
+                        Published
+                      </span>
                     ) : (
-                      <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-white/10 text-white/60 border border-white/15">Draft</span>
+                      <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-white/10 text-white/60 border border-white/15">
+                        Draft
+                      </span>
                     )}
                   </div>
-                  {a.description && <p className="text-xs text-white/50 line-clamp-1 mb-1">{a.description}</p>}
+                  {a.description && (
+                    <p className="text-xs text-white/50 line-clamp-1 mb-1">
+                      {a.description}
+                    </p>
+                  )}
                   <div className="flex flex-wrap gap-3 text-xs text-white/40">
-                    <span className="flex items-center gap-1"><ListChecks size={12}/>{(a.cr_assessment_questions || []).length} problems</span>
-                    <span className="flex items-center gap-1"><Clock size={12}/>{formatTimeLimit(a.time_limit_minutes)}</span>
-                    <span>{(a.cr_assignments || []).length} assignment{(a.cr_assignments || []).length === 1 ? '' : 's'}</span>
+                    <span className="flex items-center gap-1">
+                      <ListChecks size={12} />
+                      {(a.cr_assessment_questions || []).length} problems
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock size={12} />
+                      {formatTimeLimit(a.time_limit_minutes)}
+                    </span>
+                    <span>
+                      {(a.cr_assignments || []).length} assignment
+                      {(a.cr_assignments || []).length === 1 ? "" : "s"}
+                    </span>
                   </div>
                 </div>
                 <ExternalLink size={16} className="text-white/40 shrink-0" />
@@ -548,5 +604,5 @@ function CodeRankPanel() {
 }
 
 function formatTimeLimit(minutes) {
-  return Number(minutes) > 0 ? `${minutes} min` : 'No time limit';
+  return Number(minutes) > 0 ? `${minutes} min` : "No time limit";
 }

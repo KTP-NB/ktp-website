@@ -40,7 +40,7 @@ export async function PUT(request, { params }) {
   const service = getServiceClient();
   const { data: member } = await service.from('member_profiles').select('user_id,member_status,default_application_target,uses_default_application_target').eq('id', params.id).maybeSingle();
   if (!member?.user_id) return withNoStore(NextResponse.json({ error: 'Member account is not linked.' }, { status: 404 }));
-  const usesDefault = Boolean(body.uses_default_application_target);
+  const useBaseline = Boolean(body.use_baseline);
   const { data: chapterSetting, error: chapterError } = await service
     .from('chapter_application_requirements')
     .select('default_target')
@@ -48,21 +48,34 @@ export async function PUT(request, { params }) {
     .maybeSingle();
   if (chapterError) return withNoStore(NextResponse.json({ error: chapterError.message }, { status: 500 }));
   const noRequirement = ['Inactive','Alumni'].includes(member.member_status);
-  const effectiveTarget = noRequirement ? 0 : usesDefault ? chapterSetting?.default_target ?? 40 : target;
+  const baselineTarget = noRequirement
+    ? 0
+    : member.uses_default_application_target
+      ? chapterSetting?.default_target ?? 40
+      : member.default_application_target ?? 40;
+  if (useBaseline) {
+    const { error } = await service
+      .from('application_requirements')
+      .delete()
+      .eq('user_id', member.user_id)
+      .eq('month_start', `${body.month}-01`);
+    if (error) return withNoStore(NextResponse.json({ error: error.message }, { status: 500 }));
+    return withNoStore(NextResponse.json({
+      requirement: null,
+      effective_target: baselineTarget,
+      has_monthly_override: false,
+    }));
+  }
+  const effectiveTarget = noRequirement ? 0 : target;
   const { data, error } = await service.from('application_requirements').upsert({
     user_id: member.user_id, month_start: `${body.month}-01`, target_count: effectiveTarget,
     is_exempt: false, exemption_reason: String(body.exemption_reason || '').trim() || null,
     updated_by: auth.user.id,
   }, { onConflict: 'user_id,month_start' }).select('*').single();
   if (error) return withNoStore(NextResponse.json({ error: error.message }, { status: 500 }));
-  if (body.month >= new Date().toISOString().slice(0, 7)) {
-    const profileUpdates = noRequirement
-      ? { default_application_target: 0, uses_default_application_target: false }
-      : usesDefault
-        ? { uses_default_application_target: true }
-        : { default_application_target: target, uses_default_application_target: false };
-    const { error: profileError } = await service.from('member_profiles').update(profileUpdates).eq('id', params.id);
-    if (profileError) return withNoStore(NextResponse.json({ error: profileError.message }, { status: 500 }));
-  }
-  return withNoStore(NextResponse.json({ requirement: data, effective_target: effectiveTarget, uses_default_application_target: usesDefault }));
+  return withNoStore(NextResponse.json({
+    requirement: data,
+    effective_target: effectiveTarget,
+    has_monthly_override: true,
+  }));
 }

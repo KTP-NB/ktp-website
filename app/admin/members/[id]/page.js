@@ -307,7 +307,7 @@ function MemberApplications({ memberId }) {
   const [chapterRequirements, setChapterRequirements] = useState([]);
   const [defaultTarget, setDefaultTarget] = useState(40);
   const [profileUsesDefault, setProfileUsesDefault] = useState(true);
-  const [usesDefault, setUsesDefault] = useState(true);
+  const [useBaseline, setUseBaseline] = useState(true);
   const [memberStatus, setMemberStatus] = useState("Active");
   const [month, setMonth] = useState(new Date().toISOString().slice(0, 7));
   const [target, setTarget] = useState(40);
@@ -347,11 +347,10 @@ function MemberApplications({ memberId }) {
     );
     const chapterRow = chapterRequirements.find((item) => item.month_start?.startsWith(month));
     const chapterDefault = chapterRow?.default_target ?? 40;
-    const isPast = month < new Date().toISOString().slice(0, 7);
     const noRequirement = ["Inactive", "Alumni"].includes(memberStatus);
-    const nextUsesDefault = !isPast && !noRequirement && profileUsesDefault;
-    setUsesDefault(nextUsesDefault);
-    setTarget(noRequirement ? 0 : isPast ? row?.target_count ?? (profileUsesDefault ? chapterDefault : defaultTarget) : nextUsesDefault ? chapterDefault : defaultTarget);
+    const baselineTarget = noRequirement ? 0 : profileUsesDefault ? chapterDefault : defaultTarget;
+    setUseBaseline(!row);
+    setTarget(row?.target_count ?? baselineTarget);
     setReason(row?.exemption_reason || "");
   }, [requirements, chapterRequirements, month, defaultTarget, profileUsesDefault, memberStatus]);
 
@@ -365,20 +364,13 @@ function MemberApplications({ memberId }) {
         body: JSON.stringify({
           month,
           target_count: Number(target),
-          uses_default_application_target: usesDefault,
+          use_baseline: useBaseline,
           exemption_reason: reason,
         }),
       });
-      setRequirements((current) => [
-        result.requirement,
-        ...current.filter(
-          (item) => item.month_start !== result.requirement.month_start,
-        ),
-      ]);
-      if (month >= new Date().toISOString().slice(0, 7)) {
-        setProfileUsesDefault(result.uses_default_application_target);
-        if (!result.uses_default_application_target) setDefaultTarget(result.effective_target);
-      }
+      setRequirements((current) => result.requirement
+        ? [result.requirement, ...current.filter((item) => item.month_start !== result.requirement.month_start)]
+        : current.filter((item) => !item.month_start?.startsWith(month)));
       setMessage("Monthly requirement saved.");
     } catch (e) {
       setError(e.message);
@@ -395,8 +387,8 @@ function MemberApplications({ memberId }) {
     app.date_applied.startsWith(year),
   ).length;
   const selectedChapterDefault = chapterRequirements.find((item) => item.month_start?.startsWith(month))?.default_target ?? 40;
-  const isPastMonth = month < new Date().toISOString().slice(0, 7);
   const noRequirement = ["Inactive", "Alumni"].includes(memberStatus);
+  const baselineTarget = noRequirement ? 0 : profileUsesDefault ? selectedChapterDefault : defaultTarget;
 
   return (
     <div className="mt-6 space-y-6">
@@ -418,17 +410,17 @@ function MemberApplications({ memberId }) {
           <label className="grid gap-2 text-sm font-semibold text-white/70">
             Requirement mode
             <select
-              value={usesDefault ? "default" : "custom"}
-              disabled={isPastMonth || noRequirement}
+              value={useBaseline ? "baseline" : "override"}
+              disabled={noRequirement}
               onChange={(e) => {
-                const nextDefault = e.target.value === "default";
-                setUsesDefault(nextDefault);
-                if (nextDefault) setTarget(selectedChapterDefault);
+                const nextBaseline = e.target.value === "baseline";
+                setUseBaseline(nextBaseline);
+                if (nextBaseline) setTarget(baselineTarget);
               }}
               className="rounded-xl border border-white/15 bg-slate-900 px-4 py-3 disabled:opacity-40"
             >
-              <option value="default">Use chapter default ({selectedChapterDefault})</option>
-              <option value="custom">Custom requirement</option>
+              <option value="baseline">Use member baseline ({baselineTarget})</option>
+              <option value="override">Override for this month</option>
             </select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-white/70">
@@ -439,11 +431,11 @@ function MemberApplications({ memberId }) {
               max="1000"
               value={target}
               onChange={(e) => setTarget(e.target.value)}
-              disabled={usesDefault || noRequirement}
+              disabled={useBaseline || noRequirement}
               className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 disabled:opacity-40"
             />
           </label>
-          {isPastMonth && <p className="text-xs text-white/45 sm:col-span-2">Historical edits apply only to the selected month and do not change the member&apos;s persistent requirement.</p>}
+          <p className="text-xs text-white/45 sm:col-span-2">Monthly overrides apply only to the selected month. Resetting to the member baseline makes this month follow future baseline changes.</p>
           <label className="grid gap-2 text-sm font-semibold text-white/70 sm:col-span-2">
             Member-visible explanation
             <textarea

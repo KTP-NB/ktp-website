@@ -84,9 +84,7 @@ function ApplicationsTracker() {
       : memberRequirement.usesDefault
         ? chapterTarget
         : memberRequirement.target;
-    const target = selectedMonth < monthKey()
-      ? row?.target_count ?? baseTarget
-      : baseTarget;
+    const target = row?.target_count ?? baseTarget;
     return {
       target_count: target,
       is_exempt: noRequirement || Boolean(row?.is_exempt),

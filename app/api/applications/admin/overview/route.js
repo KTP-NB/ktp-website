@@ -38,22 +38,24 @@ export async function GET(request) {
     appsByUser.set(app.user_id, current);
   }
   const reqByUser = new Map((requirementsResult.data || []).map((row) => [row.user_id, row]));
-  const currentMonth = new Date().toISOString().slice(0, 7);
   const chapterDefault = chapterResult.data?.default_target ?? 40;
   const members = (membersResult.data || []).map((member) => {
     const stats = appsByUser.get(member.user_id) || { count: 0, offers: 0, interviews: 0 };
     const requirement = reqByUser.get(member.user_id);
-    // The profile target is the single source of truth for the current and
-    // future months. Saved requirement rows remain authoritative for history.
-    const currentOrFutureTarget = member.uses_default_application_target
+    const baselineTarget = member.uses_default_application_target
       ? chapterDefault
       : member.default_application_target ?? 40;
     const target = ['Inactive', 'Alumni'].includes(member.member_status)
       ? 0
-      : month >= currentMonth
-        ? currentOrFutureTarget
-        : requirement?.target_count ?? currentOrFutureTarget;
-    return { ...member, ...stats, target, met: stats.count >= target };
+      : requirement?.target_count ?? baselineTarget;
+    return {
+      ...member,
+      ...stats,
+      target,
+      baseline_target: baselineTarget,
+      has_monthly_override: Boolean(requirement),
+      met: stats.count >= target,
+    };
   });
 
   return withNoStore(NextResponse.json({ month, chapter_default: chapterDefault, members }));

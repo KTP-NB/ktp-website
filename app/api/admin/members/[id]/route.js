@@ -71,42 +71,15 @@ export async function PUT(request, { params }) {
     .single();
   if (error)
     return NextResponse.json({ error: error.message }, { status: 400 });
-  const month = `${new Date().toISOString().slice(0, 7)}-01`;
-  const { data: chapterSetting, error: settingError } = await service
-    .from("chapter_application_requirements")
-    .select("default_target")
-    .eq("month_start", month)
-    .maybeSingle();
-  if (settingError) return NextResponse.json({ error: settingError.message }, { status: 500 });
-  const currentTarget = noRequirement
-    ? 0
-    : usesDefault
-      ? chapterSetting?.default_target ?? 40
-      : requestedTarget;
-  if (data.user_id && "current_application_target" in body) {
-    const { data: savedRequirement, error: requirementError } = await service
-      .from("application_requirements")
-      .upsert({
-        user_id: data.user_id,
-        month_start: month,
-        target_count: currentTarget,
-        is_exempt: false,
-        exemption_reason: null,
-        updated_by: auth.user.id,
-      }, { onConflict: "user_id,month_start" })
-      .select("target_count")
-      .single();
-    if (requirementError)
-      return NextResponse.json(
-        { error: `Member details saved, but the application requirement failed: ${requirementError.message}` },
-        { status: 500 },
-      );
-    return NextResponse.json({
-      member: { ...data, current_application_target: savedRequirement.target_count },
-    });
-  }
   return NextResponse.json({
-    member: { ...data, current_application_target: currentTarget },
+    member: {
+      ...data,
+      current_application_target: noRequirement
+        ? 0
+        : usesDefault
+          ? requestedTarget
+          : data.default_application_target,
+    },
   });
 }
 

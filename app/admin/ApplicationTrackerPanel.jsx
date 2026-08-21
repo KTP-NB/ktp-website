@@ -285,7 +285,14 @@ export default function ApplicationTrackerPanel() {
                       </Link>
                     </td>
                     <td className="p-4">
-                      {hasRequirement ? member.target : "—"}
+                      {hasRequirement ? (
+                        <>
+                          {member.target}
+                          <small className="block text-white/40">
+                            {member.has_monthly_override ? "Monthly override" : "Member baseline"}
+                          </small>
+                        </>
+                      ) : "—"}
                     </td>
                     <td className="p-4 font-bold">{member.count}</td>
                     <td className="p-4">{hasRequirement ? remaining : "—"}</td>

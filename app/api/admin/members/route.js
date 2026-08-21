@@ -15,18 +15,10 @@ export async function GET(request) {
     .order("name");
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
-  const month = `${new Date().toISOString().slice(0, 7)}-01`;
-  const { data: requirements } = await service
-    .from("application_requirements")
-    .select("user_id,target_count")
-    .eq("month_start", month);
-  const targets = new Map(
-    (requirements || []).map((row) => [row.user_id, row.target_count]),
-  );
   return NextResponse.json({
     members: (data || []).map((m) => ({
       ...m,
-      current_application_target: targets.get(m.user_id) ?? m.default_application_target ?? 40,
+      current_application_target: m.default_application_target ?? 40,
     })),
     viewerRole: auth.profile.access_role,
   });

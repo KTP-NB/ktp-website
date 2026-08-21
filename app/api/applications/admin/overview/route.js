@@ -37,10 +37,15 @@ export async function GET(request) {
     appsByUser.set(app.user_id, current);
   }
   const reqByUser = new Map((requirementsResult.data || []).map((row) => [row.user_id, row]));
+  const currentMonth = new Date().toISOString().slice(0, 7);
   const members = (membersResult.data || []).map((member) => {
     const stats = appsByUser.get(member.user_id) || { count: 0, offers: 0, interviews: 0 };
     const requirement = reqByUser.get(member.user_id);
-    const target = requirement?.target_count ?? member.default_application_target ?? 40;
+    // The profile target is the single source of truth for the current and
+    // future months. Saved requirement rows remain authoritative for history.
+    const target = month >= currentMonth
+      ? member.default_application_target ?? 40
+      : requirement?.target_count ?? member.default_application_target ?? 40;
     return { ...member, ...stats, target, met: stats.count >= target };
   });
 

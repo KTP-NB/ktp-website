@@ -19,6 +19,14 @@ function currentMonth() {
   return new Date().toISOString().slice(0, 7);
 }
 
+function progressState(member, paceFraction) {
+  const status = (member.member_status || "").trim().toLowerCase();
+  if (status !== "active" || member.target <= 0) return "no-requirement";
+  if (member.met) return "met";
+  if (paceFraction !== null && member.count >= Math.ceil(member.target * paceFraction)) return "on-track";
+  return "behind";
+}
+
 export default function ApplicationTrackerPanel() {
   const [month, setMonth] = useState(currentMonth());
   const [members, setMembers] = useState([]);
@@ -46,15 +54,20 @@ export default function ApplicationTrackerPanel() {
     };
   }, [month]);
 
+  const today = new Date();
+  const selectedMonth = new Date(`${month}-01T12:00:00`);
+  const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+  const selectedMonthStart = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth(), 1);
+  const paceFraction = selectedMonthStart < currentMonthStart
+    ? 1
+    : selectedMonthStart > currentMonthStart
+      ? null
+      : today.getDate() / new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
   const filtered = useMemo(
     () =>
       members
         .filter((member) => {
-          const status = (member.member_status || "").trim().toLowerCase();
-          const hasRequirement = status === "active" && member.target > 0;
-          if (filter === "met" && !(hasRequirement && member.met)) return false;
-          if (filter === "behind" && !(hasRequirement && !member.met)) return false;
-          if (filter === "no-requirement" && hasRequirement) return false;
+          if (filter !== "all" && progressState(member, paceFraction) !== filter) return false;
           return (
             !search ||
             `${member.name} ${member.pledge_class || ""}`
@@ -68,7 +81,7 @@ export default function ApplicationTrackerPanel() {
             b.target - b.count - (a.target - a.count) ||
             a.name.localeCompare(b.name),
         ),
-    [members, search, filter],
+    [members, search, filter, paceFraction],
   );
   const active = members.filter((m) => {
     const status = (m.member_status || "").trim().toLowerCase();
@@ -80,17 +93,8 @@ export default function ApplicationTrackerPanel() {
     return status !== "active" || m.target <= 0;
   });
   const met = required.filter((m) => m.met).length;
-  const today = new Date();
-  const selectedMonth = new Date(`${month}-01T12:00:00`);
-  const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-  const selectedMonthStart = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth(), 1);
-  const paceFraction = selectedMonthStart < currentMonthStart
-    ? 1
-    : selectedMonthStart > currentMonthStart
-      ? 0
-      : today.getDate() / new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
   const onTrack = required.filter(
-    (m) => !m.met && m.count >= Math.ceil(m.target * paceFraction),
+    (m) => progressState(m, paceFraction) === "on-track",
   ).length;
   const behind = required.length - met - onTrack;
   const noApplications = required.filter((m) => m.count === 0).length;
@@ -134,6 +138,13 @@ export default function ApplicationTrackerPanel() {
         <Card icon={Target} label="Median applications" value={medianApplications} />
         <Card icon={Target} label="Interviewing or offer" value={interviewingOrOffer} />
       </div>
+      <p className="mb-5 text-xs text-white/45">
+        {paceFraction === null
+          ? "Future reporting months do not have an on-track pace yet."
+          : selectedMonthStart < currentMonthStart
+            ? "Completed months are classified as Requirement Met or Behind; On Track applies to the current month."
+            : `On track means completing at least ${Math.round(paceFraction * 100)}% of the monthly requirement by today (${today.toLocaleDateString(undefined, { month: "short", day: "numeric" })}).`}
+      </p>
       <div className="mb-5 flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
           <Search
@@ -154,6 +165,7 @@ export default function ApplicationTrackerPanel() {
         >
           <option value="all">All members</option>
           <option value="behind">Behind</option>
+          <option value="on-track">On track</option>
           <option value="met">Requirement met</option>
           <option value="no-requirement">No application requirement</option>
         </select>
@@ -184,8 +196,12 @@ export default function ApplicationTrackerPanel() {
               {filtered.map((member) => {
                 const status = (member.member_status || "").trim().toLowerCase();
                 const hasRequirement = status === "active" && member.target > 0;
+                const state = progressState(member, paceFraction);
                 const remaining = Math.max(0, member.target - member.count);
                 const pct = hasRequirement ? Math.min(100, Math.round((member.count / member.target) * 100)) : 0;
+                const progressLabel = state === "met" ? "Met" : state === "on-track" ? "On Track" : "Behind";
+                const progressText = state === "met" ? "text-emerald-300" : state === "on-track" ? "text-blue-300" : "text-amber-300";
+                const progressBar = state === "met" ? "bg-emerald-400" : state === "on-track" ? "bg-blue-400" : "bg-amber-400";
                 return (
                   <tr
                     key={member.id}
@@ -218,17 +234,15 @@ export default function ApplicationTrackerPanel() {
                       {hasRequirement ? <div className="w-32">
                         <div className="mb-1 flex justify-between text-xs">
                           <span
-                            className={
-                              member.met ? "text-emerald-300" : "text-amber-300"
-                            }
+                            className={progressText}
                           >
-                            {member.met ? "Met" : "Behind"}
+                            {progressLabel}
                           </span>
                           <span>{pct}%</span>
                         </div>
                         <div className="h-1.5 rounded-full bg-white/10">
                           <div
-                            className={`h-full rounded-full ${member.met ? "bg-emerald-400" : "bg-amber-400"}`}
+                            className={`h-full rounded-full ${progressBar}`}
                             style={{ width: `${pct}%` }}
                           />
                         </div>

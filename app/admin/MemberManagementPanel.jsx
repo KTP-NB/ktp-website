@@ -280,6 +280,7 @@ function MemberModal({
   chapterDefault,
 }) {
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const requiredProfileFields = new Set(["name", "email", "position", "pledge_class", "graduation_year", "major"]);
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-4">
       <form
@@ -304,9 +305,9 @@ function MemberModal({
             ["linkedin_url", "LinkedIn URL"],
           ].map(([k, l]) => (
             <label key={k} className="grid gap-1 text-sm font-bold">
-              {l}
+              <span>{l}{requiredProfileFields.has(k) && <b className="ml-1 text-red-400">*</b>}</span>
               <input
-                required={["name", "email"].includes(k)}
+                required={requiredProfileFields.has(k)}
                 disabled={!inviteMode && k === "email"}
                 value={form[k] || ""}
                 onChange={(e) => set(k, e.target.value)}

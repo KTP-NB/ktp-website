@@ -46,9 +46,17 @@ export async function POST(request) {
     .trim()
     .toLowerCase();
   const name = String(body.name || "").trim();
-  if (!email || !name)
+  const requiredProfile = {
+    name,
+    email,
+    position: String(body.position || "").trim(),
+    pledge_class: String(body.pledge_class || "").trim(),
+    graduation_year: String(body.graduation_year || "").trim(),
+    major: String(body.major || "").trim(),
+  };
+  if (Object.values(requiredProfile).some((value) => !value))
     return NextResponse.json(
-      { error: "Name and email are required." },
+      { error: "Name, email, position, pledge class, graduation year, and major are required." },
       { status: 400 },
     );
   const service = getServiceClient();
@@ -72,10 +80,13 @@ export async function POST(request) {
       {
         email,
         name,
+        position: requiredProfile.position,
         user_id: invited.user.id,
-        pledge_class: body.pledge_class || null,
-        graduation_year: body.graduation_year || null,
-        major: body.major || null,
+        pledge_class: requiredProfile.pledge_class,
+        graduation_year: requiredProfile.graduation_year,
+        major: requiredProfile.major,
+        minors: String(body.minors || "").trim() || null,
+        linkedin_url: String(body.linkedin_url || "").trim() || null,
         member_status: "Active",
         access_role: "member",
         default_application_target: requestedTarget,

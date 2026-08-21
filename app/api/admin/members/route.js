@@ -3,7 +3,7 @@ import { requirePermission } from "@/lib/coderank/auth";
 import { getServiceClient } from "@/lib/coderank/supabaseServer";
 
 const FIELDS =
-  "id,user_id,name,email,position,pledge_class,member_status,graduation_year,major,minors,linkedin_url,executive_board,committees,sort_order,photo_url,resume_url,access_role,manager_permissions,default_application_target,created_at,updated_at";
+  "id,user_id,name,email,position,pledge_class,member_status,graduation_year,major,minors,linkedin_url,executive_board,committees,sort_order,photo_url,resume_url,access_role,manager_permissions,default_application_target,uses_default_application_target,created_at,updated_at";
 
 export async function GET(request) {
   const auth = await requirePermission(request, "members.manage");
@@ -15,12 +15,26 @@ export async function GET(request) {
     .order("name");
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
+  const month = `${new Date().toISOString().slice(0, 7)}-01`;
+  const { data: chapterSetting, error: settingError } = await service
+    .from("chapter_application_requirements")
+    .select("default_target")
+    .eq("month_start", month)
+    .maybeSingle();
+  if (settingError)
+    return NextResponse.json({ error: settingError.message }, { status: 500 });
+  const chapterDefault = chapterSetting?.default_target ?? 40;
   return NextResponse.json({
     members: (data || []).map((m) => ({
       ...m,
-      current_application_target: m.default_application_target ?? 40,
+      current_application_target: ["Inactive", "Alumni"].includes(m.member_status)
+        ? 0
+        : m.uses_default_application_target
+          ? chapterDefault
+          : m.default_application_target ?? 40,
     })),
     viewerRole: auth.profile.access_role,
+    chapterDefault,
   });
 }
 
@@ -38,6 +52,13 @@ export async function POST(request) {
       { status: 400 },
     );
   const service = getServiceClient();
+  const month = `${new Date().toISOString().slice(0, 7)}-01`;
+  const { data: chapterSetting } = await service
+    .from("chapter_application_requirements")
+    .select("default_target")
+    .eq("month_start", month)
+    .maybeSingle();
+  const requestedTarget = Number(body.current_application_target ?? 40);
   const { data: invited, error: inviteError } =
     await service.auth.admin.inviteUserByEmail(email, {
       data: { name, must_set_password: true },
@@ -57,7 +78,8 @@ export async function POST(request) {
         major: body.major || null,
         member_status: "Active",
         access_role: "member",
-        default_application_target: Number(body.current_application_target ?? 40),
+        default_application_target: requestedTarget,
+        uses_default_application_target: requestedTarget === (chapterSetting?.default_target ?? 40),
         source_key: `invite:${invited.user.id}`,
       },
       { onConflict: "email" },

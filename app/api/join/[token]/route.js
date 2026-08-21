@@ -69,6 +69,14 @@ export async function POST(request, { params }) {
     });
   if (inviteError)
     return NextResponse.json({ error: inviteError.message }, { status: 400 });
+  const month = `${new Date().toISOString().slice(0, 7)}-01`;
+  const { data: chapterSetting } = await service
+    .from("chapter_application_requirements")
+    .select("default_target")
+    .eq("month_start", month)
+    .maybeSingle();
+  const chapterDefault = chapterSetting?.default_target ?? 40;
+  const usesDefault = invite.default_application_target === chapterDefault;
   const { error: profileError } = await service.from("member_profiles").upsert(
     {
       email,
@@ -78,14 +86,14 @@ export async function POST(request, { params }) {
       member_status: "Active",
       access_role: "member",
       default_application_target: invite.default_application_target,
+      uses_default_application_target: usesDefault,
       source_key: `invite:${invited.user.id}`,
     },
     { onConflict: "email" },
   );
   if (profileError)
     return NextResponse.json({ error: profileError.message }, { status: 500 });
-  const month = `${new Date().toISOString().slice(0, 7)}-01`;
-  if (invite.default_application_target !== 40)
+  if (!usesDefault)
     await service
       .from("application_requirements")
       .upsert({

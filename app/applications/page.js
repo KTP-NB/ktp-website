@@ -32,7 +32,8 @@ function ApplicationsTracker() {
   const { user } = useAuth();
   const [applications, setApplications] = useState([]);
   const [requirements, setRequirements] = useState([]);
-  const [defaultTarget, setDefaultTarget] = useState(DEFAULT_TARGET);
+  const [chapterRequirements, setChapterRequirements] = useState([]);
+  const [memberRequirement, setMemberRequirement] = useState({ target: DEFAULT_TARGET, usesDefault: true, status: 'Active' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [view, setView] = useState('month');
@@ -47,22 +48,47 @@ function ApplicationsTracker() {
   const load = useCallback(async () => {
     if (!user?.id) return;
     setLoading(true); setError('');
-    const [{ data: apps, error: appsError }, { data: reqs, error: reqError }, { data: profile, error: profileError }] = await Promise.all([
+    const [{ data: apps, error: appsError }, { data: reqs, error: reqError }, { data: chapterReqs, error: chapterError }, { data: profile, error: profileError }] = await Promise.all([
       supabase.from('internship_applications').select('*').order('date_applied', { ascending: false }).order('created_at', { ascending: false }),
       supabase.from('application_requirements').select('*').order('month_start', { ascending: false }),
-      supabase.from('member_profiles').select('default_application_target').eq('user_id', user.id).maybeSingle(),
+      supabase.from('chapter_application_requirements').select('month_start,default_target').order('month_start', { ascending: false }),
+      supabase.from('member_profiles').select('default_application_target,uses_default_application_target,member_status').eq('user_id', user.id).maybeSingle(),
     ]);
     setLoading(false);
-    if (appsError || reqError || profileError) setError(appsError?.message || reqError?.message || profileError?.message || 'Unable to load applications.');
-    else { setApplications(apps || []); setRequirements(reqs || []); setDefaultTarget(profile?.default_application_target ?? DEFAULT_TARGET); }
+    if (appsError || reqError || chapterError || profileError) setError(appsError?.message || reqError?.message || chapterError?.message || profileError?.message || 'Unable to load applications.');
+    else {
+      setApplications(apps || []);
+      setRequirements(reqs || []);
+      setChapterRequirements(chapterReqs || []);
+      setMemberRequirement({
+        target: profile?.default_application_target ?? DEFAULT_TARGET,
+        usesDefault: profile?.uses_default_application_target ?? true,
+        status: profile?.member_status || 'Active',
+      });
+    }
   }, [user?.id]);
 
   useEffect(() => { load(); }, [load]);
 
   const currentRequirement = useMemo(() => {
     const row = requirements.find((item) => item.month_start?.slice(0, 7) === selectedMonth);
-    return row || { target_count: defaultTarget, is_exempt: false, exemption_reason: '' };
-  }, [requirements, selectedMonth, defaultTarget]);
+    const chapterRow = chapterRequirements.find((item) => item.month_start?.slice(0, 7) === selectedMonth);
+    const chapterTarget = chapterRow?.default_target ?? DEFAULT_TARGET;
+    const noRequirement = ['Inactive', 'Alumni'].includes(memberRequirement.status);
+    const baseTarget = noRequirement
+      ? 0
+      : memberRequirement.usesDefault
+        ? chapterTarget
+        : memberRequirement.target;
+    const target = selectedMonth < monthKey()
+      ? row?.target_count ?? baseTarget
+      : baseTarget;
+    return {
+      target_count: target,
+      is_exempt: noRequirement || Boolean(row?.is_exempt),
+      exemption_reason: row?.exemption_reason || '',
+    };
+  }, [requirements, chapterRequirements, selectedMonth, memberRequirement]);
 
   const visible = useMemo(() => applications.filter((app) => {
     if (view === 'month' && !app.date_applied.startsWith(selectedMonth)) return false;
@@ -75,7 +101,7 @@ function ApplicationsTracker() {
   const monthlyCount = applications.filter((app) => app.date_applied.startsWith(selectedMonth)).length;
   const target = currentRequirement.is_exempt ? 0 : currentRequirement.target_count;
   const requirementMet = monthlyCount >= target;
-  const progress = currentRequirement.is_exempt ? 100 : Math.min(100, Math.round((monthlyCount / Math.max(1, target)) * 100));
+  const progress = target === 0 || currentRequirement.is_exempt ? 100 : Math.min(100, Math.round((monthlyCount / target) * 100));
   const years = [...new Set([String(new Date().getFullYear()), ...applications.map((app) => app.date_applied.slice(0, 4))])].sort().reverse();
 
   function openNew() { setEditing('new'); setForm({ ...emptyForm, date_applied: localDate() }); }
@@ -115,7 +141,7 @@ function ApplicationsTracker() {
         <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/5 p-6 md:flex-row md:items-center md:justify-between">
           <div>
             {!requirementMet && <p className="text-sm font-bold uppercase tracking-wider text-blue-200">{new Date(`${selectedMonth}-01T12:00:00`).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</p>}
-            <h2 className="mt-1 text-3xl font-black">{requirementMet ? 'Monthly requirement met.' : `${monthlyCount} of ${target} applications`}</h2>
+            <h2 className="mt-1 text-3xl font-black">{target === 0 ? 'No application requirement.' : requirementMet ? 'Monthly requirement met.' : `${monthlyCount} of ${target} applications`}</h2>
             {currentRequirement.exemption_reason
               ? <p className="mt-2 max-w-2xl text-sm text-blue-100/80">{currentRequirement.exemption_reason}</p>
               : !requirementMet && <p className="mt-1 text-sm text-white/55">{target - monthlyCount} remaining this month.</p>}

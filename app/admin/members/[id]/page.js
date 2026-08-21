@@ -304,10 +304,13 @@ function MemberDetail({ memberId }) {
 function MemberApplications({ memberId }) {
   const [applications, setApplications] = useState([]);
   const [requirements, setRequirements] = useState([]);
+  const [chapterRequirements, setChapterRequirements] = useState([]);
   const [defaultTarget, setDefaultTarget] = useState(40);
+  const [profileUsesDefault, setProfileUsesDefault] = useState(true);
+  const [usesDefault, setUsesDefault] = useState(true);
+  const [memberStatus, setMemberStatus] = useState("Active");
   const [month, setMonth] = useState(new Date().toISOString().slice(0, 7));
   const [target, setTarget] = useState(40);
-  const [exempt, setExempt] = useState(false);
   const [reason, setReason] = useState("");
   const [loading, setLoading] = useState(true);
   const [savingRequirement, setSavingRequirement] = useState(false);
@@ -322,7 +325,10 @@ function MemberApplications({ memberId }) {
         if (!active) return;
         setApplications(result.applications || []);
         setRequirements(result.requirements || []);
+        setChapterRequirements(result.chapter_requirements || []);
         setDefaultTarget(result.default_target ?? 40);
+        setProfileUsesDefault(result.uses_default_application_target ?? true);
+        setMemberStatus(result.member_status || "Active");
       })
       .catch((e) => {
         if (active) setError(e.message);
@@ -339,10 +345,15 @@ function MemberApplications({ memberId }) {
     const row = requirements.find((item) =>
       item.month_start?.startsWith(month),
     );
-    setTarget(row?.target_count ?? defaultTarget);
-    setExempt(row?.is_exempt ?? false);
+    const chapterRow = chapterRequirements.find((item) => item.month_start?.startsWith(month));
+    const chapterDefault = chapterRow?.default_target ?? 40;
+    const isPast = month < new Date().toISOString().slice(0, 7);
+    const noRequirement = ["Inactive", "Alumni"].includes(memberStatus);
+    const nextUsesDefault = !isPast && !noRequirement && profileUsesDefault;
+    setUsesDefault(nextUsesDefault);
+    setTarget(noRequirement ? 0 : isPast ? row?.target_count ?? (profileUsesDefault ? chapterDefault : defaultTarget) : nextUsesDefault ? chapterDefault : defaultTarget);
     setReason(row?.exemption_reason || "");
-  }, [requirements, month, defaultTarget]);
+  }, [requirements, chapterRequirements, month, defaultTarget, profileUsesDefault, memberStatus]);
 
   async function saveRequirement() {
     setSavingRequirement(true);
@@ -354,7 +365,7 @@ function MemberApplications({ memberId }) {
         body: JSON.stringify({
           month,
           target_count: Number(target),
-          is_exempt: exempt,
+          uses_default_application_target: usesDefault,
           exemption_reason: reason,
         }),
       });
@@ -364,7 +375,10 @@ function MemberApplications({ memberId }) {
           (item) => item.month_start !== result.requirement.month_start,
         ),
       ]);
-      setDefaultTarget(result.requirement.target_count);
+      if (month >= new Date().toISOString().slice(0, 7)) {
+        setProfileUsesDefault(result.uses_default_application_target);
+        if (!result.uses_default_application_target) setDefaultTarget(result.effective_target);
+      }
       setMessage("Monthly requirement saved.");
     } catch (e) {
       setError(e.message);
@@ -380,6 +394,9 @@ function MemberApplications({ memberId }) {
   const yearCount = applications.filter((app) =>
     app.date_applied.startsWith(year),
   ).length;
+  const selectedChapterDefault = chapterRequirements.find((item) => item.month_start?.startsWith(month))?.default_target ?? 40;
+  const isPastMonth = month < new Date().toISOString().slice(0, 7);
+  const noRequirement = ["Inactive", "Alumni"].includes(memberStatus);
 
   return (
     <div className="mt-6 space-y-6">
@@ -399,6 +416,22 @@ function MemberApplications({ memberId }) {
             />
           </label>
           <label className="grid gap-2 text-sm font-semibold text-white/70">
+            Requirement mode
+            <select
+              value={usesDefault ? "default" : "custom"}
+              disabled={isPastMonth || noRequirement}
+              onChange={(e) => {
+                const nextDefault = e.target.value === "default";
+                setUsesDefault(nextDefault);
+                if (nextDefault) setTarget(selectedChapterDefault);
+              }}
+              className="rounded-xl border border-white/15 bg-slate-900 px-4 py-3 disabled:opacity-40"
+            >
+              <option value="default">Use chapter default ({selectedChapterDefault})</option>
+              <option value="custom">Custom requirement</option>
+            </select>
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-white/70">
             Target
             <input
               type="number"
@@ -406,19 +439,11 @@ function MemberApplications({ memberId }) {
               max="1000"
               value={target}
               onChange={(e) => setTarget(e.target.value)}
-              disabled={exempt}
+              disabled={usesDefault || noRequirement}
               className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 disabled:opacity-40"
             />
           </label>
-          <label className="flex items-center gap-3 text-sm font-semibold text-white/75 sm:col-span-2">
-            <input
-              type="checkbox"
-              checked={exempt}
-              onChange={(e) => setExempt(e.target.checked)}
-              className="h-4 w-4"
-            />{" "}
-            Exempt this member for the selected month
-          </label>
+          {isPastMonth && <p className="text-xs text-white/45 sm:col-span-2">Historical edits apply only to the selected month and do not change the member&apos;s persistent requirement.</p>}
           <label className="grid gap-2 text-sm font-semibold text-white/70 sm:col-span-2">
             Member-visible explanation
             <textarea

@@ -36,6 +36,7 @@ export default function ApplicationTrackerPanel() {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
+  const [outcomeFilter, setOutcomeFilter] = useState("all");
   const [chapterDefault, setChapterDefault] = useState(40);
   const [defaultDraft, setDefaultDraft] = useState(40);
   const [savingDefault, setSavingDefault] = useState(false);
@@ -101,6 +102,10 @@ export default function ApplicationTrackerPanel() {
       members
         .filter((member) => {
           if (filter !== "all" && progressState(member, paceFraction) !== filter) return false;
+          if (outcomeFilter === "interview" && member.interviews === 0) return false;
+          if (outcomeFilter === "offer" && member.offers === 0) return false;
+          if (outcomeFilter === "interview-or-offer" && member.interviews === 0 && member.offers === 0) return false;
+          if (outcomeFilter === "no-outcomes" && (member.interviews > 0 || member.offers > 0)) return false;
           return (
             !search ||
             `${member.name} ${member.pledge_class || ""}`
@@ -114,7 +119,7 @@ export default function ApplicationTrackerPanel() {
             b.target - b.count - (a.target - a.count) ||
             a.name.localeCompare(b.name),
         ),
-    [members, search, filter, paceFraction],
+    [members, search, filter, outcomeFilter, paceFraction],
   );
   const active = members.filter((m) => {
     const status = (m.member_status || "").trim().toLowerCase();
@@ -140,7 +145,10 @@ export default function ApplicationTrackerPanel() {
   const medianApplications = required.length
     ? [...required.map((m) => m.count)].sort((a, b) => a - b)[Math.floor(required.length / 2)]
     : 0;
-  const interviewingOrOffer = required.filter((m) => m.interviews > 0 || m.offers > 0).length;
+  const membersInterviewing = members.filter((m) => m.interviews > 0).length;
+  const membersWithOffers = members.filter((m) => m.offers > 0).length;
+  const totalInterviews = members.reduce((sum, member) => sum + member.interviews, 0);
+  const totalOffers = members.reduce((sum, member) => sum + member.offers, 0);
 
   return (
     <div>
@@ -164,7 +172,10 @@ export default function ApplicationTrackerPanel() {
         <Card icon={Ban} label="No application requirement" value={noRequirement.length} />
         <Card icon={BarChart3} label="Average completion" value={`${averageCompletion}%`} />
         <Card icon={Target} label="Median applications" value={medianApplications} />
-        <Card icon={Target} label="Interviewing or offer" value={interviewingOrOffer} />
+        <Card icon={Target} label="Members interviewing" value={membersInterviewing} />
+        <Card icon={Target} label="Members with offers" value={membersWithOffers} />
+        <Card icon={Target} label="Total interviews" value={totalInterviews} />
+        <Card icon={Target} label="Total offers" value={totalOffers} />
       </div>
       <p className="mb-5 text-xs text-white/45">
         {paceFraction === null
@@ -227,6 +238,19 @@ export default function ApplicationTrackerPanel() {
           ]}
           className="sm:w-60"
         />
+        <SelectMenu
+          label="Filter outcomes"
+          value={outcomeFilter}
+          onChange={setOutcomeFilter}
+          options={[
+            { value: "all", label: "All outcomes" },
+            { value: "interview", label: "Has interview" },
+            { value: "offer", label: "Has offer" },
+            { value: "interview-or-offer", label: "Has interview or offer" },
+            { value: "no-outcomes", label: "No interviews or offers" },
+          ]}
+          className="sm:w-60"
+        />
       </div>
       {error && (
         <p className="rounded-xl border border-red-300/25 bg-red-400/10 p-4 text-sm text-red-100">
@@ -245,9 +269,10 @@ export default function ApplicationTrackerPanel() {
                 <th className="p-4">Member</th>
                 <th className="p-4">Requirement</th>
                 <th className="p-4">Submitted</th>
+                <th className="p-4">Interviews</th>
+                <th className="p-4">Offers</th>
                 <th className="p-4">Remaining</th>
                 <th className="p-4">Progress</th>
-                <th className="p-4">Offers</th>
               </tr>
             </thead>
             <tbody>
@@ -294,6 +319,8 @@ export default function ApplicationTrackerPanel() {
                       ) : "—"}
                     </td>
                     <td className="p-4 font-bold">{member.count}</td>
+                    <td className="p-4">{member.interviews}</td>
+                    <td className="p-4">{member.offers}</td>
                     <td className="p-4">{hasRequirement ? remaining : "—"}</td>
                     <td className="p-4">
                       {hasRequirement ? <div className="w-32">
@@ -313,7 +340,6 @@ export default function ApplicationTrackerPanel() {
                         </div>
                       </div> : <span className="text-xs font-semibold text-white/45">No requirement</span>}
                     </td>
-                    <td className="p-4">{member.offers}</td>
                   </tr>
                 );
               })}

@@ -176,8 +176,8 @@ function ApplicationsTracker() {
         </div>
         <div className="mb-8 h-3 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-blue-500 to-emerald-400 transition-all" style={{ width: `${progress}%` }} /></div>
 
-        <div className="mb-6 grid gap-3 grid-cols-2 md:grid-cols-4">
-          <Stat label="This month" value={monthlyCount}/><Stat label={`${selectedYear} total`} value={applications.filter((a) => a.date_applied.startsWith(selectedYear)).length}/><Stat label="All time" value={applications.length}/><Stat label="Offers" value={allTimeCounts.offer}/>
+        <div className="mb-6 grid gap-3 grid-cols-2 md:grid-cols-5">
+          <Stat label="This month" value={monthlyCount}/><Stat label={`${selectedYear} total`} value={applications.filter((a) => a.date_applied.startsWith(selectedYear)).length}/><Stat label="All time" value={applications.length}/><Stat label="Interviews" value={allTimeCounts.interviewing}/><Stat label="Offers" value={allTimeCounts.offer}/>
         </div>
 
         <section className="rounded-2xl border border-white/10 bg-white/5 p-4 md:p-6">

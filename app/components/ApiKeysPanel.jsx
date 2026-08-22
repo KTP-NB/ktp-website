@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Check, Copy, KeyRound, Loader2, Plus, ShieldCheck, Trash2 } from 'lucide-react';
+import { Check, Copy, Download, KeyRound, Loader2, Plus, ShieldCheck, Trash2 } from 'lucide-react';
 import { api } from '@/lib/coderank/clientFetch';
 
 function readableDate(value) {
@@ -123,7 +123,12 @@ export default function ApiKeysPanel() {
 
       <section className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
         <div className="border-b border-white/10 p-6 md:p-8">
-          <h3 className="text-xl font-bold">Application API documentation</h3>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h3 className="text-xl font-bold">Application API documentation</h3>
+            <a href="/docs/ktp-application-api.md" download="KTP-Application-API.md" className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-white/15 px-4 py-2.5 text-sm font-bold transition hover:bg-white/10 sm:self-auto">
+              <Download size={16} /> Download documentation
+            </a>
+          </div>
           <p className="mt-2 max-w-3xl text-sm text-white/60">Everything needed to connect a script, automation, or AI workflow. Every endpoint operates only on the member who owns the API key.</p>
           <div className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
             <div className="rounded-xl bg-black/15 p-3"><span className="block text-xs uppercase text-white/40">Base URL</span><code className="break-all text-blue-200">{origin}/api/v1</code></div>

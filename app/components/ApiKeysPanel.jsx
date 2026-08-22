@@ -8,6 +8,26 @@ function readableDate(value) {
   return value ? new Date(value).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) : 'Never';
 }
 
+function CodeBlock({ children }) {
+  const [wasCopied, setWasCopied] = useState(false);
+  async function copy() {
+    await navigator.clipboard.writeText(children);
+    setWasCopied(true);
+    setTimeout(() => setWasCopied(false), 1500);
+  }
+  return <div className="relative mt-3">
+    <pre className="overflow-x-auto rounded-xl bg-black/35 p-4 pr-12 text-xs leading-6 text-blue-100"><code>{children}</code></pre>
+    <button type="button" onClick={copy} aria-label="Copy example" className="absolute right-3 top-3 rounded-lg border border-white/10 bg-slate-950/80 p-2 text-white/65 hover:text-white">{wasCopied ? <Check size={14} /> : <Copy size={14} />}</button>
+  </div>;
+}
+
+function DocSection({ title, children, open = false }) {
+  return <details open={open} className="group border-b border-white/10 last:border-0">
+    <summary className="cursor-pointer list-none px-5 py-4 font-bold marker:content-none"><span className="mr-2 inline-block text-blue-300 transition group-open:rotate-90">›</span>{title}</summary>
+    <div className="px-5 pb-6 text-sm text-white/65">{children}</div>
+  </details>;
+}
+
 export default function ApiKeysPanel() {
   const [keys, setKeys] = useState([]);
   const [name, setName] = useState('Personal workflow');
@@ -18,6 +38,7 @@ export default function ApiKeysPanel() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [origin, setOrigin] = useState('https://www.ktpnewbrunswick.org');
 
   async function load() {
     setLoading(true);
@@ -30,7 +51,10 @@ export default function ApiKeysPanel() {
       setLoading(false);
     }
   }
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    setOrigin(window.location.origin);
+    load();
+  }, []);
 
   async function create(event) {
     event.preventDefault();
@@ -97,13 +121,130 @@ export default function ApiKeysPanel() {
         </div>) : <p className="p-8 text-center text-white/45">No API keys yet.</p>}
       </section>
 
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-6 md:p-8">
-        <h3 className="font-bold">Quick start</h3>
-        <pre className="mt-4 overflow-x-auto rounded-xl bg-black/35 p-4 text-xs text-blue-100"><code>{`curl -X POST ${typeof window === 'undefined' ? 'https://www.ktpnewbrunswick.org' : window.location.origin}/api/v1/applications \\
+      <section className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+        <div className="border-b border-white/10 p-6 md:p-8">
+          <h3 className="text-xl font-bold">Application API documentation</h3>
+          <p className="mt-2 max-w-3xl text-sm text-white/60">Everything needed to connect a script, automation, or AI workflow. Every endpoint operates only on the member who owns the API key.</p>
+          <div className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+            <div className="rounded-xl bg-black/15 p-3"><span className="block text-xs uppercase text-white/40">Base URL</span><code className="break-all text-blue-200">{origin}/api/v1</code></div>
+            <div className="rounded-xl bg-black/15 p-3"><span className="block text-xs uppercase text-white/40">Batch limit</span><b>50 applications</b></div>
+            <div className="rounded-xl bg-black/15 p-3"><span className="block text-xs uppercase text-white/40">Rate limit</span><b>120 operations/hour</b></div>
+          </div>
+        </div>
+
+        <DocSection title="1. Authentication and key safety" open>
+          <p>Send the key in the <code className="text-blue-200">Authorization</code> header on every request. Never place it in a URL, commit it to Git, or share it with another member. Revoking a key disables it immediately.</p>
+          <CodeBlock>{`Authorization: Bearer ktp_live_YOUR_KEY`}</CodeBlock>
+          <p className="mt-3"><b className="text-white">Read</b> permits GET requests. <b className="text-white">Write</b> permits POST and PATCH requests. Inactive and alumni accounts cannot use API keys.</p>
+        </DocSection>
+
+        <DocSection title="2. Supported endpoints">
+          <div className="overflow-x-auto"><table className="w-full min-w-[620px] text-left"><thead className="text-xs uppercase text-white/40"><tr><th className="pb-3">Method</th><th>Endpoint</th><th>Scope</th><th>Purpose</th></tr></thead><tbody className="divide-y divide-white/5">
+            {[
+              ['GET','/me','Read','Confirm the key and member identity'],
+              ['GET','/applications','Read','List and filter your applications'],
+              ['POST','/applications','Write','Add one or up to 50 applications'],
+              ['GET','/applications/{id}','Read','Retrieve one application'],
+              ['PATCH','/applications/{id}','Write','Update one application'],
+            ].map((row) => <tr key={`${row[0]}${row[1]}`}><td className="py-3 font-bold text-blue-300">{row[0]}</td><td><code>{row[1]}</code></td><td>{row[2]}</td><td>{row[3]}</td></tr>)}
+          </tbody></table></div>
+          <p className="mt-3 text-xs">API deletion is intentionally unavailable. Delete an application from the website when necessary.</p>
+        </DocSection>
+
+        <DocSection title="3. Application fields and statuses">
+          <div className="overflow-x-auto"><table className="w-full min-w-[650px] text-left"><thead className="text-xs uppercase text-white/40"><tr><th className="pb-3">Field</th><th>Required</th><th>Default</th><th>Description</th></tr></thead><tbody className="divide-y divide-white/5">
+            {[
+              ['company','Yes','—','Company name, up to 160 characters'],
+              ['position','Yes','—','Position title, up to 200 characters'],
+              ['date_applied','No','Today','Original application date in YYYY-MM-DD format'],
+              ['status','No','applied','Current tracking status'],
+              ['details','No','null','Notes, up to 5,000 characters'],
+              ['application_url','No','null','An http:// or https:// URL'],
+              ['referral','No','false','Whether a referral was used'],
+              ['referral_contact','No','null','Referral contact, up to 200 characters'],
+              ['external_id','No','null','Stable source ID used to prevent duplicates'],
+            ].map((row) => <tr key={row[0]}><td className="py-3"><code className="text-blue-200">{row[0]}</code></td><td>{row[1]}</td><td>{row[2]}</td><td>{row[3]}</td></tr>)}
+          </tbody></table></div>
+          <p className="mt-4">Statuses: <code className="text-blue-200">applied</code>, <code className="text-blue-200">assessment</code>, <code className="text-blue-200">interviewing</code>, <code className="text-blue-200">rejected</code>, <code className="text-blue-200">offer</code>, and <code className="text-blue-200">withdrawn</code>.</p>
+        </DocSection>
+
+        <DocSection title="4. Check your connection">
+          <CodeBlock>{`curl ${origin}/api/v1/me \\
+  -H "Authorization: Bearer YOUR_KEY"`}</CodeBlock>
+          <p className="mt-4 font-semibold text-white">PowerShell</p>
+          <CodeBlock>{`$secureKey = Read-Host "Paste API key" -AsSecureString
+$ktpApiKey = [System.Net.NetworkCredential]::new("", $secureKey).Password
+
+Invoke-RestMethod \
+  -Uri "${origin}/api/v1/me" \
+  -Headers @{ Authorization = "Bearer $ktpApiKey" }`}</CodeBlock>
+        </DocSection>
+
+        <DocSection title="5. Add one application">
+          <CodeBlock>{`curl -X POST ${origin}/api/v1/applications \\
   -H "Authorization: Bearer YOUR_KEY" \\
   -H "Content-Type: application/json" \\
-  -d '{"company":"Example","position":"Software Engineer Intern","external_id":"unique-source-id"}'`}</code></pre>
-        <p className="mt-3 text-xs text-white/50">Company and position are required. Date defaults to today and status defaults to applied. Use a stable external_id to make retries duplicate-safe. Maximum 50 applications per request and 120 API operations per hour.</p>
+  -d '{"company":"Example Company","position":"Software Engineering Intern","date_applied":"2026-09-03","status":"applied","external_id":"gmail-message-id"}'`}</CodeBlock>
+          <p className="mt-3">A successful response has <code className="text-blue-200">created: 1</code> and includes the saved application.</p>
+        </DocSection>
+
+        <DocSection title="6. Add multiple applications">
+          <CodeBlock>{`curl -X POST ${origin}/api/v1/applications \\
+  -H "Authorization: Bearer YOUR_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"applications":[
+    {"company":"Company One","position":"Data Intern","external_id":"email-001"},
+    {"company":"Company Two","position":"Product Intern","external_id":"email-002"}
+  ]}'`}</CodeBlock>
+          <p className="mt-3">Each row receives <code className="text-blue-200">created</code>, <code className="text-blue-200">duplicate</code>, or <code className="text-blue-200">invalid</code>. Valid rows still save when another row is invalid.</p>
+        </DocSection>
+
+        <DocSection title="7. List and filter applications">
+          <CodeBlock>{`# Paginated list (1-100 rows per page)
+curl "${origin}/api/v1/applications?page=1&limit=50" \\
+  -H "Authorization: Bearer YOUR_KEY"
+
+# Filter by month and status
+curl "${origin}/api/v1/applications?month=2026-09&status=interviewing" \\
+  -H "Authorization: Bearer YOUR_KEY"`}</CodeBlock>
+          <p className="mt-3">Responses include <code className="text-blue-200">data</code> and pagination values for <code>page</code>, <code>limit</code>, and <code>total</code>.</p>
+        </DocSection>
+
+        <DocSection title="8. Read or update an application">
+          <CodeBlock>{`# Read one
+curl ${origin}/api/v1/applications/APPLICATION_ID \\
+  -H "Authorization: Bearer YOUR_KEY"
+
+# Update only the supplied fields
+curl -X PATCH ${origin}/api/v1/applications/APPLICATION_ID \\
+  -H "Authorization: Bearer YOUR_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"status":"interviewing","details":"First-round interview scheduled"}'`}</CodeBlock>
+          <p className="mt-3">A key can never read or update another member&apos;s application—even if it knows the application ID.</p>
+        </DocSection>
+
+        <DocSection title="9. Duplicate-safe automations">
+          <p>Set <code className="text-blue-200">external_id</code> to a stable source identifier, such as a Gmail message ID. Repeating a request with that ID returns the existing record as a duplicate rather than inserting another application.</p>
+          <CodeBlock>{`{
+  "company": "Example Company",
+  "position": "Engineering Intern",
+  "external_id": "gmail-message-18f3abc123"
+}`}</CodeBlock>
+          <p className="mt-3">External IDs are unique only within your account, so different members may safely process the same posting.</p>
+        </DocSection>
+
+        <DocSection title="10. Responses, errors, and limits">
+          <ul className="grid list-disc gap-2 pl-5">
+            <li><b className="text-white">200</b> — successful read/update or duplicate-only batch</li>
+            <li><b className="text-white">201</b> — at least one application created</li>
+            <li><b className="text-white">400</b> — malformed JSON or invalid fields</li>
+            <li><b className="text-white">401</b> — missing, invalid, expired, or revoked key</li>
+            <li><b className="text-white">403</b> — missing scope or inactive membership</li>
+            <li><b className="text-white">404</b> — missing application or another member&apos;s record</li>
+            <li><b className="text-white">429</b> — rate limit reached; respect the Retry-After header</li>
+          </ul>
+          <p className="mt-4">Machine-readable OpenAPI: <a className="text-blue-300 underline" href={`${origin}/api/v1/openapi`} target="_blank" rel="noreferrer"><code>/api/v1/openapi</code></a>.</p>
+        </DocSection>
       </section>
     </div>
   );

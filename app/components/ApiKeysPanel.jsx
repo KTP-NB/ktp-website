@@ -141,6 +141,15 @@ export default function ApiKeysPanel() {
           <p>Send the key in the <code className="text-blue-200">Authorization</code> header on every request. Never place it in a URL, commit it to Git, or share it with another member. Revoking a key disables it immediately.</p>
           <CodeBlock>{`Authorization: Bearer ktp_live_YOUR_KEY`}</CodeBlock>
           <p className="mt-3"><b className="text-white">Read</b> permits GET requests. <b className="text-white">Write</b> permits POST and PATCH requests. Inactive and alumni accounts cannot use API keys.</p>
+          <p className="mt-4 font-semibold text-white">Use an environment variable with Codex or Claude</p>
+          <p className="mt-1">Set the key in the terminal that launches your agent. This lets its commands authenticate without putting the secret in your prompt or source code.</p>
+          <CodeBlock>{`# PowerShell — current terminal session
+$secureKey = Read-Host "Paste API key" -AsSecureString
+$env:KTP_API_KEY = [System.Net.NetworkCredential]::new("", $secureKey).Password
+$env:KTP_API_BASE_URL = "${origin}/api/v1"
+
+# Then launch Codex or Claude from this terminal.`}</CodeBlock>
+          <p className="mt-3 text-xs">For a reusable script, use a private <code>.env</code> file excluded by <code>.gitignore</code>. Never upload or commit that file. The downloadable guide includes PowerShell, macOS/Linux, and <code>.env</code> instructions.</p>
         </DocSection>
 
         <DocSection title="2. Supported endpoints">

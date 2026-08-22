@@ -46,6 +46,43 @@ $secureKey = Read-Host "Paste API key" -AsSecureString
 $ktpApiKey = [System.Net.NetworkCredential]::new("", $secureKey).Password
 ```
 
+### Make the key available to Codex or Claude without putting it in a prompt
+
+The safest simple approach is to place the key in an environment variable and launch the agent from that same terminal. The agent's commands can read the variable without the key appearing in your prompt or source code.
+
+PowerShell, for the current terminal session:
+
+```powershell
+$secureKey = Read-Host "Paste API key" -AsSecureString
+$env:KTP_API_KEY = [System.Net.NetworkCredential]::new("", $secureKey).Password
+$env:KTP_API_BASE_URL = "https://www.ktpnewbrunswick.org/api/v1"
+```
+
+macOS or Linux, for the current terminal session:
+
+```bash
+read -s -p "Paste API key: " KTP_API_KEY
+export KTP_API_KEY
+export KTP_API_BASE_URL="https://www.ktpnewbrunswick.org/api/v1"
+```
+
+Then start Codex or Claude from that terminal. Tell the agent to use `KTP_API_KEY` as the bearer token according to this guide. Do not ask it to print the variable.
+
+For a reusable local workflow, store these values in a private `.env` file that is loaded by your script:
+
+```dotenv
+KTP_API_KEY=ktp_live_YOUR_KEY
+KTP_API_BASE_URL=https://www.ktpnewbrunswick.org/api/v1
+```
+
+Protect that file:
+
+- Add `.env` and `.env.*` to `.gitignore` before creating it.
+- Never upload the `.env` file with the API documentation.
+- Never commit it to a repository.
+- Give each workflow its own key so it can be revoked independently.
+- If a key appears in a prompt, screenshot, terminal transcript, or commit, revoke it immediately and create another.
+
 ## 2. Supported endpoints
 
 | Method | Endpoint | Required scope | Purpose |

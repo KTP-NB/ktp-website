@@ -35,6 +35,14 @@ export async function GET(request) {
 export async function POST(request) {
   const auth = await activeMember(request);
   if (auth.error) return auth.error;
+  const { count: activeKeyCount, error: countError } = await auth.service
+    .from("member_api_keys")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", auth.user.id)
+    .is("revoked_at", null);
+  if (countError) return NextResponse.json({ error: countError.message }, { status: 500 });
+  if ((activeKeyCount || 0) >= 10)
+    return NextResponse.json({ error: "Revoke an existing key before creating another. Members may have up to 10 active keys." }, { status: 400 });
   const body = await request.json().catch(() => ({}));
   const name = String(body.name || "").trim();
   const scopes = [...new Set(Array.isArray(body.scopes) ? body.scopes : ["applications:read", "applications:write"])]

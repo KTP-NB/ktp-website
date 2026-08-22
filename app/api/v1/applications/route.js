@@ -22,8 +22,11 @@ export async function GET(request) {
     .range((page - 1) * limit, page * limit - 1);
   const status = url.searchParams.get("status");
   const month = url.searchParams.get("month");
+  const validStatuses = new Set(["applied", "assessment", "interviewing", "rejected", "offer", "withdrawn"]);
+  if (status && !validStatuses.has(status)) return apiError("status filter is invalid.");
+  if (month && !/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) return apiError("month must use YYYY-MM format.");
   if (status) query = query.eq("status", status);
-  if (month && /^\d{4}-\d{2}$/.test(month)) {
+  if (month) {
     const end = new Date(`${month}-01T00:00:00Z`);
     end.setUTCMonth(end.getUTCMonth() + 1);
     query = query.gte("date_applied", `${month}-01`).lt("date_applied", end.toISOString().slice(0, 10));

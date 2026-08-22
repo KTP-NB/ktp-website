@@ -6,6 +6,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 const items = [
   { label: 'Profile', href: '/profile', match: 'profile' },
   { label: 'Applications', href: '/applications', match: 'applications' },
+  { label: 'Fines', href: '/fines', match: 'fines' },
   { label: 'Resume', href: '/profile?tab=resume', match: 'resume' },
 ];
 
@@ -14,7 +15,9 @@ export default function ProfileSectionNav() {
   const searchParams = useSearchParams();
   const active = pathname === '/applications'
     ? 'applications'
-    : searchParams.get('tab') === 'resume' ? 'resume' : 'profile';
+    : pathname === '/fines'
+      ? 'fines'
+      : searchParams.get('tab') === 'resume' ? 'resume' : 'profile';
 
   return (
     <nav aria-label="Member account sections" className="mb-8 flex flex-wrap gap-2 rounded-2xl border border-white/10 bg-white/5 p-2">

@@ -2,12 +2,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Loader2, Plus, Search, Trash2, X } from "lucide-react";
 import { api } from "@/lib/coderank/clientFetch";
+import SelectMenu from "@/components/SelectMenu";
 
 const SCOPES = [
   ["members.manage", "Member management"],
   ["resumes.manage", "Resumes"],
   ["coderank.manage", "CodeRank"],
   ["applications.manage", "Applications"],
+  ["fines.manage", "Fine tracker"],
 ];
 const empty = {
   name: "",
@@ -21,6 +23,7 @@ const empty = {
   linkedin_url: "",
   access_role: "member",
   manager_permissions: [],
+  company_questions_blocked: false,
   current_application_target: 40,
   uses_default_application_target: true,
 };
@@ -88,6 +91,7 @@ export default function MemberManagementPanel({ viewerRole }) {
       ...empty,
       ...m,
       manager_permissions: m.manager_permissions || [],
+      company_questions_blocked: Boolean(m.company_questions_blocked),
     });
   }
   async function save(e) {
@@ -174,23 +178,28 @@ export default function MemberManagementPanel({ viewerRole }) {
             className="w-full rounded-xl border border-white/15 bg-white/5 py-3 pl-10 pr-3"
           />
         </div>
-        <select
+        <SelectMenu
+          label="Filter by member status"
           value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          className="rounded-xl border border-white/15 bg-slate-900 px-4"
-        >
-          {["Active", "Inactive", "Alumni", "All"].map((x) => (
-            <option key={x}>{x}</option>
-          ))}
-        </select>
-        <select value={pledgeClass} onChange={(e) => setPledgeClass(e.target.value)} aria-label="Filter by pledge class" className="rounded-xl border border-white/15 bg-slate-900 px-4 py-3">
-          <option value="All">All classes</option>
-          {pledgeClasses.map((value) => <option key={value} value={value}>{value} Class</option>)}
-        </select>
-        <select value={accessRole} onChange={(e) => setAccessRole(e.target.value)} aria-label="Filter by access role" className="rounded-xl border border-white/15 bg-slate-900 px-4 py-3">
-          <option value="All">All access roles</option>
-          {["member","manager","admin","super_admin"].map((value) => <option key={value} value={value}>{formatRole(value)}</option>)}
-        </select>
+          onChange={setStatus}
+          options={["Active", "Inactive", "Alumni", "All"].map((x) => ({ value: x, label: x }))}
+          className="sm:w-40"
+        />
+        <SelectMenu
+          label="Filter by pledge class"
+          value={pledgeClass}
+          onChange={setPledgeClass}
+          options={[{ value: "All", label: "All classes" }, ...pledgeClasses.map((value) => ({ value, label: `${value} Class` }))]}
+          className="sm:w-44"
+        />
+        <SelectMenu
+          label="Filter by access role"
+          value={accessRole}
+          onChange={setAccessRole}
+          options={[{ value: "All", label: "All access roles" }, ...["member","manager","admin","super_admin"].map((value) => ({ value, label: formatRole(value) }))]}
+          align="right"
+          className="sm:w-48"
+        />
       </div>
       <p className="mb-4 text-sm font-semibold text-white/60">
         Showing <span className="text-white">{filtered.length}</span> of {members.length} members
@@ -319,10 +328,10 @@ function MemberModal({
             <>
             <label className="grid gap-1 text-sm font-bold">
               Member status
-              <select
+              <SelectMenu
+                label="Member status"
                 value={form.member_status}
-                onChange={(e) => {
-                  const nextStatus = e.target.value;
+                onChange={(nextStatus) => {
                   setForm((current) => ({
                     ...current,
                     member_status: nextStatus,
@@ -331,30 +340,27 @@ function MemberModal({
                       : current.current_application_target,
                   }));
                 }}
-                className="rounded-xl border border-white/15 bg-slate-900 px-3 py-2.5"
-              >
-                {["Active", "Inactive", "Alumni"].map((x) => (
-                  <option key={x}>{x}</option>
-                ))}
-              </select>
+                options={["Active", "Inactive", "Alumni"].map((x) => ({ value: x, label: x }))}
+              />
             </label>
             <label className="grid gap-1 text-sm font-bold">
               Requirement mode
-              <select
+              <SelectMenu
+                label="Requirement mode"
                 value={form.uses_default_application_target ? "default" : "custom"}
                 disabled={["Inactive", "Alumni"].includes(form.member_status)}
-                onChange={(e) => setForm((current) => ({
+                onChange={(value) => setForm((current) => ({
                   ...current,
-                  uses_default_application_target: e.target.value === "default",
-                  current_application_target: e.target.value === "default"
+                  uses_default_application_target: value === "default",
+                  current_application_target: value === "default"
                     ? chapterDefault
                     : current.current_application_target,
                 }))}
-                className="rounded-xl border border-white/15 bg-slate-900 px-3 py-2.5 disabled:opacity-50"
-              >
-                <option value="default">Use chapter default ({chapterDefault})</option>
-                <option value="custom">Custom requirement</option>
-              </select>
+                options={[
+                  { value: "default", label: `Use chapter default (${chapterDefault})` },
+                  { value: "custom", label: "Custom requirement" },
+                ]}
+              />
             </label>
             <label className="grid gap-1 text-sm font-bold">
               Monthly application requirement
@@ -369,21 +375,31 @@ function MemberModal({
             <>
               <label className="grid gap-1 text-sm font-bold">
                 Access role
-                <select
+                <SelectMenu
+                  label="Access role"
                   value={form.access_role}
-                  onChange={(e) => set("access_role", e.target.value)}
-                  className="rounded-xl border border-white/15 bg-slate-900 px-3 py-2.5"
-                >
-                  {["member", "manager", "admin", "super_admin"].map((x) => (
-                    <option key={x} value={x}>
-                      {formatRole(x)}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(value) => set("access_role", value)}
+                  options={["member", "manager", "admin", "super_admin"].map((x) => ({ value: x, label: formatRole(x) }))}
+                />
               </label>
-              {form.access_role === "manager" && (
+              <label className="sm:col-span-2 flex items-start gap-3 rounded-xl border border-white/10 p-4 text-sm font-bold">
+                <input
+                  type="checkbox"
+                  className="mt-1"
+                  checked={form.company_questions_blocked}
+                  onChange={(e) => set("company_questions_blocked", e.target.checked)}
+                />
+                <span>
+                  Block LC Company Tagged
+                  <span className="block text-sm font-medium text-white/50">
+                    Revokes access even if this member owes nothing and met the OA requirement.
+                  </span>
+                </span>
+              </label>
+              {["admin", "manager"].includes(form.access_role) && (
                 <div className="sm:col-span-2 rounded-xl border border-white/10 p-4">
-                  <p className="mb-2 font-bold">Manager permissions</p>
+                  <p className="mb-1 font-bold">Admin portal tabs</p>
+                  <p className="mb-3 text-sm text-white/50">Only the tabs ticked here are visible to this account.</p>
                   {SCOPES.map(([v, l]) => (
                     <label key={v} className="mr-5 inline-flex gap-2">
                       <input

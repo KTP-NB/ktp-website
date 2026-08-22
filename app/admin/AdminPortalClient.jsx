@@ -20,8 +20,12 @@ import Tabs from "@/components/Tabs";
 import { useAuth } from "@/components/authprovider";
 import { hasSupabaseConfig, supabase } from "@/lib/supabase";
 import { api } from "@/lib/coderank/clientFetch";
+import { profileHasPermission } from "@/lib/adminAccess";
 import ApplicationTrackerPanel from "./ApplicationTrackerPanel";
+import FineTrackerPanel from "./FineTrackerPanel";
 import MemberManagementPanel from "./MemberManagementPanel";
+import OaComplianceView from "./OaComplianceView";
+import SelectMenu from "@/components/SelectMenu";
 
 /* ─── Main Export ─── */
 export default function AdminPortalPage() {
@@ -88,16 +92,17 @@ const TAB_PERMISSIONS = {
   "Member Management": "members.manage",
   Resumes: "resumes.manage",
   CodeRank: "coderank.manage",
+  "Monthly OA": "coderank.manage",
   "Application Tracker": "applications.manage",
+  "Fine Tracker": "fines.manage",
 };
 
 function AdminDashboard({ adminProfile }) {
   const tabs = useMemo(
     () => Object.keys(TAB_PERMISSIONS).filter(
-      (tab) => ["admin", "super_admin"].includes(adminProfile.access_role) ||
-        adminProfile.manager_permissions?.includes(TAB_PERMISSIONS[tab]),
+      (tab) => profileHasPermission(adminProfile, TAB_PERMISSIONS[tab]),
     ),
-    [adminProfile.access_role, adminProfile.manager_permissions],
+    [adminProfile],
   );
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const [hydrated, setHydrated] = useState(false);
@@ -137,7 +142,15 @@ function AdminDashboard({ adminProfile }) {
         </div>
 
         {/* Tabs */}
-        <Tabs tabs={tabs} active={activeTab} setActive={setActiveTab} />
+        {tabs.length === 0 ? (
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] py-16 text-center">
+            <ShieldAlert size={40} className="mx-auto mb-3 text-white/25" />
+            <p className="text-white/60">No portal tabs have been shared with your account yet.</p>
+            <p className="mt-1 text-sm text-white/40">Ask a Super Admin to grant access in Member Management.</p>
+          </div>
+        ) : (
+          <Tabs tabs={tabs} active={activeTab} setActive={setActiveTab} />
+        )}
 
         {/* Tab Content */}
         <div className="mt-8">
@@ -146,7 +159,9 @@ function AdminDashboard({ adminProfile }) {
           )}
           {activeTab === "Resumes" && <ResumesPanel />}
           {activeTab === "CodeRank" && <CodeRankPanel />}
+          {activeTab === "Monthly OA" && <OaComplianceView />}
           {activeTab === "Application Tracker" && <ApplicationTrackerPanel />}
+          {activeTab === "Fine Tracker" && <FineTrackerPanel />}
         </div>
       </FadeIn>
     </main>
@@ -160,18 +175,6 @@ function ResumesPanel() {
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const [filterClass, setFilterClass] = useState("all");
-  const [classDropdownOpen, setClassDropdownOpen] = useState(false);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (!event.target.closest(".class-dropdown-container")) {
-        setClassDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   useEffect(() => {
     if (!hasSupabaseConfig) return;
 
@@ -181,20 +184,33 @@ function ResumesPanel() {
       setLoading(true);
       setError(null);
 
-      const { data, error: fetchError } = await supabase
-        .from("member_profiles")
-        .select(
-          "id, name, position, pledge_class, member_status, graduation_year, major, resume_url, resume_storage_path, photo_url, sort_order",
-        )
-        .order("sort_order", { ascending: true })
-        .order("name", { ascending: true });
+      const [{ data, error: fetchError }, { data: resumes, error: resumeError }] =
+        await Promise.all([
+          supabase
+            .from("member_profiles")
+            .select(
+              "id, name, position, pledge_class, member_status, graduation_year, major, photo_url, sort_order",
+            )
+            .order("sort_order", { ascending: true })
+            .order("name", { ascending: true }),
+          // Resumes live in their own table; RLS returns rows only to holders
+          // of resumes.manage (and to a member for their own row).
+          supabase.from("member_resumes").select("member_id, url, storage_path"),
+        ]);
 
       if (!isMounted) return;
 
-      if (fetchError) {
-        setError(fetchError.message);
+      if (fetchError || resumeError) {
+        setError((fetchError || resumeError).message);
       } else {
-        setMembers(data || []);
+        const resumeByMember = new Map((resumes || []).map((row) => [row.member_id, row]));
+        setMembers(
+          (data || []).map((member) => ({
+            ...member,
+            resume_url: resumeByMember.get(member.id)?.url || null,
+            resume_storage_path: resumeByMember.get(member.id)?.storage_path || null,
+          })),
+        );
       }
 
       setLoading(false);
@@ -254,57 +270,17 @@ function ResumesPanel() {
           />
         </div>
 
-        <div className="relative shrink-0 class-dropdown-container">
-          <button
-            type="button"
-            onClick={() => setClassDropdownOpen(!classDropdownOpen)}
-            className="w-full sm:w-auto flex items-center justify-between gap-3 rounded-xl border border-white/15 bg-white/5 pl-4 pr-3 py-3 text-white outline-none transition focus:border-blue-300 hover:bg-white/10 min-w-[160px]"
-          >
-            <span className="truncate">
-              {filterClass === "all" ? "All Classes" : filterClass}
-            </span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className={`text-white/50 transition-transform ${classDropdownOpen ? "rotate-180" : ""}`}
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </button>
-
-          {classDropdownOpen && (
-            <div className="absolute right-0 z-50 mt-2 w-full sm:w-48 origin-top-right rounded-2xl border border-white/10 bg-[#0f172a] p-2 shadow-xl ring-1 ring-black ring-opacity-5">
-              <div className="max-h-64 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
-                {pledgeClasses.map((cls) => {
-                  const isActive = filterClass === cls;
-                  return (
-                    <button
-                      key={cls}
-                      onClick={() => {
-                        setFilterClass(cls);
-                        setClassDropdownOpen(false);
-                      }}
-                      className={`block w-full text-left rounded-xl px-4 py-2.5 text-sm font-bold transition ${
-                        isActive
-                          ? "bg-blue-600 text-white"
-                          : "text-white hover:bg-white/10 hover:text-blue-200"
-                      }`}
-                    >
-                      {cls === "all" ? "All Classes" : cls}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
+        <SelectMenu
+          label="Filter by pledge class"
+          value={filterClass}
+          onChange={setFilterClass}
+          options={pledgeClasses.map((cls) => ({
+            value: cls,
+            label: cls === "all" ? "All Classes" : cls,
+          }))}
+          align="right"
+          className="shrink-0 sm:w-48"
+        />
       </div>
 
       {/* Stats */}

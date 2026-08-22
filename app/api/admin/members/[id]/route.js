@@ -22,7 +22,10 @@ const PERMISSIONS = [
   "resumes.manage",
   "coderank.manage",
   "applications.manage",
+  "fines.manage",
 ];
+// Roles whose portal tabs a Super Admin curates.
+const GRANTABLE_ROLES = ["admin", "manager"];
 
 export async function PUT(request, { params }) {
   const auth = await requirePermission(request, "members.manage");
@@ -43,6 +46,14 @@ export async function PUT(request, { params }) {
     ? 0
     : requestedTarget;
   updates.uses_default_application_target = usesDefault;
+  if ("company_questions_blocked" in body) {
+    if (auth.profile.access_role !== "super_admin")
+      return NextResponse.json(
+        { error: "Only Super Admins can change LC Company Tagged access." },
+        { status: 403 },
+      );
+    updates.company_questions_blocked = Boolean(body.company_questions_blocked);
+  }
   if ("access_role" in body || "manager_permissions" in body) {
     if (auth.profile.access_role !== "super_admin")
       return NextResponse.json(
@@ -52,12 +63,11 @@ export async function PUT(request, { params }) {
     if (!ROLES.includes(body.access_role))
       return NextResponse.json({ error: "Invalid role." }, { status: 400 });
     updates.access_role = body.access_role;
-    updates.manager_permissions =
-      body.access_role === "manager"
-        ? [...new Set(body.manager_permissions || [])].filter((item) =>
-            PERMISSIONS.includes(item),
-          )
-        : [];
+    updates.manager_permissions = GRANTABLE_ROLES.includes(body.access_role)
+      ? [...new Set(body.manager_permissions || [])].filter((item) =>
+          PERMISSIONS.includes(item),
+        )
+      : [];
   }
   updates.updated_at = new Date().toISOString();
   const service = getServiceClient();
@@ -66,7 +76,7 @@ export async function PUT(request, { params }) {
     .update(updates)
     .eq("id", params.id)
     .select(
-      "id,user_id,name,email,position,pledge_class,member_status,graduation_year,major,minors,linkedin_url,executive_board,committees,sort_order,photo_url,resume_url,access_role,manager_permissions,default_application_target,uses_default_application_target,created_at,updated_at",
+      "id,user_id,name,email,position,pledge_class,member_status,graduation_year,major,minors,linkedin_url,executive_board,committees,sort_order,photo_url,access_role,manager_permissions,company_questions_blocked,default_application_target,uses_default_application_target,created_at,updated_at",
     )
     .single();
   if (error)

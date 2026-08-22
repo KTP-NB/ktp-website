@@ -11,13 +11,14 @@ import {
   Clock, Pencil, Save, Layers, Search, Trophy, LogIn, Flag,
 } from 'lucide-react';
 import AuthGate from '@/components/authgate';
+import useAdminPermission from '@/components/useAdminPermission';
 import FadeIn from '@/components/FadeIn';
 import { useConfirmToast } from '@/components/ConfirmToast';
 import { hasSupabaseConfig, supabase } from '@/lib/supabase';
 import { useAuth } from '@/components/authprovider';
 import { api } from '@/lib/coderank/clientFetch';
+import DateTimePicker from '@/components/DateTimePicker';
 
-const ADMIN_POSITIONS = ['vp of tech development', 'vp of prof development'];
 const UNLIMITED_SUBMISSIONS = 2147483647;
 
 export default function AssessmentMonitorPage() {
@@ -32,7 +33,7 @@ function AssessmentMonitor() {
   const { id } = useParams();
   const router = useRouter();
   const { user } = useAuth();
-  const [authorized, setAuthorized] = useState(null);
+  const { checking: checkingAccess, allowed: authorized } = useAdminPermission(['coderank.manage']);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
@@ -44,16 +45,6 @@ function AssessmentMonitor() {
   const [pledgeClasses, setPledgeClasses] = useState([]);
   const [memberSearch, setMemberSearch] = useState('');
   const { confirm, confirmationToast } = useConfirmToast();
-
-  useEffect(() => {
-    if (!user?.id || !hasSupabaseConfig) return;
-    (async () => {
-      const { data: prof } = await supabase
-        .from('member_profiles').select('position').eq('user_id', user.id).maybeSingle();
-      const pos = (prof?.position || '').toLowerCase();
-      setAuthorized(ADMIN_POSITIONS.some((p) => pos.includes(p)));
-    })();
-  }, [user?.id]);
 
   const refresh = useCallback(async () => {
     try {
@@ -219,7 +210,7 @@ function AssessmentMonitor() {
     } catch (e) { setError(e.message); setBusy(false); }
   }
 
-  if (authorized === null) return <Center><Loader2 className="w-8 h-8 animate-spin text-white/50"/></Center>;
+  if (checkingAccess) return <Center><Loader2 className="w-8 h-8 animate-spin text-white/50"/></Center>;
   if (!authorized) return <Center><div className="text-center"><ShieldAlert size={48} className="mx-auto mb-4 text-red-400" /><h1 className="text-2xl font-bold">Access Restricted</h1></div></Center>;
   if (error) return <Center><div className="text-center text-white/70">{error}</div></Center>;
   if (!data) return <Center><Loader2 className="w-8 h-8 animate-spin text-white/50"/></Center>;
@@ -372,11 +363,10 @@ function AssessmentMonitor() {
                 </div>
               </EditField>
               <EditField label="Get done by">
-                <input
-                  type="datetime-local"
+                <DateTimePicker
                   value={editDraft.due_at}
-                  onChange={(e) => setEditDraft((d) => ({ ...d, due_at: e.target.value }))}
-                  className="w-full rounded-xl border border-white/15 bg-black/20 px-3 py-2.5 outline-none focus:border-blue-300"
+                  onChange={(value) => setEditDraft((d) => ({ ...d, due_at: value }))}
+                  placeholder="No deadline"
                 />
               </EditField>
               <EditField label="Description" className="md:col-span-2">

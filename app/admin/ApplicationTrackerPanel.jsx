@@ -14,6 +14,8 @@ import {
   UserRoundX,
 } from "lucide-react";
 import { api } from "@/lib/coderank/clientFetch";
+import SelectMenu from "@/components/SelectMenu";
+import DatePicker from "@/components/DatePicker";
 
 function currentMonth() {
   return new Date().toISOString().slice(0, 7);
@@ -151,12 +153,7 @@ export default function ApplicationTrackerPanel() {
         </div>
         <label className="grid gap-1 text-xs font-bold uppercase tracking-wider text-white/50">
           Reporting month
-          <input
-            type="month"
-            value={month}
-            onChange={(e) => setMonth(e.target.value)}
-            className="rounded-xl border border-white/15 bg-slate-900 px-4 py-2.5 text-sm text-white [color-scheme:dark]"
-          />
+          <DatePicker mode="month" label="Reporting month" value={month} onChange={setMonth} className="w-52" />
         </label>
       </div>
       <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -217,17 +214,19 @@ export default function ApplicationTrackerPanel() {
             className="w-full rounded-xl border border-white/15 bg-white/5 py-3 pl-10 pr-3 outline-none focus:border-blue-300"
           />
         </div>
-        <select
+        <SelectMenu
+          label="Filter members"
           value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="rounded-xl border border-white/15 bg-slate-900 px-4 py-3"
-        >
-          <option value="all">All members</option>
-          <option value="behind">Behind</option>
-          <option value="on-track">On track</option>
-          <option value="met">Requirement met</option>
-          <option value="no-requirement">No application requirement</option>
-        </select>
+          onChange={setFilter}
+          options={[
+            { value: "all", label: "All members" },
+            { value: "behind", label: "Behind" },
+            { value: "on-track", label: "On track" },
+            { value: "met", label: "Requirement met" },
+            { value: "no-requirement", label: "No application requirement" },
+          ]}
+          className="sm:w-60"
+        />
       </div>
       {error && (
         <p className="rounded-xl border border-red-300/25 bg-red-400/10 p-4 text-sm text-red-100">

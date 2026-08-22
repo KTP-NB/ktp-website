@@ -3,7 +3,7 @@ import { requirePermission } from "@/lib/coderank/auth";
 import { getServiceClient } from "@/lib/coderank/supabaseServer";
 
 const FIELDS =
-  "id,user_id,name,email,position,pledge_class,member_status,graduation_year,major,minors,linkedin_url,executive_board,committees,sort_order,photo_url,resume_url,access_role,manager_permissions,default_application_target,uses_default_application_target,created_at,updated_at";
+  "id,user_id,name,email,position,pledge_class,member_status,graduation_year,major,minors,linkedin_url,executive_board,committees,sort_order,photo_url,access_role,manager_permissions,company_questions_blocked,default_application_target,uses_default_application_target,created_at,updated_at";
 
 export async function GET(request) {
   const auth = await requirePermission(request, "members.manage");

@@ -121,9 +121,23 @@ function ProfileEditor() {
           linkedin_url: data.linkedin_url || '',
           photo_url: data.photo_url || '',
           photo_storage_path: data.photo_storage_path || '',
-          resume_url: data.resume_url || '',
-          resume_storage_path: data.resume_storage_path || '',
+          resume_url: '',
+          resume_storage_path: '',
         });
+
+        // Resumes live in member_resumes; RLS limits this to the member's own row.
+        const { data: resumeRow } = await supabase
+          .from('member_resumes')
+          .select('url, storage_path')
+          .eq('member_id', data.id)
+          .maybeSingle();
+        if (isMounted && resumeRow) {
+          setForm((prev) => ({
+            ...prev,
+            resume_url: resumeRow.url || '',
+            resume_storage_path: resumeRow.storage_path || '',
+          }));
+        }
 
         // Resume feedback written by admins (RLS limits this to the member's own row).
         const { data: notesRow } = await supabase
@@ -208,16 +222,15 @@ function ProfileEditor() {
       const resumeUrl = supabase.storage.from(RESUME_BUCKET).getPublicUrl(path).data.publicUrl;
       const versionedUrl = `${resumeUrl}?v=${version}`;
 
-      // Update member_profiles with the resume info
       const { error: updateError } = await supabase
-        .from('member_profiles')
-        .update({
-          resume_url: versionedUrl,
-          resume_storage_path: path,
-          resume_bucket: RESUME_BUCKET,
-        })
-        .eq('id', profileId)
-        .eq('user_id', user.id);
+        .from('member_resumes')
+        .upsert({
+          member_id: profileId,
+          url: versionedUrl,
+          storage_path: path,
+          bucket: RESUME_BUCKET,
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'member_id' });
 
       if (updateError) throw updateError;
 
@@ -261,10 +274,9 @@ function ProfileEditor() {
       if (removeError) throw removeError;
 
       const { error: updateError } = await supabase
-        .from('member_profiles')
-        .update({ resume_url: null, resume_storage_path: null })
-        .eq('id', profileId)
-        .eq('user_id', user.id);
+        .from('member_resumes')
+        .delete()
+        .eq('member_id', profileId);
 
       if (updateError) throw updateError;
 
@@ -316,8 +328,8 @@ function ProfileEditor() {
         linkedin_url: data.linkedin_url || '',
         photo_url: data.photo_url || '',
         photo_storage_path: data.photo_storage_path || '',
-        resume_url: data.resume_url || '',
-        resume_storage_path: data.resume_storage_path || '',
+        resume_url: form.resume_url,
+        resume_storage_path: form.resume_storage_path,
       });
       setProfileName(data.name || null);
       setPhotoFile(null);

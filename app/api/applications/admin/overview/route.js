@@ -20,12 +20,13 @@ export async function GET(request) {
   const end = endDate.toISOString().slice(0, 10);
   const service = getServiceClient();
 
-  const [membersResult, appsResult, requirementsResult] = await Promise.all([
-    service.from('member_profiles').select('id,user_id,name,email,pledge_class,member_status,photo_url,default_application_target').not('user_id', 'is', null).order('name'),
+  const [membersResult, appsResult, requirementsResult, chapterResult] = await Promise.all([
+    service.from('member_profiles').select('id,user_id,name,email,pledge_class,member_status,photo_url,default_application_target,uses_default_application_target').not('user_id', 'is', null).order('name'),
     service.from('internship_applications').select('user_id,status').gte('date_applied', start).lt('date_applied', end),
     service.from('application_requirements').select('*').eq('month_start', start),
+    service.from('chapter_application_requirements').select('default_target').eq('month_start', start).maybeSingle(),
   ]);
-  const error = membersResult.error || appsResult.error || requirementsResult.error;
+  const error = membersResult.error || appsResult.error || requirementsResult.error || chapterResult.error;
   if (error) return withNoStore(NextResponse.json({ error: error.message }, { status: 500 }));
 
   const appsByUser = new Map();
@@ -37,17 +38,25 @@ export async function GET(request) {
     appsByUser.set(app.user_id, current);
   }
   const reqByUser = new Map((requirementsResult.data || []).map((row) => [row.user_id, row]));
-  const currentMonth = new Date().toISOString().slice(0, 7);
+  const chapterDefault = chapterResult.data?.default_target ?? 40;
   const members = (membersResult.data || []).map((member) => {
     const stats = appsByUser.get(member.user_id) || { count: 0, offers: 0, interviews: 0 };
     const requirement = reqByUser.get(member.user_id);
-    // The profile target is the single source of truth for the current and
-    // future months. Saved requirement rows remain authoritative for history.
-    const target = month >= currentMonth
-      ? member.default_application_target ?? 40
-      : requirement?.target_count ?? member.default_application_target ?? 40;
-    return { ...member, ...stats, target, met: stats.count >= target };
+    const baselineTarget = member.uses_default_application_target
+      ? chapterDefault
+      : member.default_application_target ?? 40;
+    const target = ['Inactive', 'Alumni'].includes(member.member_status)
+      ? 0
+      : requirement?.target_count ?? baselineTarget;
+    return {
+      ...member,
+      ...stats,
+      target,
+      baseline_target: baselineTarget,
+      has_monthly_override: Boolean(requirement),
+      met: stats.count >= target,
+    };
   });
 
-  return withNoStore(NextResponse.json({ month, members }));
+  return withNoStore(NextResponse.json({ month, chapter_default: chapterDefault, members }));
 }

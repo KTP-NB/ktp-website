@@ -36,6 +36,9 @@ export default function ApplicationTrackerPanel() {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
+  const [chapterDefault, setChapterDefault] = useState(40);
+  const [defaultDraft, setDefaultDraft] = useState(40);
+  const [savingDefault, setSavingDefault] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -43,7 +46,11 @@ export default function ApplicationTrackerPanel() {
     setError("");
     api(`/api/applications/admin/overview?month=${month}`)
       .then((result) => {
-        if (active) setMembers(result.members || []);
+        if (active) {
+          setMembers(result.members || []);
+          setChapterDefault(result.chapter_default ?? 40);
+          setDefaultDraft(result.chapter_default ?? 40);
+        }
       })
       .catch((e) => {
         if (active) setError(e.message);
@@ -55,6 +62,30 @@ export default function ApplicationTrackerPanel() {
       active = false;
     };
   }, [month]);
+
+  async function saveChapterDefault() {
+    const target = Number(defaultDraft);
+    if (!Number.isInteger(target) || target < 0 || target > 1000) {
+      setError("Default target must be between 0 and 1000.");
+      return;
+    }
+    setSavingDefault(true);
+    setError("");
+    try {
+      await api("/api/applications/admin/settings", {
+        method: "PUT",
+        body: JSON.stringify({ month, default_target: target }),
+      });
+      const result = await api(`/api/applications/admin/overview?month=${month}`);
+      setMembers(result.members || []);
+      setChapterDefault(result.chapter_default ?? target);
+      setDefaultDraft(result.chapter_default ?? target);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setSavingDefault(false);
+    }
+  }
 
   const today = new Date();
   const selectedMonth = new Date(`${month}-01T12:00:00`);
@@ -142,6 +173,34 @@ export default function ApplicationTrackerPanel() {
             ? "Completed months are classified as Requirement Met or Behind; On Track applies to the current month."
             : `On track means completing at least ${Math.round(paceFraction * 100)}% of the monthly requirement by today (${today.toLocaleDateString(undefined, { month: "short", day: "numeric" })}).`}
       </p>
+      <div className="mb-5 flex flex-col gap-3 rounded-2xl border border-blue-300/15 bg-blue-400/5 p-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="font-bold">Chapter default for {selectedMonth.toLocaleDateString(undefined, { month: "long", year: "numeric" })}</p>
+          <p className="mt-1 text-xs text-white/50">
+            Members using the chapter default will update; custom requirements will stay unchanged.
+          </p>
+        </div>
+        <div className="flex items-end gap-2">
+          <label className="grid gap-1 text-xs font-bold uppercase tracking-wider text-white/50">
+            Applications
+            <input
+              type="number"
+              min="0"
+              max="1000"
+              value={defaultDraft}
+              onChange={(e) => setDefaultDraft(e.target.value)}
+              className="w-28 rounded-xl border border-white/15 bg-slate-900 px-3 py-2.5 text-sm text-white"
+            />
+          </label>
+          <button
+            onClick={saveChapterDefault}
+            disabled={savingDefault || Number(defaultDraft) === chapterDefault}
+            className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-bold hover:bg-blue-500 disabled:opacity-40"
+          >
+            {savingDefault ? "Saving…" : "Save default"}
+          </button>
+        </div>
+      </div>
       <div className="mb-5 flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
           <Search
@@ -225,7 +284,14 @@ export default function ApplicationTrackerPanel() {
                       </Link>
                     </td>
                     <td className="p-4">
-                      {hasRequirement ? member.target : "—"}
+                      {hasRequirement ? (
+                        <>
+                          {member.target}
+                          <small className="block text-white/40">
+                            {member.has_monthly_override ? "Monthly override" : "Member baseline"}
+                          </small>
+                        </>
+                      ) : "—"}
                     </td>
                     <td className="p-4 font-bold">{member.count}</td>
                     <td className="p-4">{hasRequirement ? remaining : "—"}</td>

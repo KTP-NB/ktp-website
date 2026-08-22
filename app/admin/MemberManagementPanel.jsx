@@ -25,6 +25,7 @@ const empty = {
   manager_permissions: [],
   company_questions_blocked: false,
   current_application_target: 40,
+  uses_default_application_target: true,
 };
 
 function formatRole(value) {
@@ -53,11 +54,15 @@ export default function MemberManagementPanel({ viewerRole }) {
     [form, setForm] = useState(empty),
     [saving, setSaving] = useState(false),
     [adding, setAdding] = useState(false),
-    [inviteOpen, setInviteOpen] = useState(false);
+    [inviteOpen, setInviteOpen] = useState(false),
+    [chapterDefault, setChapterDefault] = useState(40);
   const load = () => {
     setLoading(true);
     api("/api/admin/members")
-      .then((r) => setMembers(r.members || []))
+      .then((r) => {
+        setMembers(r.members || []);
+        setChapterDefault(r.chapterDefault ?? 40);
+      })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   };
@@ -232,7 +237,14 @@ export default function MemberManagementPanel({ viewerRole }) {
                   <td>{m.member_status}</td>
                   <td>{m.pledge_class || "—"}</td>
                   <td>{formatPosition(m.position)}</td>
-                  <td>{m.current_application_target ?? 40}</td>
+                  <td>
+                    {m.current_application_target ?? 40}
+                    {m.member_status === "Active" && (
+                      <small className="block text-white/40">
+                        {m.uses_default_application_target ? "Chapter default" : "Custom"}
+                      </small>
+                    )}
+                  </td>
                   <td>{formatRole(m.access_role)}</td>
                   <td className="p-3 text-right">
                     <div className="flex justify-end gap-2"><button onClick={() => open(m)} className="rounded-lg border border-white/15 px-3 py-2 font-bold hover:bg-white/10">Edit</button>
@@ -257,6 +269,7 @@ export default function MemberManagementPanel({ viewerRole }) {
           saving={saving}
           canRoles={viewerRole === "super_admin"}
           inviteMode={adding}
+          chapterDefault={chapterDefault}
         />
       )}{" "}
       {inviteOpen && <InviteModal onClose={() => setInviteOpen(false)} />}
@@ -273,8 +286,10 @@ function MemberModal({
   saving,
   canRoles,
   inviteMode,
+  chapterDefault,
 }) {
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const requiredProfileFields = new Set(["name", "email", "position", "pledge_class", "graduation_year", "major"]);
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-4">
       <form
@@ -299,9 +314,9 @@ function MemberModal({
             ["linkedin_url", "LinkedIn URL"],
           ].map(([k, l]) => (
             <label key={k} className="grid gap-1 text-sm font-bold">
-              {l}
+              <span>{l}{requiredProfileFields.has(k) && <b className="ml-1 text-red-400">*</b>}</span>
               <input
-                required={["name", "email"].includes(k)}
+                required={requiredProfileFields.has(k)}
                 disabled={!inviteMode && k === "email"}
                 value={form[k] || ""}
                 onChange={(e) => set(k, e.target.value)}
@@ -329,10 +344,30 @@ function MemberModal({
               />
             </label>
             <label className="grid gap-1 text-sm font-bold">
-              This month&apos;s application requirement
-              <input type="number" min="0" max="1000" value={form.current_application_target}
+              Requirement mode
+              <SelectMenu
+                label="Requirement mode"
+                value={form.uses_default_application_target ? "default" : "custom"}
+                disabled={["Inactive", "Alumni"].includes(form.member_status)}
+                onChange={(value) => setForm((current) => ({
+                  ...current,
+                  uses_default_application_target: value === "default",
+                  current_application_target: value === "default"
+                    ? chapterDefault
+                    : current.current_application_target,
+                }))}
+                options={[
+                  { value: "default", label: `Use chapter default (${chapterDefault})` },
+                  { value: "custom", label: "Custom requirement" },
+                ]}
+              />
+            </label>
+            <label className="grid gap-1 text-sm font-bold">
+              Monthly application requirement
+              <input type="number" min="0" max="1000" value={form.uses_default_application_target ? chapterDefault : form.current_application_target}
                 onChange={(e) => set("current_application_target", Number(e.target.value))}
-                className="rounded-xl border border-white/15 bg-white/5 px-3 py-2.5" />
+                disabled={form.uses_default_application_target || ["Inactive", "Alumni"].includes(form.member_status)}
+                className="rounded-xl border border-white/15 bg-white/5 px-3 py-2.5 disabled:opacity-50" />
             </label>
             </>
           )}

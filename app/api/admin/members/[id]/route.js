@@ -35,9 +35,17 @@ export async function PUT(request, { params }) {
     ALLOWED.filter((key) => key in body).map((key) => [key, body[key]]),
   );
   const requestedTarget = Number(body.current_application_target ?? 40);
+  if (!Number.isInteger(requestedTarget) || requestedTarget < 0 || requestedTarget > 1000)
+    return NextResponse.json(
+      { error: "Monthly target must be between 0 and 1000." },
+      { status: 400 },
+    );
+  const noRequirement = ["Inactive", "Alumni"].includes(body.member_status);
+  const usesDefault = noRequirement ? false : Boolean(body.uses_default_application_target);
   updates.default_application_target = ["Inactive", "Alumni"].includes(body.member_status)
     ? 0
     : requestedTarget;
+  updates.uses_default_application_target = usesDefault;
   if ("company_questions_blocked" in body) {
     if (auth.profile.access_role !== "super_admin")
       return NextResponse.json(
@@ -68,47 +76,20 @@ export async function PUT(request, { params }) {
     .update(updates)
     .eq("id", params.id)
     .select(
-      "id,user_id,name,email,position,pledge_class,member_status,graduation_year,major,minors,linkedin_url,executive_board,committees,sort_order,photo_url,access_role,manager_permissions,default_application_target,created_at,updated_at",
+      "id,user_id,name,email,position,pledge_class,member_status,graduation_year,major,minors,linkedin_url,executive_board,committees,sort_order,photo_url,access_role,manager_permissions,company_questions_blocked,default_application_target,uses_default_application_target,created_at,updated_at",
     )
     .single();
   if (error)
     return NextResponse.json({ error: error.message }, { status: 400 });
-  const currentTarget = ["Inactive", "Alumni"].includes(data.member_status)
-    ? 0
-    : Number(body.current_application_target ?? 40);
-  if (
-    !Number.isInteger(currentTarget) ||
-    currentTarget < 0 ||
-    currentTarget > 1000
-  )
-    return NextResponse.json(
-      { error: "Monthly target must be between 0 and 1000." },
-      { status: 400 },
-    );
-  if (data.user_id && "current_application_target" in body) {
-    const { data: savedRequirement, error: requirementError } = await service
-      .from("application_requirements")
-      .upsert({
-        user_id: data.user_id,
-        month_start: `${new Date().toISOString().slice(0, 7)}-01`,
-        target_count: currentTarget,
-        is_exempt: false,
-        exemption_reason: null,
-        updated_by: auth.user.id,
-      }, { onConflict: "user_id,month_start" })
-      .select("target_count")
-      .single();
-    if (requirementError)
-      return NextResponse.json(
-        { error: `Member details saved, but the application requirement failed: ${requirementError.message}` },
-        { status: 500 },
-      );
-    return NextResponse.json({
-      member: { ...data, current_application_target: savedRequirement.target_count },
-    });
-  }
   return NextResponse.json({
-    member: { ...data, current_application_target: currentTarget },
+    member: {
+      ...data,
+      current_application_target: noRequirement
+        ? 0
+        : usesDefault
+          ? requestedTarget
+          : data.default_application_target,
+    },
   });
 }
 

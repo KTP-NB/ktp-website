@@ -19,6 +19,7 @@ import FadeIn from "@/components/FadeIn";
 import { useAuth } from "@/components/authprovider";
 import { api } from "@/lib/coderank/clientFetch";
 import DatePicker from '@/components/DatePicker';
+import SelectMenu from '@/components/SelectMenu';
 
 function formatDate(value) {
   if (!value) return null;
@@ -300,10 +301,13 @@ function MemberDetail({ memberId }) {
 function MemberApplications({ memberId }) {
   const [applications, setApplications] = useState([]);
   const [requirements, setRequirements] = useState([]);
+  const [chapterRequirements, setChapterRequirements] = useState([]);
   const [defaultTarget, setDefaultTarget] = useState(40);
+  const [profileUsesDefault, setProfileUsesDefault] = useState(true);
+  const [useBaseline, setUseBaseline] = useState(true);
+  const [memberStatus, setMemberStatus] = useState("Active");
   const [month, setMonth] = useState(new Date().toISOString().slice(0, 7));
   const [target, setTarget] = useState(40);
-  const [exempt, setExempt] = useState(false);
   const [reason, setReason] = useState("");
   const [loading, setLoading] = useState(true);
   const [savingRequirement, setSavingRequirement] = useState(false);
@@ -318,7 +322,10 @@ function MemberApplications({ memberId }) {
         if (!active) return;
         setApplications(result.applications || []);
         setRequirements(result.requirements || []);
+        setChapterRequirements(result.chapter_requirements || []);
         setDefaultTarget(result.default_target ?? 40);
+        setProfileUsesDefault(result.uses_default_application_target ?? true);
+        setMemberStatus(result.member_status || "Active");
       })
       .catch((e) => {
         if (active) setError(e.message);
@@ -335,10 +342,14 @@ function MemberApplications({ memberId }) {
     const row = requirements.find((item) =>
       item.month_start?.startsWith(month),
     );
-    setTarget(row?.target_count ?? defaultTarget);
-    setExempt(row?.is_exempt ?? false);
+    const chapterRow = chapterRequirements.find((item) => item.month_start?.startsWith(month));
+    const chapterDefault = chapterRow?.default_target ?? 40;
+    const noRequirement = ["Inactive", "Alumni"].includes(memberStatus);
+    const baselineTarget = noRequirement ? 0 : profileUsesDefault ? chapterDefault : defaultTarget;
+    setUseBaseline(!row);
+    setTarget(row?.target_count ?? baselineTarget);
     setReason(row?.exemption_reason || "");
-  }, [requirements, month, defaultTarget]);
+  }, [requirements, chapterRequirements, month, defaultTarget, profileUsesDefault, memberStatus]);
 
   async function saveRequirement() {
     setSavingRequirement(true);
@@ -350,17 +361,13 @@ function MemberApplications({ memberId }) {
         body: JSON.stringify({
           month,
           target_count: Number(target),
-          is_exempt: exempt,
+          use_baseline: useBaseline,
           exemption_reason: reason,
         }),
       });
-      setRequirements((current) => [
-        result.requirement,
-        ...current.filter(
-          (item) => item.month_start !== result.requirement.month_start,
-        ),
-      ]);
-      setDefaultTarget(result.requirement.target_count);
+      setRequirements((current) => result.requirement
+        ? [result.requirement, ...current.filter((item) => item.month_start !== result.requirement.month_start)]
+        : current.filter((item) => !item.month_start?.startsWith(month)));
       setMessage("Monthly requirement saved.");
     } catch (e) {
       setError(e.message);
@@ -376,6 +383,9 @@ function MemberApplications({ memberId }) {
   const yearCount = applications.filter((app) =>
     app.date_applied.startsWith(year),
   ).length;
+  const selectedChapterDefault = chapterRequirements.find((item) => item.month_start?.startsWith(month))?.default_target ?? 40;
+  const noRequirement = ["Inactive", "Alumni"].includes(memberStatus);
+  const baselineTarget = noRequirement ? 0 : profileUsesDefault ? selectedChapterDefault : defaultTarget;
 
   return (
     <div className="mt-6 space-y-6">
@@ -390,6 +400,23 @@ function MemberApplications({ memberId }) {
             <DatePicker mode="month" label="Month" value={month} onChange={setMonth} />
           </label>
           <label className="grid gap-2 text-sm font-semibold text-white/70">
+            Requirement mode
+            <SelectMenu
+              label="Requirement mode"
+              value={useBaseline ? "baseline" : "override"}
+              disabled={noRequirement}
+              onChange={(value) => {
+                const nextBaseline = value === "baseline";
+                setUseBaseline(nextBaseline);
+                if (nextBaseline) setTarget(baselineTarget);
+              }}
+              options={[
+                { value: "baseline", label: `Use member baseline (${baselineTarget})` },
+                { value: "override", label: "Override for this month" },
+              ]}
+            />
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-white/70">
             Target
             <input
               type="number"
@@ -397,19 +424,11 @@ function MemberApplications({ memberId }) {
               max="1000"
               value={target}
               onChange={(e) => setTarget(e.target.value)}
-              disabled={exempt}
+              disabled={useBaseline || noRequirement}
               className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 disabled:opacity-40"
             />
           </label>
-          <label className="flex items-center gap-3 text-sm font-semibold text-white/75 sm:col-span-2">
-            <input
-              type="checkbox"
-              checked={exempt}
-              onChange={(e) => setExempt(e.target.checked)}
-              className="h-4 w-4"
-            />{" "}
-            Exempt this member for the selected month
-          </label>
+          <p className="text-xs text-white/45 sm:col-span-2">Monthly overrides apply only to the selected month. Resetting to the member baseline makes this month follow future baseline changes.</p>
           <label className="grid gap-2 text-sm font-semibold text-white/70 sm:col-span-2">
             Member-visible explanation
             <textarea

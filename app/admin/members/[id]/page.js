@@ -14,9 +14,11 @@ import {
   StickyNote,
 } from "lucide-react";
 import AuthGate from "@/components/authgate";
+import useAdminPermission from "@/components/useAdminPermission";
 import FadeIn from "@/components/FadeIn";
 import { useAuth } from "@/components/authprovider";
 import { api } from "@/lib/coderank/clientFetch";
+import DatePicker from '@/components/DatePicker';
 
 function formatDate(value) {
   if (!value) return null;
@@ -43,17 +45,11 @@ function AdminMemberReview() {
   const params = useParams();
   const memberId = params?.id;
 
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const [checkingAccess, setCheckingAccess] = useState(true);
-
-  useEffect(() => {
-    if (!user?.id) return;
-    let isMounted = true;
-    api('/api/admin/me').then(()=>{if(isMounted)setIsAuthorized(true);}).catch(()=>{}).finally(()=>{if(isMounted)setCheckingAccess(false);});
-    return () => {
-      isMounted = false;
-    };
-  }, [user?.id, user?.email]);
+  // Reached from Member Management and from Resumes, so either grant opens it.
+  const { checking: checkingAccess, allowed: isAuthorized } = useAdminPermission([
+    'members.manage',
+    'resumes.manage',
+  ]);
 
   if (checkingAccess) {
     return (
@@ -391,12 +387,7 @@ function MemberApplications({ memberId }) {
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="grid gap-2 text-sm font-semibold text-white/70">
             Month
-            <input
-              type="month"
-              value={month}
-              onChange={(e) => setMonth(e.target.value)}
-              className="rounded-xl border border-white/15 bg-slate-900 px-4 py-3 [color-scheme:dark]"
-            />
+            <DatePicker mode="month" label="Month" value={month} onChange={setMonth} />
           </label>
           <label className="grid gap-2 text-sm font-semibold text-white/70">
             Target

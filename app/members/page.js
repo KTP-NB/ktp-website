@@ -118,9 +118,13 @@ export default function MembersPage() {
         return;
       }
 
+      // Explicit list: anonymous visitors are granted only the directory
+      // columns, so `select('*')` would be denied for signed-out users.
       const { data, error } = await supabase
         .from('member_profiles')
-        .select('*')
+        .select(
+          'id, name, position, image_path, photo_url, graduation_year, major, minors, linkedin_url, pledge_class, member_status, executive_board, committees, sort_order'
+        )
         .order('sort_order', { ascending: true });
 
       if (!isMounted) return;

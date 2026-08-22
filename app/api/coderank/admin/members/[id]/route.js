@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/coderank/auth';
+import { profileHasPermission } from '@/lib/adminAccess';
 import { getServiceClient } from '@/lib/coderank/supabaseServer';
 import { withNoStore } from '@/lib/coderank/noStore';
 
@@ -9,7 +10,7 @@ export const fetchCache = 'force-no-store';
 export const runtime = 'nodejs';
 
 const MEMBER_FIELDS =
-  'id, user_id, name, email, position, pledge_class, member_status, graduation_year, major, photo_url, resume_url';
+  'id, user_id, name, email, position, pledge_class, member_status, graduation_year, major, photo_url';
 
 /** GET — member detail + their current resume notes. `[id]` = member_profiles.id. */
 export async function GET(request, { params }) {
@@ -35,6 +36,17 @@ export async function GET(request, { params }) {
     .maybeSingle();
 
   if (notesErr) return withNoStore(NextResponse.json({ error: notesErr.message }, { status: 500 }));
+
+  // The resume itself is only for people who hold the Resumes tab.
+  if (profileHasPermission(auth.profile, 'resumes.manage')) {
+    const { data: resume } = await service
+      .from('member_resumes')
+      .select('url, storage_path')
+      .eq('member_id', id)
+      .maybeSingle();
+    member.resume_url = resume?.url || null;
+    member.resume_storage_path = resume?.storage_path || null;
+  }
 
   return withNoStore(NextResponse.json({ member, notes: notesRow || null }));
 }

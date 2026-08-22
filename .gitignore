@@ -62,3 +62,4 @@ scripts/*
 neetcode150.json
 150_images/
 questions_export.json
+.mcp.json

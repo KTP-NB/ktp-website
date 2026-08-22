@@ -11,6 +11,7 @@ import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { clearCachedData } from '@/lib/publicDataCache';
 import { MEMBERS_CACHE_KEY } from '@/lib/cacheKeys';
+import ApiKeysPanel from '@/components/ApiKeysPanel';
 
 const editableFields = [
   { name: 'name', label: 'Name', type: 'text', required: true },
@@ -63,6 +64,7 @@ function formatDate(value) {
 function ProfileEditor() {
   const searchParams = useSearchParams();
   const showResume = searchParams.get('tab') === 'resume';
+  const showIntegrations = searchParams.get('tab') === 'integrations';
   const { user, setProfileName } = useAuth();
   const [profileId, setProfileId] = useState(null);
   const [form, setForm] = useState(emptyProfile);
@@ -362,7 +364,7 @@ function ProfileEditor() {
 
         <ProfileSectionNav />
 
-        {!showResume && (
+        {!showResume && !showIntegrations && (
         <form
           onSubmit={onSubmit}
           className="grid gap-8 rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl md:grid-cols-[280px_1fr] md:p-8"
@@ -509,6 +511,7 @@ function ProfileEditor() {
             )}
           </div>
         )}
+        {showIntegrations && profileId && <ApiKeysPanel />}
       </FadeIn>
     </main>
   );

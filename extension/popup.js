@@ -367,6 +367,12 @@ function formatLookupError(response) {
     return "Not authenticated. Log in to ktpnewbrunswick.org and keep that tab open.";
   }
   if (response.error === "api_error") {
+    if (response.error_code === "fines_unpaid" || response.status === 403) {
+      return (
+        response.detail ||
+        "You have unpaid fines. Pay them on ktpnewbrunswick.org/fines to unlock referrals."
+      );
+    }
     const status = response.status ? `HTTP ${response.status}` : "API error";
     return response.detail ? `${status}: ${response.detail}` : status;
   }
@@ -383,6 +389,16 @@ function isAuthLookupError(response) {
     response &&
       (response.error === "not_authenticated" ||
         (response.error === "api_error" && response.status === 401))
+  );
+}
+
+function isFinesLookupError(response) {
+  return Boolean(
+    response &&
+      response.error === "api_error" &&
+      (response.error_code === "fines_unpaid" ||
+        response.error_code === "no_profile" ||
+        response.status === 403)
   );
 }
 
@@ -594,20 +610,34 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   if (!lookupResponse || lookupResponse.error) {
+    let action = null;
+    if (isFinesLookupError(lookupResponse)) {
+      action = {
+        id: "go-to-fines-btn",
+        label: "View my fines",
+        onClick: () => {
+          chrome.tabs.create({ url: "https://www.ktpnewbrunswick.org/fines" });
+          window.close();
+        },
+      };
+    } else if (isAuthLookupError(lookupResponse)) {
+      action = {
+        id: "clear-token-btn",
+        label: "Clear cached login",
+        onClick: async () => {
+          await sendMessage({ type: "CLEAR_SESSION_TOKEN" });
+          await sendMessage({ type: "CLEAR_PERSISTENT_TOKEN" });
+          chrome.tabs.create({ url: "https://www.ktpnewbrunswick.org/login" });
+          window.close();
+        },
+      };
+    }
+
     renderStatus(
-      `Could not reach the referral API. ${formatLookupError(lookupResponse)}`,
-      isAuthLookupError(lookupResponse)
-        ? {
-            id: "clear-token-btn",
-            label: "Clear cached login",
-            onClick: async () => {
-              await sendMessage({ type: "CLEAR_SESSION_TOKEN" });
-              await sendMessage({ type: "CLEAR_PERSISTENT_TOKEN" });
-              chrome.tabs.create({ url: "https://www.ktpnewbrunswick.org/login" });
-              window.close();
-            },
-          }
-        : null
+      isFinesLookupError(lookupResponse)
+        ? formatLookupError(lookupResponse)
+        : `Could not reach the referral API. ${formatLookupError(lookupResponse)}`,
+      action
     );
     return;
   }

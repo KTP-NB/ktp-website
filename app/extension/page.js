@@ -35,6 +35,7 @@ const HOW_IT_WORKS = [
   'The extension only sends the company name from the job page — not your browsing history.',
   'It uses your existing KTP website login. You do not need a separate Supabase account.',
   'Lookups go to secure Supabase Edge Functions (match + telemetry) already deployed for the chapter.',
+  'Referrals stay locked while you have unpaid fines — the same standing rule as LC Company Tagged. Pay on /fines and access returns automatically.',
 ];
 
 const TROUBLESHOOTING = [
@@ -47,12 +48,16 @@ const TROUBLESHOOTING = [
     fix: 'Click Clear cached login in the popup, log in again on ktpnewbrunswick.org, reload the extension on chrome://extensions, keep the KTP tab open, and retry on a job page. This usually means the extension was holding an expired token.',
   },
   {
+    problem: 'Unpaid fines / “Pay them on …/fines to unlock referrals”',
+    fix: 'The extension is blocked until your fine balance is $0. Open https://www.ktpnewbrunswick.org/fines, settle with the VP of Finance, then try again — no reinstall needed.',
+  },
+  {
     problem: 'Extension shows nothing / wrong company',
     fix: 'Open a specific job posting URL (not a Google search results page or shopping page). Supported boards: LinkedIn, Greenhouse, Lever, Workday, and many company career sites.',
   },
   {
     problem: '“No KTP referral contacts found”',
-    fix: 'You are authenticated, but no alumni marked open-to-refer are linked to that company in the database yet. Try another company or ask leadership to update alumni profiles.',
+    fix: 'You are authenticated and in good standing, but no alumni marked open-to-refer are linked to that company in the database yet. Try another company or ask leadership to update alumni profiles.',
   },
   {
     problem: 'After an update, old behavior returns',
@@ -91,7 +96,7 @@ function ExtensionDownloadContent() {
             Download Extension
           </a>
           <p className="mt-3 text-sm text-white/50">
-            Version 1.4.0 · works with your ktpnewbrunswick.org login · no separate server
+            Version 1.4.1 · works with your ktpnewbrunswick.org login · unpaid fines lock referrals
           </p>
 
           <div className="mt-10">

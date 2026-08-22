@@ -312,15 +312,6 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
           await self.KTPCache.removeCachedCompany(company_name);
         }
 
-        // 1. Cache check BEFORE any backend / Supabase call.
-        const cached = await self.KTPCache.getCachedCompany(company_name);
-        if (cached) {
-          await self.KTPCache.recordCacheEvent("cache_hit");
-          self.KTPTelemetry.sendTelemetry("cache_hit", company_name);
-          sendResponse({ success: true, data: cached.data, cached: true });
-          return;
-        }
-
         // Prefer a live token from an open KTP tab so we don't reuse a stale
         // session-cache JWT (common cause of HTTP 401 Invalid session).
         let token = await readTokenFromKtpTab();
@@ -337,8 +328,15 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
           return;
         }
 
-        await self.KTPCache.recordCacheEvent("cache_miss");
-        self.KTPTelemetry.sendTelemetry("cache_miss", company_name);
+        // Always hit the API so unpaid-fines gating cannot be bypassed via cache.
+        const cached = await self.KTPCache.getCachedCompany(company_name);
+        if (cached) {
+          await self.KTPCache.recordCacheEvent("cache_hit");
+          self.KTPTelemetry.sendTelemetry("cache_hit", company_name);
+        } else {
+          await self.KTPCache.recordCacheEvent("cache_miss");
+          self.KTPTelemetry.sendTelemetry("cache_miss", company_name);
+        }
 
         const matchBody = JSON.stringify({
           company_raw: company_name,
@@ -373,9 +371,19 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 
         if (!response.ok) {
           let detail = "";
+          let errorCode = "";
+          let outstanding = null;
+          let unpaidCount = null;
           try {
             const errorBody = await response.json();
             detail = errorBody.detail || errorBody.error || "";
+            errorCode = errorBody.error || "";
+            if (typeof errorBody.outstanding_fines === "number") {
+              outstanding = errorBody.outstanding_fines;
+            }
+            if (typeof errorBody.unpaid_fine_count === "number") {
+              unpaidCount = errorBody.unpaid_fine_count;
+            }
           } catch {
             try {
               detail = await response.text();
@@ -383,16 +391,23 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
               detail = "";
             }
           }
-          sendResponse({ error: "api_error", status: response.status, detail });
+          sendResponse({
+            error: "api_error",
+            status: response.status,
+            detail,
+            error_code: errorCode,
+            outstanding_fines: outstanding,
+            unpaid_fine_count: unpaidCount,
+          });
           return;
         }
 
         const data = await response.json();
 
-        // 4. Cache the successful response for 24h to avoid redundant calls.
+        // Cache successful responses for 24h (fines already cleared server-side).
         await self.KTPCache.setCachedCompany(company_name, data);
 
-        sendResponse({ success: true, data, cached: false });
+        sendResponse({ success: true, data, cached: Boolean(cached) });
       } catch (err) {
         sendResponse({
           error: "network_error",

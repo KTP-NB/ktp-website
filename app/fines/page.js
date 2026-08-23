@@ -3,8 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BadgeDollarSign, Loader2 } from 'lucide-react';
 import AuthGate from '@/components/authgate';
-import FadeIn from '@/components/FadeIn';
-import ProfileSectionNav from '@/components/ProfileSectionNav';
+import AccountShell from '@/components/AccountShell';
 import { useAuth } from '@/components/authprovider';
 import { supabase } from '@/lib/supabase';
 import {
@@ -77,13 +76,7 @@ function MemberFines() {
   }, [fines, view]);
 
   return (
-    <main className="min-h-screen px-4 pb-20 pt-28 text-white md:pt-36">
-      <FadeIn className="mx-auto w-full max-w-6xl">
-        <div className="mb-8">
-          <h1 className="text-4xl font-black tracking-tight sm:text-5xl">Member Account</h1>
-          <p className="mt-2 text-white/60">Manage your profile, applications, and resume.</p>
-        </div>
-        <ProfileSectionNav />
+    <AccountShell>
 
         <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/5 p-6 md:flex-row md:items-center md:justify-between">
           <div>
@@ -192,7 +185,6 @@ function MemberFines() {
             </div>
           )}
         </section>
-      </FadeIn>
-    </main>
+    </AccountShell>
   );
 }

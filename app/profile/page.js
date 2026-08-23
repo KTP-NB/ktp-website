@@ -1,17 +1,13 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Camera, Save, FileText, Upload, Trash2, ExternalLink } from 'lucide-react';
+import { Camera, Save } from 'lucide-react';
 import AuthGate from '@/components/authgate';
-import FadeIn from '@/components/FadeIn';
+import AccountShell from '@/components/AccountShell';
 import { useAuth } from '@/components/authprovider';
-import { useConfirmToast } from '@/components/ConfirmToast';
-import ProfileSectionNav from '@/components/ProfileSectionNav';
-import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { clearCachedData } from '@/lib/publicDataCache';
 import { MEMBERS_CACHE_KEY } from '@/lib/cacheKeys';
-import ApiKeysPanel from '@/components/ApiKeysPanel';
 
 const editableFields = [
   { name: 'name', label: 'Name', type: 'text', required: true },
@@ -30,8 +26,6 @@ const emptyProfile = {
   linkedin_url: '',
   photo_url: '',
   photo_storage_path: '',
-  resume_url: '',
-  resume_storage_path: '',
 };
 
 function fileExtension(file) {
@@ -52,32 +46,15 @@ function publicUrlFor(path, version) {
   return version ? `${url}?v=${version}` : url;
 }
 
-function formatDate(value) {
-  if (!value) return null;
-  try {
-    return new Date(value).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
-  } catch {
-    return null;
-  }
-}
-
 function ProfileEditor() {
-  const searchParams = useSearchParams();
-  const showResume = searchParams.get('tab') === 'resume';
-  const showIntegrations = searchParams.get('tab') === 'integrations';
   const { user, setProfileName } = useAuth();
   const [profileId, setProfileId] = useState(null);
   const [form, setForm] = useState(emptyProfile);
   const [photoFile, setPhotoFile] = useState(null);
   const [photoPreview, setPhotoPreview] = useState('');
-  const [uploadingResume, setUploadingResume] = useState(false);
-  const [deletingResume, setDeletingResume] = useState(false);
-  const [resumeMessage, setResumeMessage] = useState(null);
-  const [resumeNotes, setResumeNotes] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState(null);
-  const { confirm, confirmationToast } = useConfirmToast();
 
   const visibleFields = editableFields;
 
@@ -121,34 +98,7 @@ function ProfileEditor() {
           linkedin_url: data.linkedin_url || '',
           photo_url: data.photo_url || '',
           photo_storage_path: data.photo_storage_path || '',
-          resume_url: '',
-          resume_storage_path: '',
         });
-
-        // Resumes live in member_resumes; RLS limits this to the member's own row.
-        const { data: resumeRow } = await supabase
-          .from('member_resumes')
-          .select('url, storage_path')
-          .eq('member_id', data.id)
-          .maybeSingle();
-        if (isMounted && resumeRow) {
-          setForm((prev) => ({
-            ...prev,
-            resume_url: resumeRow.url || '',
-            resume_storage_path: resumeRow.storage_path || '',
-          }));
-        }
-
-        // Resume feedback written by admins (RLS limits this to the member's own row).
-        const { data: notesRow } = await supabase
-          .from('member_resume_notes')
-          .select('notes, updated_at')
-          .eq('user_id', user.id)
-          .maybeSingle();
-
-        if (isMounted && notesRow?.notes) {
-          setResumeNotes(notesRow);
-        }
       }
 
       setLoading(false);
@@ -198,97 +148,6 @@ function ProfileEditor() {
     };
   }
 
-  async function handleResumeUpload(file) {
-    if (!file || !user || !profileId) return;
-
-    setUploadingResume(true);
-    setResumeMessage(null);
-
-    try {
-      const extension = fileExtension(file);
-      const version = Date.now();
-      const RESUME_BUCKET = 'member-resumes';
-      const path = `resumes/${user.id}/${fileSafeName(form.name)}-resume.${extension}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from(RESUME_BUCKET)
-        .upload(path, file, {
-          contentType: file.type || 'application/pdf',
-          upsert: true,
-        });
-
-      if (uploadError) throw uploadError;
-
-      const resumeUrl = supabase.storage.from(RESUME_BUCKET).getPublicUrl(path).data.publicUrl;
-      const versionedUrl = `${resumeUrl}?v=${version}`;
-
-      const { error: updateError } = await supabase
-        .from('member_resumes')
-        .upsert({
-          member_id: profileId,
-          url: versionedUrl,
-          storage_path: path,
-          bucket: RESUME_BUCKET,
-          updated_at: new Date().toISOString(),
-        }, { onConflict: 'member_id' });
-
-      if (updateError) throw updateError;
-
-      // Remove old resume if path changed
-      if (form.resume_storage_path && form.resume_storage_path !== path) {
-        await supabase.storage.from(RESUME_BUCKET).remove([form.resume_storage_path]);
-      }
-
-      setForm((prev) => ({
-        ...prev,
-        resume_url: versionedUrl,
-        resume_storage_path: path,
-      }));
-      setResumeMessage({ type: 'success', text: 'Resume uploaded successfully.' });
-    } catch (err) {
-      setResumeMessage({ type: 'error', text: err.message || 'Failed to upload resume.' });
-    } finally {
-      setUploadingResume(false);
-    }
-  }
-
-  async function handleResumeDelete() {
-    if (!form.resume_storage_path || !profileId) return;
-    const ok = await confirm({
-      title: 'Remove resume?',
-      message: 'This cannot be undone.',
-      confirmLabel: 'Remove',
-      tone: 'danger',
-    });
-    if (!ok) return;
-
-    setDeletingResume(true);
-    setResumeMessage(null);
-
-    try {
-      const RESUME_BUCKET = 'member-resumes';
-      const { error: removeError } = await supabase.storage
-        .from(RESUME_BUCKET)
-        .remove([form.resume_storage_path]);
-
-      if (removeError) throw removeError;
-
-      const { error: updateError } = await supabase
-        .from('member_resumes')
-        .delete()
-        .eq('member_id', profileId);
-
-      if (updateError) throw updateError;
-
-      setForm((prev) => ({ ...prev, resume_url: '', resume_storage_path: '' }));
-      setResumeMessage({ type: 'success', text: 'Resume removed.' });
-    } catch (err) {
-      setResumeMessage({ type: 'error', text: err.message || 'Failed to remove resume.' });
-    } finally {
-      setDeletingResume(false);
-    }
-  }
-
   async function onSubmit(event) {
     event.preventDefault();
     if (!profileId) return;
@@ -328,8 +187,6 @@ function ProfileEditor() {
         linkedin_url: data.linkedin_url || '',
         photo_url: data.photo_url || '',
         photo_storage_path: data.photo_storage_path || '',
-        resume_url: form.resume_url,
-        resume_storage_path: form.resume_storage_path,
       });
       setProfileName(data.name || null);
       setPhotoFile(null);
@@ -366,21 +223,11 @@ function ProfileEditor() {
   }
 
   return (
-    <main className="min-h-screen px-4 pb-20 pt-28 text-white md:pt-36">
-      {confirmationToast}
-      <FadeIn className="mx-auto w-full max-w-5xl">
-        <div className="mb-10">
-          <h1 className="text-4xl font-black tracking-tight sm:text-5xl">Member Account</h1>
-          <p className="mt-2 text-white/70">{user.email}</p>
-        </div>
-
-        <ProfileSectionNav />
-
-        {!showResume && !showIntegrations && (
-        <form
-          onSubmit={onSubmit}
-          className="grid gap-8 rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl md:grid-cols-[280px_1fr] md:p-8"
-        >
+    <AccountShell subtitle={user.email}>
+      <form
+        onSubmit={onSubmit}
+        className="grid gap-8 rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl md:grid-cols-[280px_1fr] md:p-8"
+      >
           <section className="flex flex-col gap-4">
             <div className="relative aspect-square overflow-hidden rounded-xl border border-white/15 bg-white/5">
               <img
@@ -437,95 +284,8 @@ function ProfileEditor() {
               {saving ? 'Saving...' : 'Save Profile'}
             </button>
           </section>
-        </form>
-        )}
-
-        {/* ========== RESUME SECTION ========== */}
-        {showResume && profileId && (
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl md:p-8">
-            <h2 className="text-xl font-bold mb-1">Resume</h2>
-            <p className="text-sm text-white/60 mb-6">Upload your resume as a PDF so leadership can review it.</p>
-
-            {form.resume_url ? (
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-600/20 border border-blue-400/20">
-                    <FileText size={22} className="text-blue-300" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="font-semibold truncate">Your Resume</p>
-                    <p className="text-xs text-white/50">PDF uploaded</p>
-                  </div>
-                </div>
-
-                <div className="flex gap-2 shrink-0">
-                  <a
-                    href={form.resume_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-4 py-2.5 text-sm font-semibold transition hover:bg-white/10"
-                  >
-                    <ExternalLink size={16} />
-                    View
-                  </a>
-                  <button
-                    type="button"
-                    disabled={deletingResume}
-                    onClick={handleResumeDelete}
-                    className="inline-flex items-center gap-2 rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-2.5 text-sm font-semibold text-red-300 transition hover:bg-red-500/20 disabled:opacity-50"
-                  >
-                    <Trash2 size={16} />
-                    {deletingResume ? 'Removing...' : 'Remove'}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                <label className={`inline-flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-white/25 px-5 py-3 font-semibold transition hover:bg-white/10 hover:border-white/40 ${uploadingResume ? 'opacity-50 pointer-events-none' : ''}`}>
-                  <Upload size={18} />
-                  {uploadingResume ? 'Uploading...' : 'Choose PDF to Upload'}
-                  <input
-                    type="file"
-                    accept="application/pdf"
-                    className="sr-only"
-                    disabled={uploadingResume}
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleResumeUpload(file);
-                      e.target.value = '';
-                    }}
-                  />
-                </label>
-              </div>
-            )}
-
-            {resumeMessage && (
-              <p
-                className={`mt-4 rounded-xl px-4 py-3 text-sm ${
-                  resumeMessage.type === 'success'
-                    ? 'border border-emerald-300/25 bg-emerald-400/10 text-emerald-100'
-                    : 'border border-red-300/25 bg-red-400/10 text-red-100'
-                }`}
-              >
-                {resumeMessage.text}
-              </p>
-            )}
-
-            {/* Resume feedback from leadership (read-only) */}
-            {resumeNotes?.notes && (
-              <div className="mt-6 rounded-xl border border-amber-300/20 bg-amber-400/[0.06] p-5">
-                <h3 className="text-sm font-bold text-amber-200 mb-2">Resume Feedback</h3>
-                <p className="text-sm text-white/80 whitespace-pre-wrap">{resumeNotes.notes}</p>
-                {formatDate(resumeNotes.updated_at) && (
-                  <p className="mt-3 text-xs text-white/40">Last updated {formatDate(resumeNotes.updated_at)}</p>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-        {showIntegrations && profileId && <ApiKeysPanel />}
-      </FadeIn>
-    </main>
+      </form>
+    </AccountShell>
   );
 }
 

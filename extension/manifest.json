@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "KTP Referral Finder",
+  "version": "1.4.1",
+  "description": "Find KTP alumni referrals while browsing job postings",
+  "permissions": ["storage", "activeTab", "scripting", "cookies", "alarms"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "exclude_matches": [
+        "https://www.ktpnewbrunswick.org/*"
+      ],
+      "js": ["utils/auth.js", "utils/alumni.js", "utils/parser.js", "content.js"],
+      "css": ["styles/content.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://www.ktpnewbrunswick.org/*"],
+      "js": ["utils/ktp-sync.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "KTP Referral Finder"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Download } from 'lucide-react';
 import AuthGate from '@/components/authgate';
 import FadeIn from '@/components/FadeIn';
@@ -35,7 +36,7 @@ const HOW_IT_WORKS = [
   'The extension only sends the company name from the job page — not your browsing history.',
   'It uses your existing KTP website login. You do not need a separate Supabase account.',
   'Lookups go to secure Supabase Edge Functions (match + telemetry) already deployed for the chapter.',
-  'Referrals stay locked while you have unpaid fines — the same standing rule as LC Company Tagged. Pay on /fines and access returns automatically.',
+  'Referrals stay locked while you have unpaid fines.',
 ];
 
 const TROUBLESHOOTING = [
@@ -69,18 +70,64 @@ const TROUBLESHOOTING = [
   },
 ];
 
+function TroubleshootingAccordion({ items }) {
+  const [openIndex, setOpenIndex] = useState(null);
+
+  return (
+    <div className="space-y-3">
+      {items.map((item, index) => {
+        const isOpen = openIndex === index;
+
+        return (
+          <div
+            key={item.problem}
+            className={`overflow-hidden rounded-xl border transition-all ${
+              isOpen
+                ? 'border-white/20 bg-white/[0.06]'
+                : 'border-white/10 bg-white/[0.03] hover:border-white/20'
+            }`}
+          >
+            <button
+              type="button"
+              onClick={() => setOpenIndex(isOpen ? null : index)}
+              aria-expanded={isOpen}
+              className="flex w-full items-center justify-between gap-4 px-4 py-3 text-left"
+            >
+              <span className="font-semibold text-white">{item.problem}</span>
+              <span
+                className={`shrink-0 text-sm text-blue-300 transition-transform duration-300 ${
+                  isOpen ? 'rotate-180' : ''
+                }`}
+              >
+                ▼
+              </span>
+            </button>
+
+            <div
+              className={`grid transition-all duration-300 ${
+                isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+              }`}
+            >
+              <div className="overflow-hidden">
+                <p className="px-4 pb-3 text-sm leading-relaxed text-white/70">{item.fix}</p>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function ExtensionDownloadContent() {
   return (
     <main className="min-h-screen px-4 pb-20 pt-28 text-white md:pt-36">
-      <FadeIn className="mx-auto w-full max-w-3xl">
+      <FadeIn className="mx-auto w-full max-w-6xl">
         <div className="mb-10">
-          <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-blue-300/80">
-            Brother tools
-          </p>
           <h1 className="text-4xl font-black tracking-tight sm:text-5xl">
             KTP Referral Finder
           </h1>
-          <p className="mt-4 text-lg text-white/70">
+          <p className="mt-4 max-w-3xl text-lg text-white/70">
             Chrome extension that finds KTP alumni referral contacts while you browse job
             postings on LinkedIn, Greenhouse, Lever, Workday, and company career pages.
           </p>
@@ -99,7 +146,20 @@ function ExtensionDownloadContent() {
             Version 1.4.1 · works with your ktpnewbrunswick.org login · unpaid fines lock referrals
           </p>
 
-          <div className="mt-10">
+          <div className="mt-8">
+            <h2 className="text-lg font-bold">How it works</h2>
+            <ul className="mt-3 list-disc space-y-1.5 pl-5 text-white/80">
+              {HOW_IT_WORKS.map((item) => (
+                <li key={item} className="leading-relaxed">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-6 lg:grid-cols-2 lg:items-start">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl md:p-8">
             <h2 className="text-xl font-bold">Install &amp; use</h2>
             <ol className="mt-4 list-decimal space-y-4 pl-5 text-white/80">
               {INSTALL_STEPS.map((step) => (
@@ -111,38 +171,20 @@ function ExtensionDownloadContent() {
             </ol>
           </div>
 
-          <div className="mt-10">
-            <h2 className="text-xl font-bold">How it works</h2>
-            <ul className="mt-4 list-disc space-y-2 pl-5 text-white/80">
-              {HOW_IT_WORKS.map((item) => (
-                <li key={item} className="leading-relaxed">
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="mt-10">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl md:p-8">
             <h2 className="text-xl font-bold">Troubleshooting</h2>
-            <div className="mt-4 space-y-4">
-              {TROUBLESHOOTING.map((item) => (
-                <div
-                  key={item.problem}
-                  className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3"
-                >
-                  <p className="font-semibold text-white">{item.problem}</p>
-                  <p className="mt-1 text-sm leading-relaxed text-white/70">{item.fix}</p>
-                </div>
-              ))}
+            <p className="mt-1 text-sm text-white/50">Click a problem to see the fix.</p>
+            <div className="mt-4">
+              <TroubleshootingAccordion items={TROUBLESHOOTING} />
             </div>
           </div>
-
-          <p className="mt-8 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white/60">
-            This extension is distributed by the chapter and is not on the Chrome Web Store
-            yet, so Chrome will show a Developer Mode notice — that is expected and safe for
-            brothers installing from this page.
-          </p>
         </div>
+
+        <p className="mt-6 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white/60">
+          This extension is distributed by the chapter and is not on the Chrome Web Store
+          yet, so Chrome will show a Developer Mode notice — that is expected and safe for
+          brothers installing from this page.
+        </p>
       </FadeIn>
     </main>
   );

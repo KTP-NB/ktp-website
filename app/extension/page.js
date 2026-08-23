@@ -123,11 +123,11 @@ function ExtensionDownloadContent() {
   return (
     <main className="min-h-screen px-4 pb-20 pt-28 text-white md:pt-36">
       <FadeIn className="mx-auto w-full max-w-6xl">
-        <div className="mb-10">
-          <h1 className="text-4xl font-black tracking-tight sm:text-5xl">
+        <div className="mb-10 text-center">
+          <h1 className="mt-2 text-3xl font-black leading-[1.1] tracking-tight text-white drop-shadow-2xl sm:text-4xl lg:text-5xl">
             KTP Referral Finder
           </h1>
-          <p className="mt-4 max-w-3xl text-lg text-white/70">
+          <p className="mx-auto mt-3 max-w-3xl text-[1.05rem] text-white/60">
             Chrome extension that finds KTP alumni referral contacts while you browse job
             postings on LinkedIn, Greenhouse, Lever, Workday, and company career pages.
           </p>

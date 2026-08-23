@@ -312,3 +312,49 @@ https://www.ktpnewbrunswick.org/api/v1/openapi
 ```
 
 Tools capable of reading OpenAPI can use this endpoint to generate clients or inspect the API programmatically.
+
+## 13. KTP Application Tracker MCP
+
+The hosted MCP server presents the Application API as tools for Codex, Claude, and other Streamable HTTP MCP clients. It wraps the existing API rather than accessing database tables directly, so API-key ownership, scopes, revocation, rate limits, duplicate protection, and audit logs remain enforced.
+
+MCP endpoint:
+
+```text
+https://tagpabkdkbyjfmexikxn.supabase.co/functions/v1/application-tracker-mcp/mcp
+```
+
+Available tools:
+
+- `get_my_profile`
+- `list_applications`
+- `get_application`
+- `add_application`
+- `add_applications_bulk`
+- `update_application`
+
+### Connect Codex on PowerShell
+
+Store the key in the environment without placing it in your command history:
+
+```powershell
+$secureKey = Read-Host "Paste API key" -AsSecureString
+$env:KTP_API_KEY = [System.Net.NetworkCredential]::new("", $secureKey).Password
+```
+
+Add the remote MCP server:
+
+```powershell
+codex mcp add ktp-applications `
+  --url "https://tagpabkdkbyjfmexikxn.supabase.co/functions/v1/application-tracker-mcp/mcp" `
+  --bearer-token-env-var KTP_API_KEY
+```
+
+Restart Codex after adding the connection. The environment variable must be available to the process that launches Codex.
+
+Other Streamable HTTP MCP clients can use the same URL and send:
+
+```http
+Authorization: Bearer ktp_live_YOUR_KEY
+```
+
+Never paste the key into an AI prompt or commit it in an MCP configuration file.

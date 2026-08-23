@@ -1,0 +1,32 @@
+{
+  "version": "5",
+  "specifiers": {
+    "npm:hono@4.9.6": "4.9.6",
+    "npm:mcp-lite@0.8.2": "0.8.2",
+    "npm:zod@4.1.12": "4.1.12"
+  },
+  "npm": {
+    "@standard-schema/spec@1.1.0": {
+      "integrity": "sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w=="
+    },
+    "hono@4.9.6": {
+      "integrity": "sha512-doVjXhSFvYZ7y0dNokjwwSahcrAfdz+/BCLvAMa/vHLzjj8+CFyV5xteThGUsKdkaasgN+gF2mUxao+SGLpUeA=="
+    },
+    "mcp-lite@0.8.2": {
+      "integrity": "sha512-v78gCsmOI9cGhUsu8xRZ8NEZ6AOFPaAxm4xarP6Dhro3l9HY6Voo43MNuX+CO5oT8gpRfgJ5bMJLTSCFsp+4Kg==",
+      "dependencies": [
+        "@standard-schema/spec"
+      ]
+    },
+    "zod@4.1.12": {
+      "integrity": "sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ=="
+    }
+  },
+  "workspace": {
+    "dependencies": [
+      "npm:hono@4.9.6",
+      "npm:mcp-lite@0.8.2",
+      "npm:zod@4.1.12"
+    ]
+  }
+}

@@ -97,7 +97,7 @@ export default function ApiKeysPanel() {
     <div className="space-y-6">
       <section className="rounded-2xl border border-white/10 bg-white/5 p-6 md:p-8">
         <div className="mb-2 flex items-center gap-3"><ShieldCheck className="text-blue-300" /><h2 className="text-xl font-bold">API & Integrations</h2></div>
-        <p className="mb-6 max-w-3xl text-sm text-white/60">Create a personal key for your own scripts, Codex, Claude, or a future KTP MCP. A key can access only your applications and stops working if your membership becomes inactive.</p>
+        <p className="mb-6 max-w-3xl text-sm text-white/60">Create a personal key for your own scripts, Codex, Claude, or the KTP MCP. A key can access only your applications and stops working if your membership becomes inactive.</p>
         <form onSubmit={create} className="grid gap-4 rounded-xl border border-white/10 bg-black/10 p-4 sm:grid-cols-[1fr_auto]">
           <label className="grid gap-1 text-sm font-semibold">Key name<input required maxLength={80} value={name} onChange={(e) => setName(e.target.value)} className="rounded-xl border border-white/15 bg-white/5 px-4 py-3" /></label>
           <div className="flex flex-wrap items-end gap-4 pb-3 text-sm">
@@ -124,7 +124,7 @@ export default function ApiKeysPanel() {
       <section className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
         <div className="border-b border-white/10 p-6 md:p-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h3 className="text-xl font-bold">Application API documentation</h3>
+            <h3 className="text-xl font-bold">Application API and MCP documentation</h3>
             <a href="/docs/ktp-application-api.md" download="KTP-Application-API.md" className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-white/15 px-4 py-2.5 text-sm font-bold transition hover:bg-white/10 sm:self-auto">
               <Download size={16} /> Download documentation
             </a>
@@ -258,6 +258,19 @@ curl -X PATCH ${origin}/api/v1/applications/APPLICATION_ID \\
             <li><b className="text-white">429</b> — rate limit reached; respect the Retry-After header</li>
           </ul>
           <p className="mt-4">Machine-readable OpenAPI: <a className="text-blue-300 underline" href={`${origin}/api/v1/openapi`} target="_blank" rel="noreferrer"><code>/api/v1/openapi</code></a>.</p>
+        </DocSection>
+
+        <DocSection title="11. Connect Codex through the KTP MCP">
+          <p>The hosted MCP exposes the same secured application operations as tools. It uses this API key, so ownership, scopes, revocation, rate limits, duplicate protection, and audit logs behave exactly like the REST API.</p>
+          <p className="mt-4 font-semibold text-white">1. Store the key in the terminal environment</p>
+          <CodeBlock>{`$secureKey = Read-Host "Paste API key" -AsSecureString
+$env:KTP_API_KEY = [System.Net.NetworkCredential]::new("", $secureKey).Password`}</CodeBlock>
+          <p className="mt-4 font-semibold text-white">2. Add the remote MCP to Codex</p>
+          <CodeBlock>{`codex mcp add ktp-applications \
+  --url https://tagpabkdkbyjfmexikxn.supabase.co/functions/v1/application-tracker-mcp/mcp \
+  --bearer-token-env-var KTP_API_KEY`}</CodeBlock>
+          <p className="mt-3">Restart Codex after adding the connection. Available tools include identifying your account, listing, reading, adding one or many, and updating your applications.</p>
+          <p className="mt-3 text-xs">Never paste the key into a prompt or store it directly in a shared MCP configuration file. Claude and other Streamable HTTP MCP clients can use the same endpoint with the key as a Bearer token.</p>
         </DocSection>
       </section>
     </div>

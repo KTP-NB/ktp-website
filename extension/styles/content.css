@@ -1,0 +1,212 @@
+/* styles/content.css */
+
+#ktp-referral-overlay {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 320px;
+  max-width: calc(100vw - 32px);
+  background: #ffffff;
+  border: 1px solid #dfe3e8;
+  border-radius: 8px;
+  box-shadow: 0 10px 28px rgba(20, 24, 31, 0.18);
+  z-index: 2147483647;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px;
+  color: #1a1a1a;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  padding: 0;
+}
+
+#ktp-referral-overlay.ktp-overlay-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#ktp-referral-overlay .ktp-overlay-summary {
+  width: 100%;
+  min-height: 44px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  background: #ffffff;
+  color: #14181f;
+  cursor: pointer;
+  font: inherit;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+#ktp-referral-overlay .ktp-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 24px;
+  border-radius: 4px;
+  background: #1a1a2e;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+#ktp-referral-overlay .ktp-summary-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+#ktp-referral-overlay .ktp-summary-caret {
+  font-size: 16px;
+  color: #5f6875;
+  line-height: 1;
+  transition: transform 0.15s ease;
+}
+
+#ktp-referral-overlay.ktp-overlay-collapsed .ktp-summary-caret {
+  transform: rotate(180deg);
+}
+
+#ktp-referral-overlay .ktp-overlay-panel {
+  max-height: 428px;
+  overflow-y: auto;
+  border-top: 1px solid #edf0f2;
+}
+
+#ktp-referral-overlay.ktp-overlay-collapsed .ktp-overlay-panel {
+  display: none;
+}
+
+#ktp-referral-overlay .ktp-overlay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #1a1a2e;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+#ktp-referral-overlay .ktp-overlay-close {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  padding: 0;
+  margin: 0;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+
+#ktp-referral-overlay .ktp-overlay-close:hover {
+  opacity: 1;
+}
+
+#ktp-referral-overlay .ktp-overlay-body {
+  padding: 12px 16px;
+}
+
+#ktp-referral-overlay .ktp-alumni-card {
+  background: #f8f9fa;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 8px;
+  border: 1px solid #e9ecef;
+}
+
+#ktp-referral-overlay .ktp-alumni-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #1a1a1a;
+  margin-bottom: 2px;
+}
+
+#ktp-referral-overlay a.ktp-alumni-name-link {
+  color: #1a1a1a;
+  text-decoration: none;
+}
+
+#ktp-referral-overlay a.ktp-alumni-name-link:hover {
+  color: #0077b5;
+  text-decoration: underline;
+}
+
+#ktp-referral-overlay .ktp-alumni-meta {
+  font-size: 12px;
+  color: #6c757d;
+  margin-bottom: 8px;
+}
+
+#ktp-referral-overlay .ktp-alumni-actions {
+  display: flex;
+  gap: 8px;
+}
+
+#ktp-referral-overlay .ktp-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+#ktp-referral-overlay .ktp-btn-linkedin {
+  background: #0077b5;
+  color: #ffffff;
+}
+
+#ktp-referral-overlay .ktp-btn-email {
+  background: #e9ecef;
+  color: #495057;
+}
+
+#ktp-referral-overlay .ktp-btn:hover {
+  opacity: 0.85;
+}
+
+#ktp-referral-overlay .ktp-overlay-footer {
+  padding: 10px 16px;
+  font-size: 11px;
+  color: #adb5bd;
+  border-top: 1px solid #e9ecef;
+  text-align: center;
+}
+
+#ktp-referral-overlay .ktp-badge {
+  display: inline-block;
+  background: #e8f4f8;
+  color: #0077b5;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+@media (max-width: 480px) {
+  #ktp-referral-overlay {
+    right: 16px;
+    bottom: 16px;
+    width: calc(100vw - 32px);
+  }
+
+  #ktp-referral-overlay .ktp-overlay-panel {
+    max-height: min(420px, calc(100vh - 96px));
+  }
+}

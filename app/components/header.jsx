@@ -33,6 +33,7 @@ export default function Header() {
       { name: 'Study Tools', href: '/study-tools' },
       { name: 'CodeRank', href: '/coderank' },
       { name: 'LC Company Tagged', href: '/company-questions' },
+      { name: 'Referral Finder', href: '/extension' },
       ...(hasAdminAccess ? [{ name: 'Admin Portal', href: '/admin' }] : []),
       { name: 'Member Account', href: '/profile' },
     ],

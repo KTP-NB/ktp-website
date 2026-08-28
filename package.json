@@ -14,7 +14,8 @@
     "coderank:verify-local": "node scripts/coderank/verify_local.mjs",
     "coderank:seed-profiles": "node scripts/coderank/seed_profiles.mjs",
     "test:judge": "node --test lib/coderank/judge/__tests__/judge.test.mjs",
-    "test:harness": "node --test lib/coderank/__tests__/harness.test.mjs"
+    "test:harness": "node --test lib/coderank/__tests__/harness.test.mjs",
+    "test:applications": "node --test lib/__tests__/applicationFines.test.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",

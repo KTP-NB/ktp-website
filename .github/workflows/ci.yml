@@ -47,6 +47,9 @@ jobs:
       - name: Test harness
         run: npm run test:harness
 
+      - name: Test application requirements
+        run: npm run test:applications
+
       - name: Build
         run: npm run build
 

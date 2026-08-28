@@ -24,7 +24,7 @@ export async function GET(request) {
     service.from('member_profiles').select('id,user_id,name,email,pledge_class,member_status,photo_url,default_application_target,uses_default_application_target').not('user_id', 'is', null).order('name'),
     service.from('internship_applications').select('user_id,status').gte('date_applied', start).lt('date_applied', end),
     service.from('application_requirements').select('*').eq('month_start', start),
-    service.from('chapter_application_requirements').select('default_target').eq('month_start', start).maybeSingle(),
+    service.from('chapter_application_requirements').select('default_target,fine_amount').eq('month_start', start).maybeSingle(),
   ]);
   const error = membersResult.error || appsResult.error || requirementsResult.error || chapterResult.error;
   if (error) return withNoStore(NextResponse.json({ error: error.message }, { status: 500 }));
@@ -58,5 +58,10 @@ export async function GET(request) {
     };
   });
 
-  return withNoStore(NextResponse.json({ month, chapter_default: chapterDefault, members }));
+  return withNoStore(NextResponse.json({
+    month,
+    chapter_default: chapterDefault,
+    fine_amount: Number(chapterResult.data?.fine_amount ?? 0),
+    members,
+  }));
 }

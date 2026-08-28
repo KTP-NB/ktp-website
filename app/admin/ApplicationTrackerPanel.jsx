@@ -7,6 +7,8 @@ import {
   BarChart3,
   CheckCircle2,
   CircleGauge,
+  CircleX,
+  DollarSign,
   Loader2,
   Search,
   Target,
@@ -23,7 +25,7 @@ function currentMonth() {
 
 function progressState(member, paceFraction) {
   const status = (member.member_status || "").trim().toLowerCase();
-  if (status !== "active" || member.target <= 0) return "no-requirement";
+  if (status !== "active") return "no-requirement";
   if (member.met) return "met";
   if (paceFraction !== null && member.count >= Math.ceil(member.target * paceFraction)) return "on-track";
   return "behind";
@@ -40,6 +42,11 @@ export default function ApplicationTrackerPanel() {
   const [chapterDefault, setChapterDefault] = useState(40);
   const [defaultDraft, setDefaultDraft] = useState(40);
   const [savingDefault, setSavingDefault] = useState(false);
+  const [fineAmount, setFineAmount] = useState(0);
+  const [fineDraft, setFineDraft] = useState(0);
+  const [savingFine, setSavingFine] = useState(false);
+  const [processingFines, setProcessingFines] = useState(false);
+  const [notice, setNotice] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -51,6 +58,8 @@ export default function ApplicationTrackerPanel() {
           setMembers(result.members || []);
           setChapterDefault(result.chapter_default ?? 40);
           setDefaultDraft(result.chapter_default ?? 40);
+          setFineAmount(Number(result.fine_amount ?? 0));
+          setFineDraft(Number(result.fine_amount ?? 0));
         }
       })
       .catch((e) => {
@@ -75,7 +84,7 @@ export default function ApplicationTrackerPanel() {
     try {
       await api("/api/applications/admin/settings", {
         method: "PUT",
-        body: JSON.stringify({ month, default_target: target }),
+        body: JSON.stringify({ month, default_target: target, fine_amount: Number(fineAmount) }),
       });
       const result = await api(`/api/applications/admin/overview?month=${month}`);
       setMembers(result.members || []);
@@ -85,6 +94,51 @@ export default function ApplicationTrackerPanel() {
       setError(e.message);
     } finally {
       setSavingDefault(false);
+    }
+  }
+
+  async function saveFineAmount() {
+    const amount = Number(fineDraft);
+    if (!Number.isFinite(amount) || amount < 0 || amount > 10000) {
+      setError("Fine amount must be between $0 and $10,000.");
+      return;
+    }
+    setSavingFine(true);
+    setError("");
+    setNotice("");
+    try {
+      await api("/api/applications/admin/settings", {
+        method: "PUT",
+        body: JSON.stringify({ month, default_target: Number(chapterDefault), fine_amount: amount }),
+      });
+      setFineAmount(amount);
+      setFineDraft(amount);
+      setNotice(`Monthly fine amount saved as $${amount.toFixed(2)}.`);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setSavingFine(false);
+    }
+  }
+
+  async function processMonthlyFines() {
+    if (!window.confirm(`Process application fines for ${selectedMonth.toLocaleDateString(undefined, { month: "long", year: "numeric" })}? This is safe to retry and will not duplicate fines.`)) return;
+    setProcessingFines(true);
+    setError("");
+    setNotice("");
+    try {
+      const response = await api("/api/applications/admin/fines/process", {
+        method: "POST",
+        body: JSON.stringify({ month }),
+      });
+      const result = response.result || {};
+      setNotice(result.skipped === "fine-disabled"
+        ? "No fines were created because this month’s fine amount is $0."
+        : `Fine processing complete: ${result.created || 0} created for ${result.eligible || 0} eligible members.`);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setProcessingFines(false);
     }
   }
 
@@ -125,25 +179,27 @@ export default function ApplicationTrackerPanel() {
     const status = (m.member_status || "").trim().toLowerCase();
     return status === "active";
   });
-  const required = active.filter((m) => m.target > 0);
+  const required = active;
   const noRequirement = members.filter((m) => {
     const status = (m.member_status || "").trim().toLowerCase();
-    return status !== "active" || m.target <= 0;
+    return status !== "active";
   });
   const met = required.filter((m) => m.met).length;
   const onTrack = required.filter(
     (m) => progressState(m, paceFraction) === "on-track",
   ).length;
-  const behind = required.length - met - onTrack;
-  const noApplications = required.filter((m) => m.count === 0).length;
-  const completionRates = required
+  const behind = required.filter((m) => progressState(m, paceFraction) === "behind").length;
+  const notMet = onTrack + behind;
+  const positiveRequirements = required.filter((m) => m.target > 0);
+  const noApplications = positiveRequirements.filter((m) => m.count === 0).length;
+  const completionRates = positiveRequirements
     .map((m) => Math.min(100, (m.count / m.target) * 100))
     .sort((a, b) => a - b);
   const averageCompletion = completionRates.length
     ? Math.round(completionRates.reduce((sum, value) => sum + value, 0) / completionRates.length)
     : 0;
-  const medianApplications = required.length
-    ? [...required.map((m) => m.count)].sort((a, b) => a - b)[Math.floor(required.length / 2)]
+  const medianApplications = positiveRequirements.length
+    ? [...positiveRequirements.map((m) => m.count)].sort((a, b) => a - b)[Math.floor(positiveRequirements.length / 2)]
     : 0;
   const membersInterviewing = members.filter((m) => m.interviews > 0).length;
   const membersWithOffers = members.filter((m) => m.offers > 0).length;
@@ -166,6 +222,7 @@ export default function ApplicationTrackerPanel() {
       </div>
       <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Card icon={CheckCircle2} label="Requirements met" value={`${met} of ${required.length}`} />
+        <Card icon={CircleX} label="Requirements not met" value={`${notMet} of ${required.length}`} />
         <Card icon={CircleGauge} label="On track" value={onTrack} />
         <Card icon={TriangleAlert} label="Behind pace" value={behind} />
         <Card icon={UserRoundX} label="No applications" value={noApplications} />
@@ -184,14 +241,15 @@ export default function ApplicationTrackerPanel() {
             ? "Completed months are classified as Requirement Met or Behind; On Track applies to the current month."
             : `On track means completing at least ${Math.round(paceFraction * 100)}% of the monthly requirement by today (${today.toLocaleDateString(undefined, { month: "short", day: "numeric" })}).`}
       </p>
-      <div className="mb-5 flex flex-col gap-3 rounded-2xl border border-blue-300/15 bg-blue-400/5 p-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
+      <div className="mb-5 grid gap-5 rounded-2xl border border-blue-300/15 bg-blue-400/5 p-4 lg:grid-cols-2">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between lg:border-r lg:border-white/10 lg:pr-5">
+          <div>
           <p className="font-bold">Chapter default for {selectedMonth.toLocaleDateString(undefined, { month: "long", year: "numeric" })}</p>
           <p className="mt-1 text-xs text-white/50">
             Members using the chapter default will update; custom requirements will stay unchanged.
           </p>
-        </div>
-        <div className="flex items-end gap-2">
+          </div>
+          <div className="flex items-end gap-2">
           <label className="grid gap-1 text-xs font-bold uppercase tracking-wider text-white/50">
             Applications
             <input
@@ -210,8 +268,32 @@ export default function ApplicationTrackerPanel() {
           >
             {savingDefault ? "Saving…" : "Save default"}
           </button>
+          </div>
+        </div>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="font-bold">Monthly application fine</p>
+            <p className="mt-1 text-xs text-white/50">Defaults to $0. Custom-baseline goals, inactive members, alumni, and completed requirements are never fined.</p>
+          </div>
+          <div className="flex items-end gap-2">
+            <label className="grid gap-1 text-xs font-bold uppercase tracking-wider text-white/50">
+              Amount ($)
+              <input type="number" min="0" max="10000" step="0.01" value={fineDraft} onChange={(e) => setFineDraft(e.target.value)} className="w-28 rounded-xl border border-white/15 bg-slate-900 px-3 py-2.5 text-sm text-white" />
+            </label>
+            <button onClick={saveFineAmount} disabled={savingFine || Number(fineDraft) === fineAmount} className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-bold hover:bg-blue-500 disabled:opacity-40">
+              {savingFine ? "Saving…" : "Save fine"}
+            </button>
+          </div>
         </div>
       </div>
+      <div className="mb-5 flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-xs text-white/50">Fines run automatically on the first day of the next month. Use this recovery action only after the selected month has ended.</p>
+        <button onClick={processMonthlyFines} disabled={processingFines || selectedMonthStart >= currentMonthStart} className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 px-4 py-2.5 text-sm font-bold hover:bg-white/10 disabled:opacity-40">
+          {processingFines ? <Loader2 size={16} className="animate-spin" /> : <DollarSign size={16} />}
+          Process monthly fines
+        </button>
+      </div>
+      {notice && <p className="mb-5 rounded-xl border border-emerald-300/25 bg-emerald-400/10 p-4 text-sm text-emerald-100">{notice}</p>}
       <div className="mb-5 flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
           <Search
@@ -252,6 +334,9 @@ export default function ApplicationTrackerPanel() {
           className="sm:w-60"
         />
       </div>
+      <p className="mb-3 text-sm font-semibold text-white/60">
+        Showing {filtered.length} of {members.length} members
+      </p>
       {error && (
         <p className="rounded-xl border border-red-300/25 bg-red-400/10 p-4 text-sm text-red-100">
           {error}
@@ -278,10 +363,10 @@ export default function ApplicationTrackerPanel() {
             <tbody>
               {filtered.map((member) => {
                 const status = (member.member_status || "").trim().toLowerCase();
-                const hasRequirement = status === "active" && member.target > 0;
+                const hasRequirement = status === "active";
                 const state = progressState(member, paceFraction);
                 const remaining = Math.max(0, member.target - member.count);
-                const pct = hasRequirement ? Math.min(100, Math.round((member.count / member.target) * 100)) : 0;
+                const pct = hasRequirement ? (member.target <= 0 ? 100 : Math.min(100, Math.round((member.count / member.target) * 100))) : 0;
                 const progressLabel = state === "met" ? "Met" : state === "on-track" ? "On Track" : "Behind";
                 const progressText = state === "met" ? "text-emerald-300" : state === "on-track" ? "text-blue-300" : "text-amber-300";
                 const progressBar = state === "met" ? "bg-emerald-400" : state === "on-track" ? "bg-blue-400" : "bg-amber-400";
@@ -313,7 +398,9 @@ export default function ApplicationTrackerPanel() {
                         <>
                           {member.target}
                           <small className="block text-white/40">
-                            {member.has_monthly_override ? "Monthly override" : "Member baseline"}
+                            {member.uses_default_application_target
+                              ? member.has_monthly_override ? "Monthly override" : "Chapter default"
+                              : member.has_monthly_override ? "Monthly custom goal · No fine" : "Custom goal · No fine"}
                           </small>
                         </>
                       ) : "—"}

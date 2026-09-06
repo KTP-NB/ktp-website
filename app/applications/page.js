@@ -8,6 +8,7 @@ import { useAuth } from '@/components/authprovider';
 import { supabase } from '@/lib/supabase';
 import SelectMenu from '@/components/SelectMenu';
 import DatePicker from '@/components/DatePicker';
+import { applicationCreatePayload, applicationUpdatePayload } from '@/lib/applications/payloads.mjs';
 
 const DEFAULT_TARGET = 40;
 const STATUSES = [
@@ -113,11 +114,11 @@ function ApplicationsTracker() {
 
   async function save(event) {
     event.preventDefault(); setSaving(true); setError('');
-    const payload = {
-      user_id: user.id, company: form.company.trim(), position: form.position.trim(), date_applied: form.date_applied,
+    const payload = applicationUpdatePayload({
+      company: form.company.trim(), position: form.position.trim(), date_applied: form.date_applied,
       status: form.status, details: form.details.trim() || null, application_url: form.application_url.trim() || null,
       referral: Boolean(form.referral), referral_contact: form.referral ? form.referral_contact.trim() || null : null,
-    };
+    });
     const query = supabase.from('internship_applications').update(payload).eq('id', editing);
     const { error: saveError } = await query;
     setSaving(false);
@@ -132,8 +133,7 @@ function ApplicationsTracker() {
     const completed = bulkRows.filter((row) => row.company.trim() && row.position.trim());
     if (!completed.length) { setError('Complete at least one application row.'); return; }
     setSaving(true); setError('');
-    const payloads = completed.map((row) => ({
-      user_id: user.id,
+    const payloads = completed.map((row) => applicationCreatePayload({
       company: row.company.trim(),
       position: row.position.trim(),
       date_applied: row.date_applied || localDate(),
@@ -142,7 +142,7 @@ function ApplicationsTracker() {
       application_url: row.application_url.trim() || null,
       referral: Boolean(row.referral),
       referral_contact: row.referral ? row.referral_contact.trim() || null : null,
-    }));
+    }, user.id));
     const { error: saveError } = await supabase.from('internship_applications').insert(payloads);
     setSaving(false);
     if (saveError) setError(saveError.message);

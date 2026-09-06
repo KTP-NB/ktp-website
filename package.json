@@ -15,7 +15,7 @@
     "coderank:seed-profiles": "node scripts/coderank/seed_profiles.mjs",
     "test:judge": "node --test lib/coderank/judge/__tests__/judge.test.mjs",
     "test:harness": "node --test lib/coderank/__tests__/harness.test.mjs",
-    "test:applications": "node --test lib/__tests__/applicationFines.test.mjs"
+    "test:applications": "node --test lib/__tests__/applicationFines.test.mjs lib/__tests__/applicationPayloads.test.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",

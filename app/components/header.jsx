@@ -59,8 +59,8 @@ export default function Header() {
 
   return (
     <header className="absolute inset-x-0 top-0 z-50 bg-transparent">
-      <nav aria-label="Global" className="grid grid-cols-3 items-center p-6 lg:px-8">
-        <div className="flex items-center">
+      <nav aria-label="Global" className="flex items-center justify-between gap-6 p-6 lg:px-8">
+        <div className="flex shrink-0 items-center">
           <Link href="/" onClick={handleNavigation} className="flex items-center gap-4 group transition-all">
             {/* Logo Circle */}
             <div className="relative h-12 w-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center overflow-hidden transition-transform group-hover:scale-110">
@@ -85,7 +85,7 @@ export default function Header() {
           </Link>
         </div>
 
-        <div className="hidden lg:flex justify-center gap-x-2">
+        <div className="hidden xl:flex flex-1 justify-center gap-x-1">
           {navLinks.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -96,7 +96,7 @@ export default function Header() {
                   e.preventDefault();
                   router.push(item.href);
                 }}
-                className={`text-base font-bold leading-6 transition-all duration-300 px-6 py-2.5 rounded-full whitespace-nowrap pointer-events-auto relative z-50 ${
+                className={`text-base font-bold leading-6 transition-all duration-300 px-4 2xl:px-6 py-2.5 rounded-full whitespace-nowrap pointer-events-auto relative z-50 ${
                   isActive 
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' 
                     : 'text-white hover:bg-white/10 hover:text-blue-200'
@@ -108,7 +108,7 @@ export default function Header() {
           })}
         </div>
 
-        <div className="hidden lg:flex justify-end items-center gap-x-2">
+        <div className="hidden xl:flex shrink-0 justify-end items-center gap-x-2">
           {!loading && user ? (
             <>
               <span className="max-w-[140px] truncate text-sm font-semibold opacity-90" title={displayName}>
@@ -171,7 +171,7 @@ export default function Header() {
           )}
         </div>
 
-        <div className="flex lg:hidden col-start-3 justify-end">
+        <div className="flex xl:hidden justify-end">
           <button
             type="button"
             onClick={() => setMobileMenuOpen(true)}
@@ -184,7 +184,7 @@ export default function Header() {
       </nav>
 
       {mobileMenuOpen && (
-        <Dialog as="div" open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
+        <Dialog as="div" open={mobileMenuOpen} onClose={setMobileMenuOpen} className="xl:hidden">
           <div className="fixed inset-0 z-50" />
           <Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-gray-800 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-700">
           <div className="flex items-center justify-between">

@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BriefcaseBusiness, CalendarDays, ExternalLink, Loader2, Pencil, Plus, Search, Trash2, X } from 'lucide-react';
 import AuthGate from '@/components/authgate';
+import MemberPermissionGate from '@/components/MemberPermissionGate';
+import { MEMBER_PERMISSIONS } from '@/lib/memberAccess';
 import AccountShell from '@/components/AccountShell';
 import { useAuth } from '@/components/authprovider';
 import { supabase } from '@/lib/supabase';
@@ -29,7 +31,7 @@ function labelStatus(value) { return STATUSES.find(([key]) => key === value)?.[1
 function formatDate(value) { return new Date(`${value}T12:00:00`).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }); }
 
 export default function ApplicationsPage() {
-  return <AuthGate><ApplicationsTracker /></AuthGate>;
+  return <AuthGate><MemberPermissionGate permission={MEMBER_PERMISSIONS.APPLICATIONS}><ApplicationsTracker /></MemberPermissionGate></AuthGate>;
 }
 
 function ApplicationsTracker() {

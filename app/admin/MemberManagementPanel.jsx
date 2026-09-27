@@ -419,8 +419,8 @@ function MemberModal({
               </label>
               {["admin", "manager"].includes(form.access_role) && (
                 <div className="sm:col-span-2 rounded-xl border border-white/10 p-4">
-                  <p className="mb-1 font-bold">Admin portal tabs</p>
-                  <p className="mb-3 text-sm text-white/50">Only the tabs ticked here are visible to this account.</p>
+                  <p className="mb-1 font-bold">Additional individual permissions</p>
+                  <p className="mb-3 text-sm text-white/50">These are added on top of the role defaults configured in Access Roles.</p>
                   {SCOPES.map(([v, l]) => (
                     <label key={v} className="mr-5 inline-flex gap-2">
                       <input

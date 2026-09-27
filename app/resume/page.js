@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { FileText, Upload, Trash2, ExternalLink } from 'lucide-react';
 import AuthGate from '@/components/authgate';
+import MemberPermissionGate from '@/components/MemberPermissionGate';
+import { MEMBER_PERMISSIONS } from '@/lib/memberAccess';
 import AccountShell from '@/components/AccountShell';
 import { useAuth } from '@/components/authprovider';
 import { useConfirmToast } from '@/components/ConfirmToast';
@@ -297,7 +299,9 @@ function MemberResume() {
 export default function MemberResumePage() {
   return (
     <AuthGate>
-      <MemberResume />
+      <MemberPermissionGate permission={MEMBER_PERMISSIONS.RESUME}>
+        <MemberResume />
+      </MemberPermissionGate>
     </AuthGate>
   );
 }

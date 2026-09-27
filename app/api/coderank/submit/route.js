@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { requireUser } from '@/lib/coderank/auth';
+import { requireMemberPermission } from '@/lib/coderank/auth';
+import { MEMBER_PERMISSIONS } from '@/lib/memberAccess';
 import { getServiceClient } from '@/lib/coderank/supabaseServer';
 import { gradeSubmission } from '@/lib/coderank/grading';
 
@@ -12,7 +13,7 @@ const UNLIMITED_SUBMISSIONS = 2147483647;
  * (enforced by a DB trigger as well — see migration).
  */
 export async function POST(request) {
-  const auth = await requireUser(request);
+  const auth = await requireMemberPermission(request, MEMBER_PERMISSIONS.CODERANK);
   if (auth.error) return auth.error;
 
   const { attempt_id, question_id, language, code, auto_submit = false } = await request.json().catch(() => ({}));

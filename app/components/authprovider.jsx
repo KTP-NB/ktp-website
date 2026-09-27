@@ -8,6 +8,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined); // undefined = loading
   const [profileName, setProfileName] = useState(null);
   const [accessRole, setAccessRole] = useState(null);
+  const [permissions, setPermissions] = useState([]);
   const [profileLoading, setProfileLoading] = useState(true);
 
   useEffect(() => {
@@ -51,6 +52,7 @@ export function AuthProvider({ children }) {
     if (!hasSupabaseConfig || !user?.id) {
       setProfileName(null);
       setAccessRole(null);
+      setPermissions([]);
       setProfileLoading(false);
       return undefined;
     }
@@ -61,13 +63,27 @@ export function AuthProvider({ children }) {
     async function loadProfileName() {
       const { data, error } = await supabase
         .from('member_profiles')
-        .select('name,access_role')
+        .select('name,access_role,manager_permissions')
         .eq('user_id', user.id)
         .maybeSingle();
 
       if (!isMounted) return;
       setProfileName(error ? null : data?.name || null);
-      setAccessRole(error ? null : data?.access_role || 'member');
+      const nextRole = error ? null : data?.access_role || 'member';
+      setAccessRole(nextRole);
+      if (nextRole) {
+        const { data: rolePermissions, error: permissionError } = await supabase
+          .from('role_permissions')
+          .select('permission_key')
+          .eq('role_key', nextRole);
+        if (!isMounted) return;
+        setPermissions(permissionError ? [] : [...new Set([
+          ...(rolePermissions || []).map((row) => row.permission_key),
+          ...(data?.manager_permissions || []),
+        ])]);
+      } else {
+        setPermissions([]);
+      }
       setProfileLoading(false);
     }
 
@@ -89,8 +105,9 @@ export function AuthProvider({ children }) {
       '',
     setProfileName,
     accessRole,
+    permissions,
     profileLoading: profileLoading || Boolean(user?.id && accessRole === null),
-    hasAdminAccess: ['manager', 'admin', 'super_admin'].includes(accessRole),
+    hasAdminAccess: permissions.includes('admin.portal'),
     signOut: () => (hasSupabaseConfig ? supabase.auth.signOut() : Promise.resolve()),
     signIn: async (email, password) => {
       if (!hasSupabaseConfig) {
@@ -162,7 +179,7 @@ export function AuthProvider({ children }) {
       if (error) throw error;
       return data;
     },
-  }), [user, profileName, accessRole, profileLoading]);
+  }), [user, profileName, accessRole, permissions, profileLoading]);
 
   return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;
 }

@@ -23,6 +23,7 @@ import { api } from "@/lib/coderank/clientFetch";
 import { profileHasPermission } from "@/lib/adminAccess";
 import ApplicationTrackerPanel from "./ApplicationTrackerPanel";
 import FineTrackerPanel from "./FineTrackerPanel";
+import AccessRolesPanel from "./AccessRolesPanel";
 import MemberManagementPanel from "./MemberManagementPanel";
 import OaComplianceView from "./OaComplianceView";
 import SelectMenu from "@/components/SelectMenu";
@@ -95,6 +96,7 @@ const TAB_PERMISSIONS = {
   "Monthly OA": "coderank.manage",
   "Application Tracker": "applications.manage",
   "Fine Tracker": "fines.manage",
+  "Access Roles": "roles.manage",
 };
 
 function AdminDashboard({ adminProfile }) {
@@ -162,6 +164,7 @@ function AdminDashboard({ adminProfile }) {
           {activeTab === "Monthly OA" && <OaComplianceView />}
           {activeTab === "Application Tracker" && <ApplicationTrackerPanel />}
           {activeTab === "Fine Tracker" && <FineTrackerPanel />}
+          {activeTab === "Access Roles" && <AccessRolesPanel />}
         </div>
       </FadeIn>
     </main>

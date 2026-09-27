@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
-import { requireUser } from '@/lib/coderank/auth';
+import { requireMemberPermission } from '@/lib/coderank/auth';
+import { MEMBER_PERMISSIONS } from '@/lib/memberAccess';
 import { getServiceClient } from '@/lib/coderank/supabaseServer';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request, { params }) {
-  const auth = await requireUser(request);
+  const auth = await requireMemberPermission(request, MEMBER_PERMISSIONS.CODERANK);
   if (auth.error) return auth.error;
 
   const service = getServiceClient();
@@ -81,7 +82,7 @@ export async function GET(request, { params }) {
 }
 
 export async function PATCH(request, { params }) {
-  const auth = await requireUser(request);
+  const auth = await requireMemberPermission(request, MEMBER_PERMISSIONS.CODERANK);
   if (auth.error) return auth.error;
 
   const body = await request.json().catch(() => ({}));

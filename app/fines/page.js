@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BadgeDollarSign, Loader2 } from 'lucide-react';
 import AuthGate from '@/components/authgate';
+import MemberPermissionGate from '@/components/MemberPermissionGate';
+import { MEMBER_PERMISSIONS } from '@/lib/memberAccess';
 import AccountShell from '@/components/AccountShell';
 import { useAuth } from '@/components/authprovider';
 import { supabase } from '@/lib/supabase';
@@ -36,7 +38,9 @@ function Stat({ label, value, accent = 'text-white' }) {
 export default function MemberFinesPage() {
   return (
     <AuthGate>
-      <MemberFines />
+      <MemberPermissionGate permission={MEMBER_PERMISSIONS.FINES}>
+        <MemberFines />
+      </MemberPermissionGate>
     </AuthGate>
   );
 }

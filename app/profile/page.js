@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Camera, Save } from 'lucide-react';
 import AuthGate from '@/components/authgate';
+import MemberPermissionGate from '@/components/MemberPermissionGate';
+import { MEMBER_PERMISSIONS } from '@/lib/memberAccess';
 import AccountShell from '@/components/AccountShell';
 import { useAuth } from '@/components/authprovider';
 import { supabase } from '@/lib/supabase';
@@ -292,7 +294,9 @@ function ProfileEditor() {
 export default function ProfilePage() {
   return (
     <AuthGate>
-      <ProfileEditor />
+      <MemberPermissionGate permission={MEMBER_PERMISSIONS.PROFILE}>
+        <ProfileEditor />
+      </MemberPermissionGate>
     </AuthGate>
   );
 }

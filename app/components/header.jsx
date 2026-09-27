@@ -7,12 +7,12 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/components/authprovider';
-import { MEMBER_PERMISSIONS, roleHasMemberPermission } from '@/lib/memberAccess';
+import { MEMBER_PERMISSIONS, hasPermission } from '@/lib/memberAccess';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
-  const { user, loading, signOut, displayName, hasAdminAccess, accessRole } = useAuth();
+  const { user, loading, signOut, displayName, hasAdminAccess, permissions } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -30,15 +30,24 @@ export default function Header() {
   );
 
   const authRequiredLinks = useMemo(
-    () => [
-      ...(roleHasMemberPermission(accessRole, MEMBER_PERMISSIONS.STUDY_TOOLS) ? [{ name: 'Study Tools', href: '/study-tools' }] : []),
-      ...(roleHasMemberPermission(accessRole, MEMBER_PERMISSIONS.CODERANK) ? [{ name: 'CodeRank', href: '/coderank' }] : []),
-      ...(roleHasMemberPermission(accessRole, MEMBER_PERMISSIONS.COMPANY_QUESTIONS) ? [{ name: 'LC Company Tagged', href: '/company-questions' }] : []),
-      ...(roleHasMemberPermission(accessRole, MEMBER_PERMISSIONS.REFERRAL_FINDER) ? [{ name: 'Referral Finder', href: '/extension' }] : []),
+    () => {
+      const accountHref = [
+        [MEMBER_PERMISSIONS.PROFILE, '/profile'],
+        [MEMBER_PERMISSIONS.APPLICATIONS, '/applications'],
+        [MEMBER_PERMISSIONS.FINES, '/fines'],
+        [MEMBER_PERMISSIONS.RESUME, '/resume'],
+        [MEMBER_PERMISSIONS.INTEGRATIONS, '/integrations'],
+      ].find(([permission]) => hasPermission(permissions, permission))?.[1];
+      return [
+      ...(hasPermission(permissions, MEMBER_PERMISSIONS.STUDY_TOOLS) ? [{ name: 'Study Tools', href: '/study-tools' }] : []),
+      ...(hasPermission(permissions, MEMBER_PERMISSIONS.CODERANK) ? [{ name: 'CodeRank', href: '/coderank' }] : []),
+      ...(hasPermission(permissions, MEMBER_PERMISSIONS.COMPANY_QUESTIONS) ? [{ name: 'LC Company Tagged', href: '/company-questions' }] : []),
+      ...(hasPermission(permissions, MEMBER_PERMISSIONS.REFERRAL_FINDER) ? [{ name: 'Referral Finder', href: '/extension' }] : []),
       ...(hasAdminAccess ? [{ name: 'Admin Portal', href: '/admin' }] : []),
-      { name: 'Member Account', href: '/profile' },
-    ],
-    [hasAdminAccess, accessRole]
+      ...(accountHref ? [{ name: 'Member Account', href: accountHref }] : []),
+      ];
+    },
+    [hasAdminAccess, permissions]
   );
 
   const authLinks = !loading && user ? [] : [{ name: 'Login', href: '/login' }];

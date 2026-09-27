@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { requireUser } from '@/lib/coderank/auth';
+import { requireMemberPermission } from '@/lib/coderank/auth';
+import { MEMBER_PERMISSIONS } from '@/lib/memberAccess';
 import { getServiceClient } from '@/lib/coderank/supabaseServer';
 
 export const dynamic = 'force-dynamic';
@@ -7,7 +8,7 @@ export const dynamic = 'force-dynamic';
 const ALLOWED_EVENTS = new Set(['left_tab', 'returned_to_tab', 'window_blur', 'window_focus']);
 
 export async function POST(request) {
-  const auth = await requireUser(request);
+  const auth = await requireMemberPermission(request, MEMBER_PERMISSIONS.CODERANK);
   if (auth.error) return auth.error;
 
   const { attempt_id, event_type, metadata = {} } = await request.json().catch(() => ({}));

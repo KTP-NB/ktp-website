@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Loader2, Clock, CheckCircle2, ListChecks, AlertCircle } from 'lucide-react';
 import AuthGate from '@/components/authgate';
+import MemberPermissionGate from '@/components/MemberPermissionGate';
+import { MEMBER_PERMISSIONS } from '@/lib/memberAccess';
 import FadeIn from '@/components/FadeIn';
 import { api } from '@/lib/coderank/clientFetch';
 const UNLIMITED_SUBMISSIONS = 2147483647;
@@ -11,7 +13,9 @@ const UNLIMITED_SUBMISSIONS = 2147483647;
 export default function CodeRankClient() {
   return (
     <AuthGate>
-      <CodeRankDashboard />
+      <MemberPermissionGate permission={MEMBER_PERMISSIONS.CODERANK}>
+        <CodeRankDashboard />
+      </MemberPermissionGate>
     </AuthGate>
   );
 }

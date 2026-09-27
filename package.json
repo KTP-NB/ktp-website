@@ -16,7 +16,7 @@
     "test:judge": "node --test lib/coderank/judge/__tests__/judge.test.mjs",
     "test:harness": "node --test lib/coderank/__tests__/harness.test.mjs",
     "test:applications": "node --test lib/__tests__/applicationFines.test.mjs lib/__tests__/applicationPayloads.test.mjs",
-    "test:members": "node --test lib/__tests__/publicDirectoryVisibility.test.mjs lib/__tests__/memberAccess.test.mjs",
+    "test:members": "node --test lib/__tests__/publicDirectoryVisibility.test.mjs lib/__tests__/memberAccess.test.mjs lib/__tests__/rolePermissionManagement.test.mjs",
     "test:fines": "node --test lib/__tests__/fineBulkAssignment.test.mjs"
   },
   "dependencies": {

@@ -5,6 +5,8 @@ import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Loader2, ArrowLeft, Clock, AlertCircle, PlayCircle, Lock, CheckCircle2, FileCode } from 'lucide-react';
 import AuthGate from '@/components/authgate';
+import MemberPermissionGate from '@/components/MemberPermissionGate';
+import { MEMBER_PERMISSIONS } from '@/lib/memberAccess';
 import FadeIn from '@/components/FadeIn';
 import { useConfirmToast } from '@/components/ConfirmToast';
 import { api } from '@/lib/coderank/clientFetch';
@@ -13,7 +15,9 @@ const UNLIMITED_SUBMISSIONS = 2147483647;
 export default function AssessmentStartPage() {
   return (
     <AuthGate>
-      <AssessmentStart />
+      <MemberPermissionGate permission={MEMBER_PERMISSIONS.CODERANK}>
+        <AssessmentStart />
+      </MemberPermissionGate>
     </AuthGate>
   );
 }

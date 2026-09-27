@@ -12,6 +12,8 @@ import {
   Check, Plus,
 } from 'lucide-react';
 import AuthGate from '@/components/authgate';
+import MemberPermissionGate from '@/components/MemberPermissionGate';
+import { MEMBER_PERMISSIONS } from '@/lib/memberAccess';
 import { useConfirmToast } from '@/components/ConfirmToast';
 import { api } from '@/lib/coderank/clientFetch';
 import { generateHarness } from '@/lib/coderank/harness';
@@ -916,7 +918,9 @@ function dedupeLines(lines) {
 export default function ProblemPage() {
   return (
     <AuthGate>
-      <ProblemWorkspace />
+      <MemberPermissionGate permission={MEMBER_PERMISSIONS.CODERANK}>
+        <ProblemWorkspace />
+      </MemberPermissionGate>
     </AuthGate>
   );
 }

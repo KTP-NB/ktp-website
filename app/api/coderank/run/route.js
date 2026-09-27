@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { requireUser } from '@/lib/coderank/auth';
+import { requireMemberPermission } from '@/lib/coderank/auth';
+import { MEMBER_PERMISSIONS } from '@/lib/memberAccess';
 import { getServiceClient } from '@/lib/coderank/supabaseServer';
 import { gradeSubmission } from '@/lib/coderank/grading';
 
@@ -10,7 +11,7 @@ export const dynamic = 'force-dynamic';
  * Does NOT count toward the submission limit.
  */
 export async function POST(request) {
-  const auth = await requireUser(request);
+  const auth = await requireMemberPermission(request, MEMBER_PERMISSIONS.CODERANK);
   if (auth.error) return auth.error;
 
   const body = await request.json().catch(() => ({}));

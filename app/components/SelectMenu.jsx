@@ -19,6 +19,7 @@ export default function SelectMenu({
   label,
   placeholder = 'Select',
   multiple = false,
+  allowSelectAll = false,
   searchable = false,
   searchPlaceholder = 'Search',
   align = 'left',
@@ -67,6 +68,8 @@ export default function SelectMenu({
     if (!term) return options;
     return options.filter((option) => option.label.toLowerCase().includes(term));
   }, [options, query]);
+  const allVisibleSelected = multiple && visibleOptions.length > 0
+    && visibleOptions.every((option) => selected.includes(option.value));
 
   function pick(optionValue) {
     if (multiple) {
@@ -113,6 +116,21 @@ export default function SelectMenu({
                 className="w-full rounded-xl border border-white/15 bg-white/5 py-2.5 pl-9 pr-3 text-sm outline-none focus:border-blue-300"
               />
             </div>
+          )}
+
+          {multiple && allowSelectAll && visibleOptions.length > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                const visibleValues = visibleOptions.map((option) => option.value);
+                onChange(allVisibleSelected
+                  ? selected.filter((value) => !visibleValues.includes(value))
+                  : [...new Set([...selected, ...visibleValues])]);
+              }}
+              className="mb-1 w-full rounded-xl px-4 py-2 text-left text-xs font-bold uppercase tracking-wider text-blue-200 transition hover:bg-white/10 hover:text-white"
+            >
+              {allVisibleSelected ? 'Clear matching members' : 'Select all matching members'}
+            </button>
           )}
 
           <div className="pretty-scrollbar max-h-72 overflow-y-auto">

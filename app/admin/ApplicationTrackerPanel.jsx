@@ -39,6 +39,7 @@ export default function ApplicationTrackerPanel() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [outcomeFilter, setOutcomeFilter] = useState("all");
+  const [classFilter, setClassFilter] = useState("all");
   const [chapterDefault, setChapterDefault] = useState(40);
   const [defaultDraft, setDefaultDraft] = useState(40);
   const [savingDefault, setSavingDefault] = useState(false);
@@ -151,11 +152,16 @@ export default function ApplicationTrackerPanel() {
     : selectedMonthStart > currentMonthStart
       ? null
       : today.getDate() / new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+  const pledgeClasses = useMemo(
+    () => [...new Set(members.map((member) => member.pledge_class).filter(Boolean))].sort(),
+    [members],
+  );
   const filtered = useMemo(
     () =>
       members
         .filter((member) => {
           if (filter !== "all" && progressState(member, paceFraction) !== filter) return false;
+          if (classFilter !== "all" && member.pledge_class !== classFilter) return false;
           if (outcomeFilter === "interview" && member.interviews === 0) return false;
           if (outcomeFilter === "offer" && member.offers === 0) return false;
           if (outcomeFilter === "interview-or-offer" && member.interviews === 0 && member.offers === 0) return false;
@@ -173,7 +179,7 @@ export default function ApplicationTrackerPanel() {
             b.target - b.count - (a.target - a.count) ||
             a.name.localeCompare(b.name),
         ),
-    [members, search, filter, outcomeFilter, paceFraction],
+    [members, search, filter, outcomeFilter, classFilter, paceFraction],
   );
   const active = members.filter((m) => {
     const status = (m.member_status || "").trim().toLowerCase();
@@ -307,6 +313,16 @@ export default function ApplicationTrackerPanel() {
             className="w-full rounded-xl border border-white/15 bg-white/5 py-3 pl-10 pr-3 outline-none focus:border-blue-300"
           />
         </div>
+        <SelectMenu
+          label="Filter by class"
+          value={classFilter}
+          onChange={setClassFilter}
+          options={[
+            { value: "all", label: "All classes" },
+            ...pledgeClasses.map((pledgeClass) => ({ value: pledgeClass, label: `${pledgeClass} Class` })),
+          ]}
+          className="sm:w-52"
+        />
         <SelectMenu
           label="Filter members"
           value={filter}

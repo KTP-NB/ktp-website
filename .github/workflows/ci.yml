@@ -53,6 +53,9 @@ jobs:
       - name: Test member directory visibility
         run: npm run test:members
 
+      - name: Test fine bulk assignment
+        run: npm run test:fines
+
       - name: Build
         run: npm run build
 

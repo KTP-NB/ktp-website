@@ -50,6 +50,7 @@ const MEMBER_FILTERS = [
 function emptyForm() {
   return {
     member_id: '',
+    member_ids: [],
     date_issued: todayIso(),
     description: '',
     amount: '',
@@ -174,7 +175,7 @@ export default function FineTrackerPanel() {
     setSaving(true);
     setError(null);
     const payload = {
-      member_id: form.member_id,
+      ...(editing === 'new' ? { member_ids: form.member_ids } : { member_id: form.member_id }),
       date_issued: form.date_issued,
       description: form.description,
       amount: form.amount,
@@ -544,6 +545,10 @@ function MemberSummaryTable({ members }) {
 }
 
 function FineModal({ editing, form, setForm, members, saving, onClose, onSubmit }) {
+  const adding = editing === 'new';
+  const selectedMembers = adding
+    ? members.filter((member) => form.member_ids.includes(member.id))
+    : [];
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
@@ -557,7 +562,7 @@ function FineModal({ editing, form, setForm, members, saving, onClose, onSubmit 
       >
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-black">{editing === 'new' ? 'Add fine' : 'Edit fine'}</h2>
+            <h2 className="text-2xl font-black">{adding ? 'Add fine' : 'Edit fine'}</h2>
             <p className="text-sm text-white/50">Member totals recalculate as soon as you save.</p>
           </div>
           <button type="button" onClick={onClose} className="rounded-lg p-2 hover:bg-white/10">
@@ -567,19 +572,42 @@ function FineModal({ editing, form, setForm, members, saving, onClose, onSubmit 
 
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="grid gap-2 text-sm font-semibold text-white/75 sm:col-span-2">
-            Member
+            {adding ? 'Members' : 'Member'}
             <SelectMenu
-              label="Member"
-              placeholder="Select a member"
+              label={adding ? 'Members' : 'Member'}
+              placeholder={adding ? 'Select one or more members' : 'Select a member'}
+              multiple={adding}
+              allowSelectAll={adding}
               searchable
               searchPlaceholder="Search members"
-              value={form.member_id}
-              onChange={(memberId) => setForm({ ...form, member_id: memberId })}
+              value={adding ? form.member_ids : form.member_id}
+              onChange={(value) => setForm({
+                ...form,
+                ...(adding ? { member_ids: value } : { member_id: value }),
+              })}
               options={members.map((member) => ({
                 value: member.id,
                 label: member.pledge_class ? `${member.name} · ${member.pledge_class}` : member.name,
               }))}
             />
+            {adding && selectedMembers.length > 0 && (
+              <span className="flex flex-wrap gap-2">
+                {selectedMembers.map((member) => (
+                  <button
+                    key={member.id}
+                    type="button"
+                    onClick={() => setForm({
+                      ...form,
+                      member_ids: form.member_ids.filter((memberId) => memberId !== member.id),
+                    })}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-blue-300/20 bg-blue-400/10 px-3 py-1.5 text-xs font-bold text-blue-100 hover:bg-blue-400/20"
+                    aria-label={`Remove ${member.name}`}
+                  >
+                    {member.name} <X size={13} />
+                  </button>
+                ))}
+              </span>
+            )}
           </label>
 
           <label className="grid gap-2 text-sm font-semibold text-white/75 sm:col-span-2">
@@ -657,11 +685,15 @@ function FineModal({ editing, form, setForm, members, saving, onClose, onSubmit 
             Cancel
           </button>
           <button
-            disabled={saving}
+            disabled={saving || (adding && form.member_ids.length === 0)}
             className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-bold hover:bg-blue-500 disabled:opacity-50"
           >
             {saving && <Loader2 size={17} className="animate-spin" />}
-            {saving ? 'Saving...' : 'Save fine'}
+            {saving
+              ? 'Saving...'
+              : adding && form.member_ids.length > 1
+                ? `Add fine to ${form.member_ids.length} members`
+                : 'Save fine'}
           </button>
         </div>
       </form>

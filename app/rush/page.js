@@ -8,6 +8,9 @@ import FadeIn from "@/components/FadeIn";
    DATA
    ========================= */
 
+// Set to true (and update the events below) when the next rush opens.
+const RUSH_OPEN = false;
+
 const events = [
   {
     title: "Meet the Brothers",
@@ -133,16 +136,23 @@ export default function RushPage() {
 
          
           <h1 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-[1.1] drop-shadow-2xl mb-4 text-center text-white">
-            Fall 2026 Rush{" "}
-            <span className="opacity">
-                Loading{dots}
-              </span>
+            {RUSH_OPEN ? (
+              <>
+                Fall 2026 Rush{" "}
+                <span className="opacity">
+                    Loading{dots}
+                  </span>
+              </>
+            ) : (
+              "Rush Is Closed"
+            )}
           </h1>
-         
+
 
           <p className="mt-4 max-w-2xl text-base md:text-lg text-gray-200">
-            Learn about our rush process, events, and how to get involved with
-            Kappa Theta Pi at Rutgers–New Brunswick.
+            {RUSH_OPEN
+              ? "Learn about our rush process, events, and how to get involved with Kappa Theta Pi at Rutgers–New Brunswick."
+              : "Our next rush is coming soon. Fill out the interest form and we'll reach out when it begins."}
           </p>
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
@@ -155,25 +165,30 @@ export default function RushPage() {
 <section className="bg-gradient-to-b from-[#0f2a44] to-[#153a63] py-16">
   <div className="max-w-4xl mx-auto text-center px-6">
     <h2 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight text-center">
-      Rush Events Timeline
+      {RUSH_OPEN ? "Rush Events Timeline" : "Next Rush Coming Soon"}
     </h2>
 
     <p className="mt-4 text-lg text-blue-100 leading-relaxed">
-      Attend our open houses, panels, and information sessions to learn more
-      about Kappa Theta Pi, our values, and our community.
+      {RUSH_OPEN
+        ? "Attend our open houses, panels, and information sessions to learn more about Kappa Theta Pi, our values, and our community."
+        : "Rush events are posted here each semester. Submit the interest form to hear about upcoming events first."}
     </p>
 
     <div className="mt-8 flex flex-wrap justify-center gap-4">
-      <a
-        href="http://forms.gle/knCAtjQDVHZ6KkRCA"
-        className="rounded-full bg-blue-500 px-8 py-3 text-white font-medium hover:bg-blue-400 transition"
-      >
-        Apply Now
-      </a>
+      {RUSH_OPEN && (
+        <a
+          href="http://forms.gle/knCAtjQDVHZ6KkRCA"
+          className="rounded-full bg-blue-500 px-8 py-3 text-white font-medium hover:bg-blue-400 transition"
+        >
+          Apply Now
+        </a>
+      )}
 
       <a
-        href="https://docs.google.com/forms/d/1t-l5DeYSW5R66DDhs8iIR3DoueGZczG_Eji22dJZR-s/viewform?edit_requested=true"
-        className="rounded-full border border-blue-300 px-8 py-3 text-blue-100 hover:bg-white/10 transition"
+        href="https://docs.google.com/forms/d/1t-l5DeYSW5R66DDhs8iIR3DoueGZczG_Eji22dJZR-s/viewform"
+        className={RUSH_OPEN
+          ? "rounded-full border border-blue-300 px-8 py-3 text-blue-100 hover:bg-white/10 transition"
+          : "rounded-full bg-blue-500 px-8 py-3 text-white font-medium hover:bg-blue-400 transition"}
 
       >
         Interest Form
@@ -193,6 +208,7 @@ export default function RushPage() {
 
   
 {/* ================= TIMELINE ================= */}
+{RUSH_OPEN && (
 <section className="bg-gradient-to-b from-slate-50 via-white to-slate-100 pt-2 pb-28">
 
 
@@ -208,7 +224,7 @@ export default function RushPage() {
         const isLeft = idx % 2 === 0;
 
         return (
-          <div key={idx} className="grid grid-cols-[auto_1fr] items-start gap-x-6 gap-y-5 md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-12">
+          <div key={idx} className="grid grid-cols-[auto_1fr] items-start gap-x-6 gap-y-5 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:items-center md:gap-12">
             {/* LEFT COLUMN */}
             <div className={`order-2 col-start-2 flex md:order-none md:col-start-auto ${isLeft ? "md:justify-end" : "md:justify-start"}`}>
               {isLeft ? (
@@ -251,6 +267,7 @@ export default function RushPage() {
     </div>
   </div>
 </section>
+)}
 
 
 
@@ -272,7 +289,7 @@ export default function RushPage() {
 
 function EventDetails({ event }) {
   return (
-    <div className="w-full rounded-2xl bg-white/90 backdrop-blur-md border border-white/40 shadow-[0_18px_50px_rgba(0,0,0,0.18)] p-5 md:w-[420px] md:p-6">
+    <div className="w-full rounded-2xl bg-white/90 backdrop-blur-md border border-white/40 shadow-[0_18px_50px_rgba(0,0,0,0.18)] p-5 md:max-w-[420px] md:p-6">
                   <div className="text-[11px] tracking-[0.18em] uppercase text-slate-500">
                     Event Details
                   </div>
@@ -314,7 +331,7 @@ function EventDetails({ event }) {
 
 function EventImage({ event }) {
   return (
-    <div className="relative w-full md:w-[420px]">
+    <div className="relative w-full md:max-w-[420px]">
       <div className="rounded-[18px] bg-[#0b0f1c] p-[10px] shadow-[0_30px_80px_rgba(0,0,0,0.45)]">
         <div className="rounded-[14px] p-[2px] bg-gradient-to-r from-white/30 via-white/10 to-white/30">
           <div className="rounded-[12px] bg-[#f8fafc] p-3 md:p-4">
@@ -331,9 +348,6 @@ function EventImage({ event }) {
             </div>
 
             <div className="mt-3">
-              <div className="text-[10px] tracking-[0.22em] uppercase text-slate-400">
-                Night Palooza Exhibition
-              </div>
               <div className="text-sm font-medium text-slate-700">
                 {event.title}
               </div>

@@ -199,7 +199,7 @@ function Hero() {
                                 transition={{ duration: 0.5, delay: 0.1 }}
                                 className="text-sm uppercase tracking-[0.3em] text-blue-200 font-bold mb-4 drop-shadow-md"
                             >
-                                Kappa Theta Pi | Alpha Beta
+                                Kappa Theta Pi | Alpha Beta · Est. 2024
                             </motion.p>
                             <motion.h1
                                 initial={{ opacity: 0, y: 24 }}
@@ -271,7 +271,7 @@ function CarouselSection() {
                     </Link>
                 </div>
 
-                <div className="mt-8 overflow-x-auto touch-pan-x pretty-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
+                <div className="mt-8 pt-2 overflow-x-auto touch-pan-x pretty-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
                     <div className="flex gap-6 pb-4 snap-x snap-mandatory">
                         {carouselImages.map((src, i) => (
                             <div key={src + i} className="relative snap-start min-w-[260px] md:min-w-[320px] lg:min-w-[360px] h-56 rounded-2xl overflow-hidden border border-blue-100/35 shadow-[0_16px_36px_rgba(18,40,82,0.34)] backdrop-blur-md bg-white/10 flex-shrink-0">
@@ -301,10 +301,10 @@ function SpotlightPreviewSection() {
                     </Link>
                 </div>
 
-                <div className="mt-8 overflow-x-auto touch-pan-x pretty-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
+                <div className="mt-8 pt-2 overflow-x-auto touch-pan-x pretty-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
                     <div className="flex gap-8 xl:gap-12 xl:justify-center pb-4 snap-x snap-mandatory">
                         {spotlightPreviewPosts.map((post) => (
-                            <div key={post.src} className="snap-start min-w-[min(336px,calc(100vw-6rem))] flex-shrink-0">
+                            <div key={post.src} className="snap-start min-w-[min(336px,calc(100vw-7rem))] flex-shrink-0">
                                 <h3 className="mb-3 text-lg font-bold text-white">{post.header}</h3>
                                 <div className="relative overflow-hidden rounded-xl border border-white/12 bg-white shadow-[0_14px_34px_rgba(12,28,62,0.26)] transition duration-300 hover:-translate-y-1 hover:scale-[1.015] hover:shadow-[0_22px_48px_rgba(12,28,62,0.36)]">
                                         <iframe

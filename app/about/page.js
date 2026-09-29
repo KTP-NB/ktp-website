@@ -82,11 +82,10 @@ const AboutUs = () => {
                   display: "flex",
                   justifyContent: "center",
                   position: "relative",
-                  width: 500,
-                  height: 500,
+                  width: "100%",
+                  maxWidth: 500,
+                  aspectRatio: "1 / 1",
                   margin: "auto",
-                  maxWidth: "90vw",
-                  maxHeight: 500,
                 }}
               >
                 <Image
@@ -277,7 +276,8 @@ const AboutUs = () => {
                     backdropFilter: "blur(16px)",
                     border: "1px solid rgba(255, 255, 255, 0.1)",
                     textAlign: "center",
-                    height: "250px",
+                    minHeight: 250,
+                    height: "100%",
                     borderRadius: 3,
                     transition: "transform 0.3s ease",
                     "&:hover": {
@@ -322,7 +322,8 @@ const AboutUs = () => {
                     backdropFilter: "blur(16px)",
                     border: "1px solid rgba(255, 255, 255, 0.1)",
                     textAlign: "center",
-                    height: "250px",
+                    minHeight: 250,
+                    height: "100%",
                     borderRadius: 3,
                     transition: "transform 0.3s ease",
                     "&:hover": {
@@ -403,9 +404,9 @@ const AboutUs = () => {
                   gutterBottom
                   sx={{ color: "#dbe8ff", fontSize: "1.25rem", mb: 2 }}
                 >
-                  We, the founders of the Alpha Beta chapter in New Brunswick,
-                  started this effort to build a stronger community for students
-                  interested in technology.
+                  We, the founders of the Alpha Beta chapter, established KTP at
+                  Rutgers–New Brunswick in 2024 to build a stronger community for
+                  students interested in technology.
                 </Typography>
               </Grid>
 

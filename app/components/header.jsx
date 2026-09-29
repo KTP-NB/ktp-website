@@ -8,6 +8,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/components/authprovider';
 import { MEMBER_PERMISSIONS, hasPermission } from '@/lib/memberAccess';
+import { isJobBoardRoute } from '@/lib/job-board/navigation';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -33,7 +34,6 @@ export default function Header() {
     () => {
       const accountHref = [
         [MEMBER_PERMISSIONS.PROFILE, '/profile'],
-        [MEMBER_PERMISSIONS.APPLICATIONS, '/applications'],
         [MEMBER_PERMISSIONS.FINES, '/fines'],
         [MEMBER_PERMISSIONS.RESUME, '/resume'],
         [MEMBER_PERMISSIONS.INTEGRATIONS, '/integrations'],
@@ -41,9 +41,10 @@ export default function Header() {
       return [
       ...(hasPermission(permissions, MEMBER_PERMISSIONS.STUDY_TOOLS) ? [{ name: 'Study Tools', href: '/study-tools' }] : []),
       ...(hasPermission(permissions, MEMBER_PERMISSIONS.CODERANK) ? [{ name: 'CodeRank', href: '/coderank' }] : []),
+      ...(hasPermission(permissions, MEMBER_PERMISSIONS.APPLICATIONS) ? [{ name: 'Job Board', href: '/job-board' }] : []),
       ...(hasPermission(permissions, MEMBER_PERMISSIONS.COMPANY_QUESTIONS) ? [{ name: 'LC Company Tagged', href: '/company-questions' }] : []),
       ...(hasPermission(permissions, MEMBER_PERMISSIONS.REFERRAL_FINDER) ? [{ name: 'Referral Finder', href: '/extension' }] : []),
-      ...(hasAdminAccess ? [{ name: 'Admin Portal', href: '/admin' }] : []),
+      ...((hasAdminAccess || (process.env.NODE_ENV !== 'production' && process.env.NEXT_PUBLIC_JOB_BOARD_DEV_ADMIN_ENABLED === 'true')) ? [{ name: 'Admin Portal', href: '/admin' }] : []),
       ...(accountHref ? [{ name: 'Member Account', href: accountHref }] : []),
       ];
     },
@@ -128,11 +129,12 @@ export default function Header() {
                 {accountMenuOpen && (
                   <div className="absolute right-0 mt-3 w-52 overflow-hidden rounded-2xl border border-white/15 bg-slate-900/95 p-2 shadow-2xl backdrop-blur-xl">
                     {authRequiredLinks.map((item) => {
-                      const isActive = pathname === item.href;
+                      const isActive = item.href === '/job-board' ? isJobBoardRoute(pathname) : pathname === item.href;
                       return (
                         <Link
                           key={item.name}
                           href={item.href}
+                          aria-current={isActive ? 'page' : undefined}
                           onClick={handleNavigation}
                           className={`block rounded-xl px-4 py-3 text-sm font-bold transition ${
                             isActive
@@ -231,11 +233,12 @@ export default function Header() {
                       {displayName}
                     </div>
                     {authRequiredLinks.map((item) => {
-                      const isActive = pathname === item.href;
+                      const isActive = item.href === '/job-board' ? isJobBoardRoute(pathname) : pathname === item.href;
                       return (
                         <Link
                           key={item.name}
                           href={item.href}
+                          aria-current={isActive ? 'page' : undefined}
                           onClick={handleNavigation}
                           className={`-mx-3 block rounded-full px-4 py-3 text-base font-bold leading-7 whitespace-nowrap transition-all ${
                             isActive

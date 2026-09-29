@@ -22,6 +22,7 @@ import { hasSupabaseConfig, supabase } from "@/lib/supabase";
 import { api } from "@/lib/coderank/clientFetch";
 import { profileHasPermission } from "@/lib/adminAccess";
 import ApplicationTrackerPanel from "./ApplicationTrackerPanel";
+import JobBoardAdminPanel from "./JobBoardAdminPanel";
 import FineTrackerPanel from "./FineTrackerPanel";
 import AccessRolesPanel from "./AccessRolesPanel";
 import MemberManagementPanel from "./MemberManagementPanel";
@@ -59,7 +60,10 @@ function AdminPortal() {
     };
   }, [user?.id, user?.email]);
 
-  const isAuthorized = Boolean(adminProfile);
+  const devJobBoardOnly = process.env.NODE_ENV !== 'production'
+    && process.env.NEXT_PUBLIC_JOB_BOARD_DEV_ADMIN_ENABLED === 'true'
+    && !adminProfile;
+  const isAuthorized = Boolean(adminProfile) || devJobBoardOnly;
 
   if (checkingAccess) {
     return (
@@ -84,7 +88,7 @@ function AdminPortal() {
     );
   }
 
-  return <AdminDashboard adminProfile={adminProfile} />;
+  return <AdminDashboard adminProfile={adminProfile} devJobBoardOnly={devJobBoardOnly} />;
 }
 
 /* ─── Admin Dashboard (tabbed layout — add more tabs later) ─── */
@@ -95,16 +99,17 @@ const TAB_PERMISSIONS = {
   CodeRank: "coderank.manage",
   "Monthly OA": "coderank.manage",
   "Application Tracker": "applications.manage",
+  "Job Board": "applications.manage",
   "Fine Tracker": "fines.manage",
   "Access Roles": "roles.manage",
 };
 
-function AdminDashboard({ adminProfile }) {
+function AdminDashboard({ adminProfile, devJobBoardOnly = false }) {
   const tabs = useMemo(
-    () => Object.keys(TAB_PERMISSIONS).filter(
+    () => devJobBoardOnly ? ['Job Board'] : Object.keys(TAB_PERMISSIONS).filter(
       (tab) => profileHasPermission(adminProfile, TAB_PERMISSIONS[tab]),
     ),
-    [adminProfile],
+    [adminProfile, devJobBoardOnly],
   );
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const [hydrated, setHydrated] = useState(false);
@@ -163,6 +168,7 @@ function AdminDashboard({ adminProfile }) {
           {activeTab === "CodeRank" && <CodeRankPanel />}
           {activeTab === "Monthly OA" && <OaComplianceView />}
           {activeTab === "Application Tracker" && <ApplicationTrackerPanel />}
+          {activeTab === "Job Board" && <JobBoardAdminPanel />}
           {activeTab === "Fine Tracker" && <FineTrackerPanel />}
           {activeTab === "Access Roles" && <AccessRolesPanel />}
         </div>

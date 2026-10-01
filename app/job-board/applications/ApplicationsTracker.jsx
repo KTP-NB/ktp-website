@@ -36,7 +36,7 @@ export default function ApplicationsTracker() {
   const [memberRequirement, setMemberRequirement] = useState({ target: DEFAULT_TARGET, usesDefault: true, status: 'Active' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [view, setView] = useState('month');
+  const [view, setView] = useState('all');
   const [selectedMonth, setSelectedMonth] = useState(monthKey());
   const [selectedYear, setSelectedYear] = useState(String(new Date().getFullYear()));
   const [search, setSearch] = useState('');

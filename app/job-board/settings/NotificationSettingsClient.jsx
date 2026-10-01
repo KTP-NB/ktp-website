@@ -83,7 +83,7 @@ export default function NotificationSettingsClient() {
       <section className="rounded-2xl border border-white/10 bg-slate-950/25 p-6 text-white shadow-xl backdrop-blur">
         <h2 className="text-xl font-black">Email delivery</h2>
         <p className="mt-3 text-sm leading-6 text-blue-50/70">
-          Email sends are enabled only after the mail service is configured and tested. You can opt in now; turn this off at any time to stop future messages.
+          Opt in to receive one digest at your selected frequency when there are new jobs or saved jobs to apply to. Turn email off at any time to stop future messages.
         </p>
       </section>
     </div>

@@ -98,6 +98,17 @@ async function authorizeRequest(request, options) {
     .eq('user_id', userData.user.id)
     .maybeSingle();
   if (profileError) return { ok: false, status: 500, error: 'Admin lookup failed' };
+  if (profile) {
+    const { data: rolePermissions, error: permissionError } = await options.service
+      .from('role_permissions')
+      .select('permission_key')
+      .eq('role_key', profile.access_role);
+    if (permissionError) return { ok: false, status: 500, error: 'Permission lookup failed' };
+    profile.permissions = [...new Set([
+      ...(rolePermissions || []).map((row) => row.permission_key),
+      ...(profile.manager_permissions || []),
+    ])];
+  }
   if (!profileCanManageJobBoard(profile)) {
     return { ok: false, status: 403, error: 'Forbidden' };
   }

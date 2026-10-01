@@ -17,16 +17,17 @@
     "test:harness": "node --test lib/coderank/__tests__/harness.test.mjs",
     "test:applications": "node --test lib/__tests__/applicationFines.test.mjs lib/__tests__/applicationPayloads.test.mjs",
     "test:members": "node --test lib/__tests__/publicDirectoryVisibility.test.mjs lib/__tests__/memberAccess.test.mjs lib/__tests__/rolePermissionManagement.test.mjs",
-    "test:fines": "node --test lib/__tests__/fineBulkAssignment.test.mjs"
+    "test:fines": "node --test lib/__tests__/fineBulkAssignment.test.mjs",
+    "test:job-board": "node --test lib/job-board/__tests__/*.test.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@headlessui/react": "^2.1.2",
     "@heroicons/react": "^2.1.5",
+    "@monaco-editor/react": "^4.6.0",
     "@mui/icons-material": "^6.1.0",
     "@mui/material": "^6.1.0",
-    "@monaco-editor/react": "^4.6.0",
     "@mui/styled-engine-sc": "^6.1.0",
     "@supabase/supabase-js": "^2.104.0",
     "class-variance-authority": "^0.7.0",
@@ -37,6 +38,8 @@
     "framer-motion": "^11.5.6",
     "lucide-react": "^0.424.0",
     "next": "^14.2.5",
+    "nodemailer": "^7.0.13",
+    "pdf-parse": "^1.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.2.1",

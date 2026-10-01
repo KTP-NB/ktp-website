@@ -4,12 +4,12 @@ import FadeIn from '@/components/FadeIn';
 import ProfileSectionNav from '@/components/ProfileSectionNav';
 
 /**
- * Shared frame for the member account section (/profile, /applications, /fines,
+ * Shared frame for the member account section (/profile, /fines,
  * /resume, /integrations). Keeps the heading and section nav identical across
  * every tab so switching routes does not shift the layout.
  */
 export default function AccountShell({
-  subtitle = 'Manage your profile, applications, and resume.',
+  subtitle = 'Manage your profile and member resources.',
   children,
   // Rendered inside <main> but outside FadeIn. Fixed-position overlays belong
   // here: FadeIn animates a transform, and a transformed ancestor makes

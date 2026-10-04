@@ -96,9 +96,37 @@ const MemberCard = ({ member, onLinkedInClick }) => (
   </Box>
 );
 
+const ClassFilterChips = ({ options, active, setActive }) => (
+  <Box display="flex" justifyContent="center" flexWrap="wrap" gap={1} sx={{ mt: -3 }}>
+    {options.map(({ cls, count }) => {
+      const isActive = active === cls;
+
+      return (
+        <button
+          key={cls}
+          onClick={() => setActive(cls)}
+          aria-pressed={isActive}
+          className={`
+            px-3.5 py-1.5 rounded-full text-xs font-medium
+            transition-all duration-300
+            ${
+              isActive
+                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
+            }
+          `}
+        >
+          {cls} ({count})
+        </button>
+      );
+    })}
+  </Box>
+);
+
 
 export default function MembersPage() {
   const [activeTab, setActiveTab] = useState('Executive Board');
+  const [classFilter, setClassFilter] = useState('All');
   const [allMembers, setAllMembers] = useState(fallbackMembers);
   const [loadingMembers, setLoadingMembers] = useState(true);
 
@@ -152,6 +180,30 @@ export default function MembersPage() {
     if (url) window.open(url, '_blank', 'noopener,noreferrer');
   };
 
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setClassFilter('All');
+  };
+
+  // Pledge class chips for Active Members: derived from data, in Greek alphabet order
+  const activeClassCounts = allMembers
+    .filter(m => m.status === 'Active')
+    .reduce((acc, m) => {
+      const cls = m.class || 'Unknown';
+      acc[cls] = (acc[cls] || 0) + 1;
+      return acc;
+    }, {});
+  const greekOrder = ['Founding', ...Object.keys(greekLetters).filter(k => k !== 'Founding')];
+  const otherClasses = Object.keys(activeClassCounts)
+    .filter(k => !greekOrder.includes(k) && k !== 'Unknown')
+    .sort();
+  const classFilterOptions = [
+    { cls: 'All', count: Object.values(activeClassCounts).reduce((a, b) => a + b, 0) },
+    ...[...greekOrder, ...otherClasses, 'Unknown']
+      .filter(cls => activeClassCounts[cls])
+      .map(cls => ({ cls, count: activeClassCounts[cls] })),
+  ];
+
   return (
     <div className="min-h-screen text-white py-24">
       <FadeIn>
@@ -167,8 +219,16 @@ export default function MembersPage() {
         <Tabs
           tabs={['Executive Board', 'Active Members', 'Committees', 'Alumni']}
           active={activeTab}
-          setActive={setActiveTab}
+          setActive={handleTabChange}
         />
+
+        {activeTab === 'Active Members' && (
+          <ClassFilterChips
+            options={classFilterOptions}
+            active={classFilter}
+            setActive={setClassFilter}
+          />
+        )}
 
         <Box
           display="flex"
@@ -249,7 +309,11 @@ export default function MembersPage() {
                 if (list && list.length) flattened.push(...list);
               });
 
-              return flattened.map((member, idx) => (
+              const visible = classFilter === 'All'
+                ? flattened
+                : flattened.filter(m => (m.class || 'Unknown') === classFilter);
+
+              return visible.map((member, idx) => (
                 <MemberCard key={idx} member={member} onLinkedInClick={handleLinkedInClick} />
               ));
             })()

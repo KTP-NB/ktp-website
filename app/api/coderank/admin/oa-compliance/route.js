@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { requirePermission, requireUser } from '@/lib/coderank/auth';
+import { requirePermission } from '@/lib/coderank/auth';
 import { getServiceClient } from '@/lib/coderank/supabaseServer';
 import { withNoStore } from '@/lib/coderank/noStore';
 
@@ -50,17 +50,11 @@ export async function GET(request) {
  * override and falls back to whatever CodeRank recorded.
  */
 export async function PUT(request) {
-  const auth = await requireUser(request);
+  const auth = await requirePermission(request, 'coderank.manage');
   if (auth.error) return auth.error;
 
   const service = getServiceClient();
-  const { data: profile } = await service
-    .from('member_profiles')
-    .select('access_role')
-    .eq('user_id', auth.user.id)
-    .maybeSingle();
-
-  if (profile?.access_role !== 'super_admin') {
+  if (auth.profile.access_role !== 'super_admin') {
     return withNoStore(
       NextResponse.json({ error: 'Only Super Admins can change OA credit.' }, { status: 403 })
     );

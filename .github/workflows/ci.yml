@@ -60,4 +60,4 @@ jobs:
         run: npm run build
 
       - name: Check Supabase Edge Functions
-        run: deno check --config supabase/functions/application-tracker-mcp/deno.json supabase/functions/application-tracker-mcp/index.ts
+        run: deno check --config supabase/functions/ktp-new-brunswick-mcp/deno.json supabase/functions/ktp-new-brunswick-mcp/index.ts

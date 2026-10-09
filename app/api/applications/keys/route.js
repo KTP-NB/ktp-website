@@ -4,8 +4,17 @@ import { getServiceClient } from "@/lib/coderank/supabaseServer";
 import { createApiKey } from "@/lib/applications/apiAuth";
 import { MEMBER_PERMISSIONS } from "@/lib/memberAccess";
 
-const SELECT_FIELDS = "id,name,key_prefix,scopes,last_used_at,expires_at,revoked_at,created_at";
+const SELECT_FIELDS = "id,name,key_prefix,scopes,acts_as_role,acts_as_permissions,last_used_at,expires_at,revoked_at,created_at";
 const ALLOWED_SCOPES = new Set(["applications:read", "applications:write"]);
+// Roles a Super Admin can limit one of their own keys to.
+const LIMITED_ROLES = ["pledge", "member", "manager", "admin"];
+const PERSONAL_PERMISSIONS = [
+  "members.manage",
+  "resumes.manage",
+  "coderank.manage",
+  "applications.manage",
+  "fines.manage",
+];
 
 async function activeMember(request) {
   const auth = await requireMemberPermission(request, MEMBER_PERMISSIONS.INTEGRATIONS);
@@ -13,7 +22,7 @@ async function activeMember(request) {
   const service = getServiceClient();
   const { data: profile } = await service
     .from("member_profiles")
-    .select("id,member_status")
+    .select("id,member_status,access_role")
     .eq("user_id", auth.user.id)
     .maybeSingle();
   if (!profile || (profile.member_status || "").toLowerCase() !== "active")
@@ -30,7 +39,10 @@ export async function GET(request) {
     .eq("user_id", auth.user.id)
     .order("created_at", { ascending: false });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ keys: data || [] });
+  return NextResponse.json({
+    keys: data || [],
+    can_limit_role: auth.profile.access_role === "super_admin",
+  });
 }
 
 export async function POST(request) {
@@ -54,11 +66,27 @@ export async function POST(request) {
   const expiration = body.expires_at ? new Date(body.expires_at) : null;
   if (expiration && (Number.isNaN(expiration.getTime()) || expiration <= new Date()))
     return NextResponse.json({ error: "Expiration must be in the future." }, { status: 400 });
+  // "super_admin" or nothing means an ordinary key that follows its owner.
+  const requestedRole = String(body.acts_as_role || "").trim();
+  let actsAsRole = null;
+  let actsAsPermissions = [];
+  if (requestedRole && requestedRole !== "super_admin") {
+    if (auth.profile.access_role !== "super_admin")
+      return NextResponse.json({ error: "Only Super Admins can create role-limited keys." }, { status: 403 });
+    if (!LIMITED_ROLES.includes(requestedRole))
+      return NextResponse.json({ error: "Invalid role." }, { status: 400 });
+    actsAsRole = requestedRole;
+    if (["admin", "manager"].includes(requestedRole))
+      actsAsPermissions = [...new Set(Array.isArray(body.acts_as_permissions) ? body.acts_as_permissions : [])]
+        .filter((permission) => PERSONAL_PERMISSIONS.includes(permission));
+  }
   const generated = createApiKey();
   const { data, error } = await auth.service.from("member_api_keys").insert({
     user_id: auth.user.id,
     name,
     scopes,
+    acts_as_role: actsAsRole,
+    acts_as_permissions: actsAsPermissions,
     key_prefix: generated.prefix,
     key_hash: generated.hash,
     expires_at: expiration?.toISOString() || null,

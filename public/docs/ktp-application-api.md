@@ -34,8 +34,10 @@ Never put an API key in a URL, commit it to Git, paste it into public messages, 
 
 Available scopes:
 
-- `applications:read` permits GET requests.
-- `applications:write` permits POST and PATCH requests.
+- `applications:read` (Read) permits requests that view data.
+- `applications:write` (Write) permits requests that change data.
+
+A key acts as its owner, so through the MCP it reaches every feature the owner's access role allows, including admin tools. See section 13.
 
 Every key is tied to one member. The server determines ownership from the key and never accepts a caller-supplied `user_id`.
 
@@ -313,24 +315,27 @@ https://www.ktpnewbrunswick.org/api/v1/openapi
 
 Tools capable of reading OpenAPI can use this endpoint to generate clients or inspect the API programmatically.
 
-## 13. KTP Application Tracker MCP
+## 13. KTP New Brunswick MCP
 
-The hosted MCP server presents the Application API as tools for Codex, Claude, and other Streamable HTTP MCP clients. It wraps the existing API rather than accessing database tables directly, so API-key ownership, scopes, revocation, rate limits, duplicate protection, and audit logs remain enforced.
+The hosted MCP server presents KTP features as tools for Codex, Claude, and other Streamable HTTP MCP clients. It wraps the existing API rather than accessing database tables directly, so API-key ownership, permissions, revocation, rate limits, duplicate protection, and audit logs remain enforced.
 
 MCP endpoint:
 
 ```text
-https://tagpabkdkbyjfmexikxn.supabase.co/functions/v1/application-tracker-mcp/mcp
+https://tagpabkdkbyjfmexikxn.supabase.co/functions/v1/ktp-new-brunswick-mcp/mcp
 ```
 
-Available tools:
+The MCP covers more than applications. A key acts as you, so the tools you see match what your access role and personal permissions allow on the website, and the server re-checks that permission on every call:
 
-- `get_my_profile`
-- `list_applications`
-- `get_application`
-- `add_application`
-- `add_applications_bulk`
-- `update_application`
+- Everyone: `get_my_profile` (shows your role and permissions)
+- Applications: `list_applications`, `get_application`, `add_application`, `add_applications_bulk`, `update_application`, `get_application_progress`
+- Your account: `get_my_profile_details`, `update_my_profile_details`, `get_my_fines`, `get_my_resume`, `list_my_assessments`
+- Member tools: `list_company_question_companies`, `list_company_questions`, `list_study_files`
+- Admin tools (names start with `admin_`): shown only to people who manage that area, such as members, fines, the application tracker, CodeRank, or resumes
+
+A key with only the Read scope can use tools that view data. Tools that change anything need the Write scope. CodeRank assessments must be taken on the website, and API keys can only be created or revoked there.
+
+If you hold admin permissions, treat your key like your password: anyone with it can do what you can do.
 
 ### Connect Codex on PowerShell
 
@@ -345,7 +350,7 @@ Add the remote MCP server:
 
 ```powershell
 codex mcp add ktp-applications `
-  --url "https://tagpabkdkbyjfmexikxn.supabase.co/functions/v1/application-tracker-mcp/mcp" `
+  --url "https://tagpabkdkbyjfmexikxn.supabase.co/functions/v1/ktp-new-brunswick-mcp/mcp" `
   --bearer-token-env-var KTP_API_KEY
 ```
 

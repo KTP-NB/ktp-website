@@ -11,7 +11,9 @@
 
 # next.js
 /.next/
+/.next-dev/
 /.next-verify/
+/supabase/.temp/
 /out/
 
 # production

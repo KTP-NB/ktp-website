@@ -3,6 +3,37 @@
 import { useEffect, useState } from 'react';
 import { Check, Copy, Download, KeyRound, Loader2, Plus, ShieldCheck, Trash2 } from 'lucide-react';
 import { api } from '@/lib/coderank/clientFetch';
+import SelectMenu from '@/components/SelectMenu';
+
+const KEY_ROLES = [
+  { value: 'super_admin', label: 'Super Admin', hint: 'Full access' },
+  { value: 'admin', label: 'Admin' },
+  { value: 'manager', label: 'Manager' },
+  { value: 'member', label: 'Member' },
+  { value: 'pledge', label: 'Pledge' },
+];
+const KEY_ADMIN_PERMISSIONS = [
+  ['members.manage', 'Members'],
+  ['resumes.manage', 'Resumes'],
+  ['coderank.manage', 'CodeRank'],
+  ['applications.manage', 'Applications'],
+  ['fines.manage', 'Fines'],
+];
+
+const MUSE_PROMPT = `Create a Custom Connector named "KTP" for this remote MCP server:
+
+https://tagpabkdkbyjfmexikxn.supabase.co/functions/v1/ktp-new-brunswick-mcp/mcp
+
+It is a Streamable HTTP MCP server. Every request must send this header:
+Authorization: Bearer <my KTP API key>
+
+Do not ask me to type the API key into this chat, and never print, log, or repeat it. Instead, open your Secure Credentials Store prompt and ask me to paste the key there. Save it only in that store and read it from there whenever you call the server.
+
+When the connector is ready, call get_my_profile to confirm it works, then tell me which tools I have access to.`;
+
+function roleLabel(role) {
+  return KEY_ROLES.find((option) => option.value === role)?.label || role;
+}
 
 function readableDate(value) {
   return value ? new Date(value).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) : 'Never';
@@ -33,8 +64,12 @@ export default function ApiKeysPanel() {
   const [name, setName] = useState('Personal workflow');
   const [read, setRead] = useState(true);
   const [write, setWrite] = useState(true);
+  const [canLimitRole, setCanLimitRole] = useState(false);
+  const [actsAsRole, setActsAsRole] = useState('super_admin');
+  const [actsAsPermissions, setActsAsPermissions] = useState([]);
   const [token, setToken] = useState('');
   const [copied, setCopied] = useState(false);
+  const [museCopied, setMuseCopied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -45,6 +80,7 @@ export default function ApiKeysPanel() {
     try {
       const result = await api('/api/applications/keys');
       setKeys(result.keys || []);
+      setCanLimitRole(Boolean(result.can_limit_role));
     } catch (e) {
       setError(e.message);
     } finally {
@@ -66,6 +102,7 @@ export default function ApiKeysPanel() {
         body: JSON.stringify({
           name,
           scopes: [read && 'applications:read', write && 'applications:write'].filter(Boolean),
+          ...(canLimitRole ? { acts_as_role: actsAsRole, acts_as_permissions: actsAsPermissions } : {}),
         }),
       });
       setKeys((current) => [result.key, ...current]);
@@ -87,6 +124,12 @@ export default function ApiKeysPanel() {
     }
   }
 
+  async function copyMusePrompt() {
+    await navigator.clipboard.writeText(MUSE_PROMPT);
+    setMuseCopied(true);
+    setTimeout(() => setMuseCopied(false), 1500);
+  }
+
   async function copyToken() {
     await navigator.clipboard.writeText(token);
     setCopied(true);
@@ -96,14 +139,30 @@ export default function ApiKeysPanel() {
   return (
     <div className="space-y-6">
       <section className="rounded-2xl border border-white/10 bg-white/5 p-6 md:p-8">
-        <div className="mb-2 flex items-center gap-3"><ShieldCheck className="text-blue-300" /><h2 className="text-xl font-bold">API & Integrations</h2></div>
-        <p className="mb-6 max-w-3xl text-sm text-white/60">Create a personal key for your own scripts, Codex, Claude, or the KTP MCP. A key can access only your applications and stops working if your membership becomes inactive.</p>
+        <div className="mb-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3"><ShieldCheck className="text-blue-300" /><h2 className="text-xl font-bold">API & Integrations</h2></div>
+          <button type="button" onClick={copyMusePrompt} title="Paste this into Meta Muse. It asks for your key through its secure prompt, so never type the key into the chat." className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-white/15 px-4 py-2.5 text-sm font-bold transition hover:bg-white/10 sm:self-auto">
+            {museCopied ? <Check size={16} /> : <Copy size={16} />}{museCopied ? 'Copied' : 'Copy MUSE connection prompt'}
+          </button>
+        </div>
+        <p className="mb-6 max-w-3xl text-sm text-white/60">Create a personal key for your own scripts, Codex, Claude, or the KTP MCP. A key acts as you: it can use every feature your access role allows, including any admin tools you have been given, and stops working if your membership becomes inactive.</p>
         <form onSubmit={create} className="grid gap-4 rounded-xl border border-white/10 bg-black/10 p-4 sm:grid-cols-[1fr_auto]">
           <label className="grid gap-1 text-sm font-semibold">Key name<input required maxLength={80} value={name} onChange={(e) => setName(e.target.value)} className="rounded-xl border border-white/15 bg-white/5 px-4 py-3" /></label>
           <div className="flex flex-wrap items-end gap-4 pb-3 text-sm">
             <label className="flex gap-2"><input type="checkbox" checked={read} onChange={(e) => setRead(e.target.checked)} /> Read</label>
             <label className="flex gap-2"><input type="checkbox" checked={write} onChange={(e) => setWrite(e.target.checked)} /> Write</label>
           </div>
+          {canLimitRole && <div className="grid gap-3 sm:col-span-2">
+            <div className="grid gap-1 text-sm font-semibold">Key acts as
+              <SelectMenu label="Key acts as" value={actsAsRole} onChange={setActsAsRole} options={KEY_ROLES} className="sm:max-w-xs" />
+            </div>
+            {['admin', 'manager'].includes(actsAsRole) && <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+              {KEY_ADMIN_PERMISSIONS.map(([permission, label]) => <label key={permission} className="flex gap-2">
+                <input type="checkbox" checked={actsAsPermissions.includes(permission)} onChange={(e) => setActsAsPermissions((current) => e.target.checked ? [...current, permission] : current.filter((item) => item !== permission))} /> {label}
+              </label>)}
+            </div>}
+            <p className="text-xs font-normal text-white/50">Super Admins can create a key that only has another role&apos;s access, for testing or for an automation that should not have full access. It still acts on your own account.</p>
+          </div>}
           <button disabled={saving || (!read && !write)} className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-bold disabled:opacity-50 sm:col-span-2"><Plus size={17} />{saving ? 'Creating…' : 'Create API key'}</button>
         </form>
         {token && <div className="mt-5 rounded-xl border border-amber-300/25 bg-amber-400/10 p-4">
@@ -116,7 +175,7 @@ export default function ApiKeysPanel() {
       <section className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
         <div className="border-b border-white/10 p-5"><h3 className="font-bold">Your API keys</h3></div>
         {loading ? <Loader2 className="mx-auto my-10 animate-spin" /> : keys.length ? keys.map((key) => <div key={key.id} className="flex flex-col gap-3 border-b border-white/5 p-5 last:border-0 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex gap-3"><KeyRound className="mt-1 shrink-0 text-blue-300" size={19} /><div><p className="font-bold">{key.name}</p><p className="font-mono text-xs text-white/45">{key.key_prefix}••••••••</p><p className="mt-1 text-xs text-white/45">Scopes: {(key.scopes || []).join(', ')} · Last used: {readableDate(key.last_used_at)}</p></div></div>
+          <div className="flex gap-3"><KeyRound className="mt-1 shrink-0 text-blue-300" size={19} /><div><p className="font-bold">{key.name}</p><p className="font-mono text-xs text-white/45">{key.key_prefix}••••••••</p><p className="mt-1 text-xs text-white/45">Scopes: {(key.scopes || []).join(', ')}{key.acts_as_role ? ` · Acts as: ${roleLabel(key.acts_as_role)}${(key.acts_as_permissions || []).length ? ` (${key.acts_as_permissions.join(', ')})` : ''}` : ''} · Last used: {readableDate(key.last_used_at)}</p></div></div>
           {key.revoked_at ? <span className="text-sm font-bold text-white/35">Revoked</span> : <button type="button" onClick={() => revoke(key)} className="inline-flex items-center gap-2 self-start rounded-lg border border-red-300/20 px-3 py-2 text-sm font-bold text-red-300"><Trash2 size={15} /> Revoke</button>}
         </div>) : <p className="p-8 text-center text-white/45">No API keys yet.</p>}
       </section>
@@ -129,7 +188,7 @@ export default function ApiKeysPanel() {
               <Download size={16} /> Download documentation
             </a>
           </div>
-          <p className="mt-2 max-w-3xl text-sm text-white/60">Everything needed to connect a script, automation, or AI workflow. Every endpoint operates only on the member who owns the API key.</p>
+          <p className="mt-2 max-w-3xl text-sm text-white/60">Everything needed to connect a script, automation, or AI workflow. The application endpoints below operate only on the member who owns the API key. Through the MCP, a key also reaches the other features and admin tools its owner has access to.</p>
           <div className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
             <div className="rounded-xl bg-black/15 p-3"><span className="block text-xs uppercase text-white/40">Base URL</span><code className="break-all text-blue-200">{origin}/api/v1</code></div>
             <div className="rounded-xl bg-black/15 p-3"><span className="block text-xs uppercase text-white/40">Batch limit</span><b>50 applications</b></div>
@@ -140,7 +199,7 @@ export default function ApiKeysPanel() {
         <DocSection title="1. Authentication and key safety" open>
           <p>Send the key in the <code className="text-blue-200">Authorization</code> header on every request. Never place it in a URL, commit it to Git, or share it with another member. Revoking a key disables it immediately.</p>
           <CodeBlock>{`Authorization: Bearer ktp_live_YOUR_KEY`}</CodeBlock>
-          <p className="mt-3"><b className="text-white">Read</b> permits GET requests. <b className="text-white">Write</b> permits POST and PATCH requests. Inactive and alumni accounts cannot use API keys.</p>
+          <p className="mt-3"><b className="text-white">Read</b> permits viewing. <b className="text-white">Write</b> permits anything that changes data, including admin actions if you hold admin permissions. Create a Read-only key when a workflow only needs to look things up. Inactive and alumni accounts cannot use API keys.</p>
           <p className="mt-4 font-semibold text-white">Use an environment variable with Codex or Claude</p>
           <p className="mt-1">Set the key in the terminal that launches your agent. This lets its commands authenticate without putting the secret in your prompt or source code.</p>
           <CodeBlock>{`# PowerShell — current terminal session
@@ -261,15 +320,15 @@ curl -X PATCH ${origin}/api/v1/applications/APPLICATION_ID \\
         </DocSection>
 
         <DocSection title="11. Connect Codex through the KTP MCP">
-          <p>The hosted MCP exposes the same secured application operations as tools. It uses this API key, so ownership, scopes, revocation, rate limits, duplicate protection, and audit logs behave exactly like the REST API.</p>
+          <p>The hosted MCP exposes your KTP features as tools: applications, profile, fines, resume, assessments, study files, and company questions, plus the admin tools for any area you manage. You only see tools your access role and personal permissions allow, and every call is re-checked on the server. It uses this API key, so revocation, rate limits, duplicate protection, and audit logs behave exactly like the REST API.</p>
           <p className="mt-4 font-semibold text-white">1. Store the key in the terminal environment</p>
           <CodeBlock>{`$secureKey = Read-Host "Paste API key" -AsSecureString
 $env:KTP_API_KEY = [System.Net.NetworkCredential]::new("", $secureKey).Password`}</CodeBlock>
           <p className="mt-4 font-semibold text-white">2. Add the remote MCP to Codex</p>
           <CodeBlock>{`codex mcp add ktp-applications \
-  --url https://tagpabkdkbyjfmexikxn.supabase.co/functions/v1/application-tracker-mcp/mcp \
+  --url https://tagpabkdkbyjfmexikxn.supabase.co/functions/v1/ktp-new-brunswick-mcp/mcp \
   --bearer-token-env-var KTP_API_KEY`}</CodeBlock>
-          <p className="mt-3">Restart Codex after adding the connection. Available tools include identifying your account, listing, reading, adding one or many, and updating your applications.</p>
+          <p className="mt-3">Restart Codex after adding the connection. Ask it to run <code className="text-blue-200">get_my_profile</code> to see your role and permissions; the tool list matches what you can do on the website. CodeRank assessments and API keys can only be used on the website.</p>
           <p className="mt-3 text-xs">Never paste the key into a prompt or store it directly in a shared MCP configuration file. Claude and other Streamable HTTP MCP clients can use the same endpoint with the key as a Bearer token.</p>
         </DocSection>
       </section>

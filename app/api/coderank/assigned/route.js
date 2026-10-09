@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { requireUser, getProfile, canTakeCodeRankAssessment } from '@/lib/coderank/auth';
+import { requireUserOrApiKey, getProfile, canTakeCodeRankAssessment, profileHasPermission } from '@/lib/coderank/auth';
 import { getServiceClient } from '@/lib/coderank/supabaseServer';
 import { withNoStore } from '@/lib/coderank/noStore';
 
@@ -12,16 +12,20 @@ export const runtime = 'nodejs';
  * List assessments visible to the current member, with their attempt state.
  */
 export async function GET(request) {
-  const auth = await requireUser(request);
+  const auth = await requireUserOrApiKey(request);
   if (auth.error) return auth.error;
 
-  const profile = await getProfile(auth.user.id);
+  // API keys carry their own (possibly role-limited) profile.
+  const profile = auth.profile || await getProfile(auth.user.id);
   if (!canTakeCodeRankAssessment(profile)) {
     return withNoStore(NextResponse.json({ assessments: [] }));
   }
 
   const service = getServiceClient();
-  const debug = new URL(request.url).searchParams.get('debug') === '1';
+  // The debug payload lists every published assessment and who it is assigned
+  // to, so only CodeRank admins may ask for it.
+  const debug = new URL(request.url).searchParams.get('debug') === '1'
+    && profileHasPermission(profile, 'coderank.manage');
   const userPledgeClass = normalize(profile?.pledge_class);
 
   const { data: userAttempts, error: atErr } = await service

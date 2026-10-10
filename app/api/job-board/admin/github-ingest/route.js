@@ -13,6 +13,9 @@ export async function POST(request) {
   const auth = await requireJobBoardAdmin(request);
   if (auth.error) return auth.error;
 
+  // The ingestion function is called with the admin's own website session.
+  if (auth.apiKey) return jsonError('GitHub ingestion must be started from the website.', 403);
+
   const body = await readJson(request);
   if (!body.sourceId) return jsonError('Choose one GitHub source to run.');
   try {

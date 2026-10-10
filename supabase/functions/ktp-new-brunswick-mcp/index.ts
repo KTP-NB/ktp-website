@@ -149,7 +149,7 @@ function withQuery(path: string, values: Record<string, unknown>) {
 function createMcp(apiKey: string, access: Access) {
   const mcp = new McpServer({
     name: "ktp-new-brunswick",
-    version: "2.1.0",
+    version: "2.2.0",
     schemaAdapter: (schema) => z.toJSONSchema(schema as z.ZodType),
   });
 
@@ -657,6 +657,44 @@ function createMcp(apiKey: string, access: Access) {
     "Member removed.",
   );
 
+  // ---- Admin: alumni -------------------------------------------------------
+
+  tool(
+    isSuperAdmin,
+    "admin_list_alumni",
+    "Super Admin only. List the alumni the referral finder uses, with company, role, LinkedIn, and email where known. Use missing_linkedin to find people who still need a LinkedIn link.",
+    z.object({
+      search: z.string().max(80).optional().describe("Filter by name."),
+      company: z.string().max(120).optional().describe("Filter by company name."),
+      chapter: z.string().max(80).optional(),
+      missing_linkedin: z.boolean().optional(),
+      page: z.number().int().min(1).default(1),
+      limit: z.number().int().min(1).max(200).default(50),
+    }),
+    ({ missing_linkedin, ...rest }) =>
+      get(withQuery("/api/admin/alumni", { ...rest, missing_linkedin: missing_linkedin ? "true" : undefined })),
+  );
+
+  tool(
+    isSuperAdmin,
+    "admin_update_alumni_contacts",
+    "Super Admin only. Add or correct the LinkedIn profile link and email for up to 50 alumni at once. Members see these in the referral finder, so only save a link when the profile clearly matches the person's name, company, and school. Pass null to clear a value.",
+    z.object({
+      updates: z.array(
+        z.object({
+          alumni_id: uuid,
+          linkedin_url: z.string().max(300).nullable().optional().describe("Personal profile link: linkedin.com/in/..."),
+          email: z.string().max(254).nullable().optional(),
+        }).refine(
+          (value) => value.linkedin_url !== undefined || value.email !== undefined,
+          { message: "Provide linkedin_url or email." },
+        ),
+      ).min(1).max(50),
+    }),
+    (args) => send("PATCH", "/api/admin/alumni", args),
+    "Alumni contacts processed.",
+  );
+
   // ---- Admin: access roles -------------------------------------------------
 
   tool(
@@ -1062,7 +1100,7 @@ const mcpApp = new Hono();
 
 mcpApp.get("/", (ctx) => ctx.json({
   name: "KTP New Brunswick MCP",
-  version: "2.1.0",
+  version: "2.2.0",
   endpoints: { mcp: "/mcp", health: "/health" },
 }));
 mcpApp.get("/health", (ctx) => ctx.json({ status: "ok" }));

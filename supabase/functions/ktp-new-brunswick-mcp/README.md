@@ -43,6 +43,7 @@ A key acts as its owner. On every MCP request the server calls `GET /api/v1/me` 
 - A Read-only key can call tools that view data. Anything that changes data needs the Write scope.
 - Super-admin-only tools are registered only for Super Admins, and the API enforces the same rule.
 - A Super Admin can create a key that acts as a lower role (pledge, member, manager, admin). It gets exactly that role's permissions, still acts on the owner's own account, and stops working if the owner is no longer a Super Admin.
+- Standing rules still apply through a key: company questions need no unpaid fines, the monthly OA and no admin block; the referral finder needs no unpaid fines.
 - Taking CodeRank assessments and managing API keys are website-only and have no tools.
 
 Deploy the Next.js site before this function: the admin tools rely on the site's admin routes accepting API keys.
@@ -52,7 +53,9 @@ Deploy the Next.js site before this function: the admin tools rely on the site's
 | Permission | Tools |
 |---|---|
 | (any key) | `get_my_profile` |
-| `account.profile` | `get_my_profile_details`, `update_my_profile_details` |
+| `account.profile` | `get_my_profile_details`, `update_my_profile_details`, `list_member_directory` |
+| `referral_finder.use` | `find_referrals` (locked while fines are unpaid) |
+| `applications.use` (job board) | `search_jobs`, `get_job`, `list_saved_jobs`, `save_job`, `unsave_job`, `list_job_notifications`, `mark_job_notifications_read`, `get_job_notification_preferences`, `update_job_notification_preferences` |
 | `applications.use` | `list_applications`, `get_application`, `add_application`, `add_applications_bulk`, `update_application`, `get_application_progress` |
 | `fines.view` | `get_my_fines` |
 | `resumes.use` | `get_my_resume` |
@@ -62,7 +65,7 @@ Deploy the Next.js site before this function: the admin tools rely on the site's
 | `members.manage` | `admin_list_members`, `admin_invite_member`, `admin_update_member`, `admin_list_invite_links`, `admin_create_invite_link` |
 | `roles.manage` | `admin_get_role_permissions` |
 | `fines.manage` | `admin_fines_overview`, `admin_create_fine`, `admin_update_fine`, `admin_delete_fine` |
-| `applications.manage` | `admin_applications_overview`, `admin_get_member_applications`, `admin_set_member_application_target`, `admin_get_application_settings`, `admin_set_application_settings`, `admin_process_application_fines` |
+| `applications.manage` | `admin_applications_overview`, `admin_get_member_applications`, `admin_set_member_application_target`, `admin_get_application_settings`, `admin_set_application_settings`, `admin_process_application_fines`, `admin_job_board_overview`, `admin_list_job_sources`, `admin_set_job_source_enabled`, `admin_run_job_ingestion`, `admin_generate_job_digest`, `admin_archive_job_postings` |
 | `coderank.manage` | `admin_list_assessments`, `admin_get_assessment`, `admin_list_coderank_questions`, `admin_create_assessment`, `admin_update_assessment`, `admin_set_assessment_questions`, `admin_set_assessment_assignments`, `admin_delete_assessment`, `admin_get_assessment_results`, `admin_rerun_submission`, `admin_oa_compliance`, `admin_get_member_review`, `admin_set_resume_notes` |
 | `resumes.manage` | `admin_list_resumes` |
 | Super Admin | `admin_set_member_access`, `admin_remove_member`, `admin_set_role_permissions`, `admin_set_oa_credit` |

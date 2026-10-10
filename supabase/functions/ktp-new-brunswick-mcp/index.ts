@@ -149,7 +149,7 @@ function withQuery(path: string, values: Record<string, unknown>) {
 function createMcp(apiKey: string, access: Access) {
   const mcp = new McpServer({
     name: "ktp-new-brunswick",
-    version: "2.0.0",
+    version: "2.1.0",
     schemaAdapter: (schema) => z.toJSONSchema(schema as z.ZodType),
   });
 
@@ -354,6 +354,161 @@ function createMcp(apiKey: string, access: Access) {
     "Browse the chapter study-tools library. Returns sub-folders and files with download links that expire after one hour.",
     z.object({ path: z.string().max(500).optional().describe("Folder path; omit for the top level.") }),
     (args) => get(withQuery("/api/v1/study-tools", args)),
+  );
+
+  tool(
+    can("referral_finder.use"),
+    "find_referrals",
+    "Referral finder: look up KTP alumni who work at a company and are open to referring. Locked while the member has unpaid fines.",
+    z.object({ company: z.string().trim().min(1).max(200).describe("Company name as written on the job posting.") }),
+    (args) => get(withQuery("/api/v1/referrals", args)),
+  );
+
+  tool(
+    can("account.profile"),
+    "list_member_directory",
+    "List the chapter member directory (name, position, class, major, LinkedIn) as shown on the public Members page.",
+    z.object({
+      search: z.string().max(80).optional().describe("Filter by name."),
+      pledge_class: z.string().max(40).optional(),
+    }),
+    (args) => get(withQuery("/api/v1/directory", args)),
+  );
+
+  // ---- Job board -----------------------------------------------------------
+
+  tool(
+    can("applications.use"),
+    "search_jobs",
+    "Search the KTP job board for open internships and jobs. Results are newest first.",
+    z.object({
+      search: z.string().max(120).optional().describe("Matches title, company, and description."),
+      category: z.string().optional().describe(
+        "Career category, for example software_engineering, data_science, data_analytics, machine_learning_ai, cybersecurity, product_management, business_analytics, consulting.",
+      ),
+      employment_type: z.enum([
+        "internship", "co_op", "new_grad", "full_time", "part_time", "contract", "apprenticeship", "other",
+        "new_grad_full_time",
+      ]).optional(),
+      workplace_type: z.enum(["remote", "hybrid", "onsite"]).optional(),
+      h1b_status: z.enum(["h1b_friendly", "explicit_h1b_sponsor", "likely_h1b_sponsor", "unknown"]).optional(),
+      company: z.string().optional().describe("Exact company name."),
+      posted_today: z.boolean().optional(),
+      saved_only: z.boolean().optional().describe("Only jobs the member has saved, including closed ones."),
+      page: z.number().int().min(1).default(1),
+      per_page: z.union([z.literal(5), z.literal(10), z.literal(20), z.literal(50)]).default(10),
+    }),
+    async ({ employment_type, workplace_type, h1b_status, posted_today, saved_only, per_page, ...rest }) => {
+      const result = await get(withQuery("/api/job-board/jobs", {
+        ...rest,
+        employmentType: employment_type,
+        workplaceType: workplace_type,
+        h1bStatus: h1b_status,
+        postedToday: posted_today ? "true" : undefined,
+        saved: saved_only ? "true" : undefined,
+        perPage: per_page,
+      })) as { jobs: Json[]; pagination: Json };
+      // Listings are trimmed to the essentials; get_job returns the full posting.
+      const jobs = result.jobs.map((job) => ({
+        id: job.id,
+        title: job.title,
+        company: job.company,
+        location: job.location,
+        workplaceType: job.workplaceType,
+        employmentType: job.employmentType,
+        careerCategory: job.careerCategory,
+        salaryRange: job.salaryRange,
+        postedAt: job.postedAt,
+        applyUrl: job.applyUrl,
+        visaSponsorshipStatus: job.visaSponsorshipStatus,
+        saved: job.saved,
+      }));
+      return { jobs, pagination: result.pagination };
+    },
+  );
+
+  tool(
+    can("applications.use"),
+    "get_job",
+    "Get the full posting for one job board listing, including description, qualifications, and apply link.",
+    z.object({ job_id: uuid }),
+    ({ job_id }) => get(`/api/job-board/jobs/${job_id}`),
+  );
+
+  tool(
+    can("applications.use"),
+    "list_saved_jobs",
+    "List the jobs the authenticated member has saved, with their notes.",
+    noInput,
+    () => get("/api/job-board/saved-jobs"),
+  );
+
+  tool(
+    can("applications.use"),
+    "save_job",
+    "Save a job board listing for the authenticated member, optionally with a note. Saving again updates the note.",
+    z.object({ job_id: uuid, notes: z.string().max(2000).optional() }),
+    ({ job_id, notes }) => send("POST", "/api/job-board/saved-jobs", { jobId: job_id, notes }),
+    "Job saved.",
+  );
+
+  tool(
+    can("applications.use"),
+    "unsave_job",
+    "Remove a job from the authenticated member's saved list.",
+    z.object({ job_id: uuid }),
+    ({ job_id }) => send("DELETE", "/api/job-board/saved-jobs", { jobId: job_id }),
+    "Job removed from saved.",
+  );
+
+  tool(
+    can("applications.use"),
+    "list_job_notifications",
+    "List the authenticated member's 50 most recent job board notifications and the unread count.",
+    noInput,
+    () => get("/api/job-board/notifications"),
+  );
+
+  tool(
+    can("applications.use"),
+    "mark_job_notifications_read",
+    "Mark one job board notification as read, or all of them with mark_all_read.",
+    z.object({ notification_id: uuid.optional(), mark_all_read: z.boolean().optional() }).refine(
+      (value) => Boolean(value.notification_id) || value.mark_all_read === true,
+      { message: "Provide notification_id or set mark_all_read." },
+    ),
+    ({ notification_id, mark_all_read }) =>
+      send("PATCH", "/api/job-board/notifications", { notificationId: notification_id, markAllRead: mark_all_read }),
+    "Notifications updated.",
+  );
+
+  tool(
+    can("applications.use"),
+    "get_job_notification_preferences",
+    "Return the authenticated member's job alert settings: in-app and email alerts, digest frequency, keywords, and locations.",
+    noInput,
+    () => get("/api/job-board/notification-preferences"),
+  );
+
+  tool(
+    can("applications.use"),
+    "update_job_notification_preferences",
+    "Change the authenticated member's job alert settings. Settings that are not provided keep their current value.",
+    z.object({
+      in_app_enabled: z.boolean().optional(),
+      email_enabled: z.boolean().optional(),
+      immediate_notifications_enabled: z.boolean().optional(),
+      posted_today_notifications_enabled: z.boolean().optional(),
+      digest_frequency: z.enum(["none", "daily", "weekly"]).optional(),
+      keywords: z.array(z.string().max(80)).max(50).optional(),
+      locations: z.array(z.string().max(80)).max(50).optional(),
+    }).refine((value) => Object.keys(value).length > 0, { message: "Provide at least one setting to change." }),
+    async (changes) => {
+      // The API replaces every setting, so start from what is saved now.
+      const current = await get("/api/job-board/notification-preferences") as { preferences: Json };
+      return send("PUT", "/api/job-board/notification-preferences", { ...current.preferences, ...changes });
+    },
+    "Job alert settings saved.",
   );
 
   // ---- Admin: members ------------------------------------------------------
@@ -648,6 +803,68 @@ function createMcp(apiKey: string, access: Access) {
     "Application fines processed.",
   );
 
+  // ---- Admin: job board ----------------------------------------------------
+
+  tool(
+    can("applications.manage"),
+    "admin_job_board_overview",
+    "Job board health: counts of open jobs, saved jobs and notifications, recent ingestion runs, and usage analytics.",
+    noInput,
+    () => get("/api/job-board/admin/overview"),
+  );
+
+  tool(
+    can("applications.manage"),
+    "admin_list_job_sources",
+    "List the sources the job board pulls postings from, with their enabled state and last successful run.",
+    z.object({
+      provider: z.enum(["jobright", "simplify", "intern_list", "new_grad_jobs", "jobright_h1b"]).optional(),
+    }),
+    (args) => get(withQuery("/api/job-board/admin/sources", args)),
+  );
+
+  tool(
+    can("applications.manage"),
+    "admin_set_job_source_enabled",
+    "Turn one job board source on or off.",
+    z.object({ source_id: uuid, enabled: z.boolean() }),
+    ({ source_id, enabled }) => send("PATCH", "/api/job-board/admin/sources", { sourceId: source_id, enabled }),
+    "Job source updated.",
+  );
+
+  tool(
+    can("applications.manage"),
+    "admin_run_job_ingestion",
+    "Pull fresh postings from the Airtable-based sources (intern_list or new_grad_jobs), for one source or all enabled ones. GitHub sources must be run from the website.",
+    z.object({
+      provider: z.enum(["intern_list", "new_grad_jobs"]).default("intern_list"),
+      source_id: uuid.optional().describe("Limit the run to one source."),
+    }),
+    ({ provider, source_id }) =>
+      send("POST", "/api/job-board/admin/intern-list-ingest", { provider, sourceId: source_id }),
+    "Job ingestion finished.",
+  );
+
+  tool(
+    can("applications.manage"),
+    "admin_generate_job_digest",
+    "Generate the job digest now for every member whose alert settings ask for one. This creates notifications and may send emails.",
+    z.object({ confirm: z.literal(true).describe("Must be true: this notifies members.") }),
+    () => send("POST", "/api/job-board/admin/digest"),
+    "Job digest generated.",
+  );
+
+  tool(
+    can("applications.manage"),
+    "admin_archive_job_postings",
+    "Archive every posting on the job board so it starts empty. Members keep their saved jobs. This affects all members.",
+    z.object({
+      confirm: z.literal("archive-job-postings").describe("Must be exactly archive-job-postings."),
+    }),
+    ({ confirm }) => send("POST", "/api/job-board/admin/jobs/clear", { confirm }),
+    "Job postings archived.",
+  );
+
   // ---- Admin: CodeRank -----------------------------------------------------
 
   tool(
@@ -845,7 +1062,7 @@ const mcpApp = new Hono();
 
 mcpApp.get("/", (ctx) => ctx.json({
   name: "KTP New Brunswick MCP",
-  version: "2.0.0",
+  version: "2.1.0",
   endpoints: { mcp: "/mcp", health: "/health" },
 }));
 mcpApp.get("/health", (ctx) => ctx.json({ status: "ok" }));

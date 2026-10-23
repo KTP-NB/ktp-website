@@ -36,6 +36,7 @@ export default function Header() {
         [MEMBER_PERMISSIONS.PROFILE, '/profile'],
         [MEMBER_PERMISSIONS.FINES, '/fines'],
         [MEMBER_PERMISSIONS.RESUME, '/resume'],
+        [MEMBER_PERMISSIONS.RECRUITER_EMAILS, '/recruiter-outreach'],
         [MEMBER_PERMISSIONS.INTEGRATIONS, '/integrations'],
       ].find(([permission]) => hasPermission(permissions, permission))?.[1];
       return [

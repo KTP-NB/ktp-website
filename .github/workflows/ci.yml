@@ -50,6 +50,9 @@ jobs:
       - name: Test application requirements
         run: npm run test:applications
 
+      - name: Test recruiter outreach
+        run: npm run test:recruiter-emails
+
       - name: Test member directory visibility
         run: npm run test:members
 

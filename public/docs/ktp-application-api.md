@@ -329,6 +329,7 @@ The MCP covers more than applications. A key acts as you, so the tools you see m
 
 - Everyone: `get_my_profile` (shows your role and permissions)
 - Applications: `list_applications`, `get_application`, `add_application`, `add_applications_bulk`, `update_application`, `get_application_progress`
+- Recruiter outreach (`recruiter_emails.use`): `list_recruiter_emails`, `get_recruiter_email`, `add_recruiter_email`, `add_recruiter_emails_bulk`, `update_recruiter_email`. Counts stay separate from application requirements; deletion is website-only.
 - Your account: `get_my_profile_details`, `update_my_profile_details`, `get_my_fines`, `get_my_resume`, `list_my_assessments`
 - Member tools: `list_company_question_companies`, `list_company_questions`, `list_study_files`
 - Admin tools (names start with `admin_`): shown only to people who manage that area, such as members, fines, the application tracker, CodeRank, or resumes
@@ -363,3 +364,7 @@ Authorization: Bearer ktp_live_YOUR_KEY
 ```
 
 Never paste the key into an AI prompt or commit it in an MCP configuration file.
+
+## Recruiter outreach
+
+Track sent recruiter emails and follow-ups separately from application requirements. See the [Recruiter Outreach API and MCP guide](/docs/recruiter-outreach.md) for metadata fields, account permissions, bulk results, duplicate-safe retries, deletion suppression, and the separately authorized email connector workflow. KTP MCP itself cannot access a mailbox.

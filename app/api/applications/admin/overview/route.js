@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { requirePermission } from '@/lib/coderank/auth';
 import { getServiceClient } from '@/lib/coderank/supabaseServer';
 import { withNoStore } from '@/lib/coderank/noStore';
+import { isApplicationFineEligible } from '@/lib/applicationFines.mjs';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -55,6 +56,7 @@ export async function GET(request) {
       baseline_target: baselineTarget,
       has_monthly_override: Boolean(requirement),
       met: stats.count >= target,
+      fine_eligible: isApplicationFineEligible({ member, target, submitted: stats.count }),
     };
   });
 

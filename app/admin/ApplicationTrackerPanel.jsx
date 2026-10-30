@@ -40,6 +40,7 @@ export default function ApplicationTrackerPanel() {
   const [filter, setFilter] = useState("all");
   const [outcomeFilter, setOutcomeFilter] = useState("all");
   const [classFilter, setClassFilter] = useState("all");
+  const [fineEligibilityFilter, setFineEligibilityFilter] = useState("all");
   const [chapterDefault, setChapterDefault] = useState(40);
   const [defaultDraft, setDefaultDraft] = useState(40);
   const [savingDefault, setSavingDefault] = useState(false);
@@ -131,6 +132,8 @@ export default function ApplicationTrackerPanel() {
         .filter((member) => {
           if (filter !== "all" && progressState(member, paceFraction) !== filter) return false;
           if (classFilter !== "all" && member.pledge_class !== classFilter) return false;
+          if (fineEligibilityFilter === "eligible" && !member.fine_eligible) return false;
+          if (fineEligibilityFilter === "not-eligible" && member.fine_eligible) return false;
           if (outcomeFilter === "interview" && member.interviews === 0) return false;
           if (outcomeFilter === "offer" && member.offers === 0) return false;
           if (outcomeFilter === "interview-or-offer" && member.interviews === 0 && member.offers === 0) return false;
@@ -148,7 +151,7 @@ export default function ApplicationTrackerPanel() {
             b.target - b.count - (a.target - a.count) ||
             a.name.localeCompare(b.name),
         ),
-    [members, search, filter, outcomeFilter, classFilter, paceFraction],
+    [members, search, filter, outcomeFilter, classFilter, fineEligibilityFilter, paceFraction],
   );
   const active = members.filter((m) => {
     const status = (m.member_status || "").trim().toLowerCase();
@@ -282,6 +285,17 @@ export default function ApplicationTrackerPanel() {
           options={[
             { value: "all", label: "All classes" },
             ...pledgeClasses.map((pledgeClass) => ({ value: pledgeClass, label: `${pledgeClass} Class` })),
+          ]}
+          className="sm:w-52"
+        />
+        <SelectMenu
+          label="Filter fine eligibility"
+          value={fineEligibilityFilter}
+          onChange={setFineEligibilityFilter}
+          options={[
+            { value: "all", label: "All fine statuses" },
+            { value: "eligible", label: "Would be fined" },
+            { value: "not-eligible", label: "Not fine eligible" },
           ]}
           className="sm:w-52"
         />

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { requirePermission } from '@/lib/coderank/auth';
 import { getServiceClient } from '@/lib/coderank/supabaseServer';
 import { withNoStore } from '@/lib/coderank/noStore';
-import { isApplicationFineEligible } from '@/lib/applicationFines.mjs';
+import { fetchMonthlyApplications, isApplicationFineEligible } from '@/lib/applicationFines.mjs';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -23,7 +23,7 @@ export async function GET(request) {
 
   const [membersResult, appsResult, requirementsResult, chapterResult] = await Promise.all([
     service.from('member_profiles').select('id,user_id,name,email,pledge_class,member_status,photo_url,default_application_target,uses_default_application_target').not('user_id', 'is', null).order('name'),
-    service.from('internship_applications').select('user_id,status').gte('date_applied', start).lt('date_applied', end),
+    fetchMonthlyApplications(service, start, end),
     service.from('application_requirements').select('*').eq('month_start', start),
     service.from('chapter_application_requirements').select('default_target').eq('month_start', start).maybeSingle(),
   ]);

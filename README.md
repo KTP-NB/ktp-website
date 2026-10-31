@@ -20,7 +20,15 @@ You can start editing the page by modifying `app/page.js`. The page auto-updates
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Learn More
+## Recruiter outreach
+
+- [API, MCP tools, and email import workflow](public/docs/recruiter-outreach.md)
+- [Database-owner migration and release handoff](docs/recruiter-outreach-release.md)
+- [MCP server configuration](supabase/functions/ktp-new-brunswick-mcp/README.md)
+
+The database owner must apply the included migration before the feature is released. Application startup and CI do not run migrations.
+
+## Next.js resources
 
 To learn more about Next.js, take a look at the following resources:
 

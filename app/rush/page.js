@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import FadeIn from "@/components/FadeIn";
+import RushTimeline from "./RushTimeline";
 
 /* =========================
    DATA
@@ -10,6 +11,11 @@ import FadeIn from "@/components/FadeIn";
 
 // Set to true (and update the events below) when the next rush opens.
 const RUSH_OPEN = false;
+
+// Shown in the rush process timeline while rush is closed.
+const NEXT_RUSH_TERM = "Spring 2027";
+const INTEREST_FORM_URL =
+  "https://docs.google.com/forms/d/1t-l5DeYSW5R66DDhs8iIR3DoueGZczG_Eji22dJZR-s/viewform";
 
 const events = [
   {
@@ -144,7 +150,7 @@ export default function RushPage() {
                   </span>
               </>
             ) : (
-              "Rush Is Closed"
+              `${NEXT_RUSH_TERM} Rush`
             )}
           </h1>
 
@@ -152,7 +158,7 @@ export default function RushPage() {
           <p className="mt-4 max-w-2xl text-base md:text-lg text-gray-200">
             {RUSH_OPEN
               ? "Learn about our rush process, events, and how to get involved with Kappa Theta Pi at Rutgers–New Brunswick."
-              : "Our next rush is coming soon. Fill out the interest form and we'll reach out when it begins."}
+              : "Rush is closed for now, but it's coming back. Scroll down to see how it works."}
           </p>
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
@@ -162,6 +168,7 @@ export default function RushPage() {
       </section>
 
 {/* ================= TIMELINE HEADER ================= */}
+{RUSH_OPEN ? (
 <section className="bg-gradient-to-b from-[#0f2a44] to-[#153a63] py-16">
   <div className="max-w-4xl mx-auto text-center px-6">
     <h2 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight text-center">
@@ -204,6 +211,9 @@ export default function RushPage() {
     </div>
   </div>
 </section>
+) : (
+  <RushTimeline term={NEXT_RUSH_TERM} interestFormUrl={INTEREST_FORM_URL} />
+)}
 
 
   

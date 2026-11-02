@@ -2,125 +2,8 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import styles from './LineageTab.module.css';
+import { buildLineage, canonicalName } from '@/lib/memberLineage.mjs';
 
-const lineage = [
-  {
-    name: 'Shriya Srinivasan',
-    children: [
-      { name: 'Aditi Sreeganesh', children: [{ name: 'Gravit Bali' }] },
-      { name: 'Kesha Patel' },
-    ],
-  },
-  {
-    name: 'Manan Shah',
-    children: [
-      { name: 'Kshiraj Gupta', children: [{ name: 'Anant Gupta' }] },
-      { name: 'Darsh Sundar' },
-    ],
-  },
-  {
-    name: 'Aishwarya Velagapudi',
-    children: [
-      {
-        name: 'Shiven Patel',
-        children: [
-          {
-            name: 'Jignasu Shah',
-            children: [{ name: 'Krish Patel' }, { name: 'Advitya Suri' }],
-          },
-          { name: 'Heet Shah', children: [{ name: 'Vedavyas Painoori' }] },
-        ],
-      },
-      {
-        name: 'Raghul Srinivasan',
-        children: [{ name: 'Gokulraj Kumarassamy' }],
-      },
-      { name: 'Radha Ghate', children: [{ name: 'Srinidhi Pappu' }] },
-    ],
-  },
-  {
-    name: 'Priyangshu Bhowmik',
-    children: [
-      {
-        name: 'Yugal Shah',
-        children: [
-          { name: 'Sujay Faldu', children: [{ name: 'Anish Allada' }] },
-          { name: 'Nayan Yadav' },
-        ],
-      },
-    ],
-  },
-  {
-    name: 'Suhani Mehra',
-    children: [
-      { name: 'Gourika Dhiman', children: [{ name: 'Mira Kehair' }] },
-      { name: 'Aaron Bansal' },
-    ],
-  },
-  {
-    name: 'Srimathi Vadivel',
-    children: [
-      {
-        name: 'Yash Singh',
-        children: [
-          { name: 'Jayden Shah' },
-          { name: 'Aditya Velagapudi' },
-          { name: 'Anusha Iyer' },
-        ],
-      },
-      { name: 'Priya Rana', children: [{ name: 'Anvi Khambadkone' }] },
-      {
-        name: 'Esha Pai',
-        children: [
-          { name: 'Jyothika Akkineni' },
-          { name: 'Godasrita Dintakurti' },
-        ],
-      },
-    ],
-  },
-  {
-    name: 'Akash Puzhakkal',
-    children: [
-      {
-        name: 'Saatvik Kabra',
-        children: [{ name: 'Krisha Bhagat' }, { name: 'Kaivalya Atigre' }],
-      },
-      {
-        name: 'Krish Kharbanda',
-        children: [{ name: 'Atul Marichetty' }, { name: 'Krish Bansal' }],
-      },
-    ],
-  },
-  {
-    name: 'Anushka Kondur',
-    children: [
-      { name: 'Akhil Thuremella', children: [{ name: 'Krish Maske' }] },
-    ],
-  },
-  {
-    name: 'Ciera Simon',
-    children: [
-      { name: 'Abirami Jayakumar', children: [{ name: 'Abhiram Sajjala' }] },
-    ],
-  },
-  { name: 'Sameer Jiandani' },
-  {
-    name: 'Ananya Ahlawat',
-    children: [
-      {
-        name: 'Umair Siddiqui',
-        children: [{ name: 'Ethan Bingemann' }, { name: 'Arnav Venkata' }],
-      },
-    ],
-  },
-];
-
-// Keep matching explicit: namesakes must never share a photo based on first name.
-const normalizeName = (name = '') => name.trim().replace(/\s+/g, ' ').toLowerCase();
-const canonicalName = (name) => {
-  const normalized = normalizeName(name);
-  return normalized === 'priyanghsu bhowmik' ? 'priyangshu bhowmik' : normalized;
-};
 const familyMembers = (node) => [node, ...(node.children || []).flatMap(familyMembers)];
 
 function Portrait({ name, member, root }) {
@@ -155,8 +38,8 @@ function Portrait({ name, member, root }) {
   );
 }
 
-function MemberRow({ node, membersByName, root = false, size }) {
-  const member = membersByName.get(canonicalName(node.name));
+function MemberRow({ node, root = false, size }) {
+  const member = node;
   return (
     <div className={`${styles.memberRow} ${root ? styles.rootRow : ''}`}>
       <Portrait key={member?.image || 'initials'} name={node.name} member={member} root={root} />
@@ -173,13 +56,13 @@ function MemberRow({ node, membersByName, root = false, size }) {
   );
 }
 
-function Branches({ nodes, membersByName }) {
+function Branches({ nodes }) {
   return (
     <ul className={styles.branches}>
       {nodes.map((node) => (
-        <li className={styles.branch} key={node.name}>
-          <MemberRow node={node} membersByName={membersByName} />
-          {node.children?.length > 0 && <Branches nodes={node.children} membersByName={membersByName} />}
+        <li className={styles.branch} key={node.id}>
+          <MemberRow node={node} />
+          {node.children?.length > 0 && <Branches nodes={node.children} />}
         </li>
       ))}
     </ul>
@@ -187,19 +70,19 @@ function Branches({ nodes, membersByName }) {
 }
 
 export default function LineageTab({ members = [] }) {
-  // Use the public directory, with only the explicit Raghul portrait exception above.
-  const membersByName = useMemo(() => new Map(members.map((member) => [canonicalName(member.name), member])), [members]);
+  const lineage = useMemo(() => buildLineage(members), [members]);
 
   return (
     <section className={styles.lineage} aria-label="Member lineage">
+        {lineage.length === 0 && <p className={styles.singleton}>No member lineages to show yet.</p>}
         <div className={styles.grid}>
           {lineage.map((root) => {
             const size = familyMembers(root).length;
             return (
-              <article className={styles.family} key={root.name} aria-label={`${root.name} family`}>
-                <MemberRow node={root} membersByName={membersByName} root size={size} />
+              <article className={styles.family} key={root.id} aria-label={`${root.name} family`}>
+                <MemberRow node={root} root size={size} />
                 {root.children?.length > 0 ? (
-                  <Branches nodes={root.children} membersByName={membersByName} />
+                  <Branches nodes={root.children} />
                 ) : (
                   <p className={styles.singleton}>Every family starts with one connection.</p>
                 )}

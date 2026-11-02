@@ -10,6 +10,8 @@ import { useAuth } from '@/components/authprovider';
 import { supabase } from '@/lib/supabase';
 import { clearCachedData } from '@/lib/publicDataCache';
 import { MEMBERS_CACHE_KEY } from '@/lib/cacheKeys';
+import { eligibleBigs, isTransferStudent } from '@/lib/memberLineage.mjs';
+import SelectMenu from '@/components/SelectMenu';
 
 const editableFields = [
   { name: 'name', label: 'Name', type: 'text', required: true },
@@ -28,6 +30,7 @@ const emptyProfile = {
   linkedin_url: '',
   photo_url: '',
   photo_storage_path: '',
+  big_member_id: '',
 };
 
 function fileExtension(file) {
@@ -57,8 +60,21 @@ function ProfileEditor() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState(null);
+  const [lineageMembers, setLineageMembers] = useState([]);
+  const [lineageAvailable, setLineageAvailable] = useState(false);
+  const [lineageError, setLineageError] = useState('');
+  const [transferClass, setTransferClass] = useState(false);
+  const [lineageRootKind, setLineageRootKind] = useState(null);
 
   const visibleFields = editableFields;
+  const bigOptions = useMemo(() => eligibleBigs(lineageMembers, profileId), [lineageMembers, profileId]);
+  const unavailableBig = form.big_member_id && !bigOptions.some((member) => member.id === form.big_member_id);
+  const existingLineageRoot = ['founding', 'promoted'].includes(lineageRootKind);
+  const bigMenuOptions = [
+    { value: '', label: 'No Big' },
+    ...(unavailableBig ? [{ value: form.big_member_id, label: 'Current Big (no longer available)' }] : []),
+    ...bigOptions.map((member) => ({ value: member.id, label: member.name })),
+  ];
 
   const displayPhoto = useMemo(
     () => photoPreview || form.photo_url || '/ktp-icon.png',
@@ -74,13 +90,22 @@ function ProfileEditor() {
       setLoading(true);
       setMessage(null);
 
-      const { data, error } = await supabase
+      const [profileResult, lineageResult] = await Promise.all([supabase
         .from('member_profiles')
         .select('*')
         .eq('user_id', user.id)
-        .maybeSingle();
+        .maybeSingle(),
+      supabase.from('public_member_directory')
+        .select('*')
+        .order('name'),
+      ]);
 
       if (!isMounted) return;
+      const { data, error } = profileResult;
+      const lineageReady = !lineageResult.error && Object.hasOwn(data || {}, 'big_member_id');
+      setLineageAvailable(lineageReady);
+      setLineageError(!lineageReady ? 'Big selection is unavailable right now. Please try again later.' : '');
+      setLineageMembers(lineageResult.data || []);
 
       if (error) {
         setMessage({ type: 'error', text: error.message });
@@ -91,6 +116,8 @@ function ProfileEditor() {
         });
       } else {
         setProfileId(data.id);
+        setTransferClass(isTransferStudent(data));
+        setLineageRootKind(data.lineage_root_kind || null);
         setForm({
           name: data.name || '',
           position: data.position || '',
@@ -100,6 +127,7 @@ function ProfileEditor() {
           linkedin_url: data.linkedin_url || '',
           photo_url: data.photo_url || '',
           photo_storage_path: data.photo_storage_path || '',
+          big_member_id: data.big_member_id || '',
         });
       }
 
@@ -126,7 +154,10 @@ function ProfileEditor() {
   }, [photoFile]);
 
   function updateField(name, value) {
-    setForm((current) => ({ ...current, [name]: value }));
+    setForm((current) => ({
+      ...current,
+      [name]: value,
+    }));
   }
 
   async function uploadPhotoIfNeeded() {
@@ -167,6 +198,9 @@ function ProfileEditor() {
         major: form.major.trim() || null,
         minors: form.minors.trim() || null,
         linkedin_url: form.linkedin_url.trim() || null,
+        ...(lineageAvailable ? {
+          big_member_id: transferClass ? null : form.big_member_id || null,
+        } : {}),
         ...(uploadedPhoto || {}),
       };
 
@@ -189,8 +223,10 @@ function ProfileEditor() {
         linkedin_url: data.linkedin_url || '',
         photo_url: data.photo_url || '',
         photo_storage_path: data.photo_storage_path || '',
+        big_member_id: data.big_member_id || '',
       });
       setProfileName(data.name || null);
+      setLineageRootKind(data.lineage_root_kind || null);
       setPhotoFile(null);
       clearCachedData(MEMBERS_CACHE_KEY);
 
@@ -264,6 +300,37 @@ function ProfileEditor() {
                 />
               </label>
             ))}
+
+            {transferClass && (
+              <p className="rounded-xl border border-white/20 bg-white/5 p-4 text-sm text-white/80">
+                <span className="font-semibold">→ Transfer class</span>
+                <span className="mt-1 block text-white/60">Your Transfer class starts a new lineage. Other members can choose you as their Big.</span>
+              </p>
+            )}
+
+            <div className="grid gap-2">
+              <span id="big-label" className="text-sm font-semibold text-white/80">Big</span>
+              <SelectMenu
+                label="Big"
+                value={form.big_member_id}
+                onChange={(value) => updateField('big_member_id', value)}
+                options={bigMenuOptions}
+                placeholder="No Big"
+                portal
+                menuClassName="min-w-0"
+                searchable
+                searchPlaceholder="Search members"
+                disabled={!lineageAvailable || saving || transferClass}
+              />
+              <span id="big-help" className="text-sm text-white/60">
+                {transferClass
+                  ? 'Your Transfer class makes you the start of a new family in the Lineage tab.'
+                  : existingLineageRoot
+                    ? 'You are an existing lineage root. Choosing a Big joins their family.'
+                    : 'No Big keeps you out of the lineage until you choose your Big. Only Transfer-class members automatically start a new lineage.'}
+              </span>
+              {lineageError && <span role="status" className="text-sm text-amber-200">{lineageError}</span>}
+            </div>
 
             {message && (
               <p

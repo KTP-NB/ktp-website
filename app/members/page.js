@@ -11,11 +11,17 @@ import FadeIn from '@/components/FadeIn';
 import { hasSupabaseConfig, supabase } from '@/lib/supabase';
 import { readCachedData, writeCachedData } from '@/lib/publicDataCache';
 import { MEMBERS_CACHE_KEY } from '@/lib/cacheKeys';
-import { greekLetters, memberProfileToCardMember } from './memberProfileMapper';
+import { greekLetters, directoryProfilesToMembers } from './memberProfileMapper';
 import LineageTab from './LineageTab';
+import { withFallbackLineage } from '@/lib/memberLineage.mjs';
 
 const MEMBERS_CACHE_TTL_MS = 5 * 60 * 1000;
+const fallbackLineageMembers = withFallbackLineage(fallbackMembers);
 
+// Apply removals to cached and live data while database visibility updates roll out.
+const visibleMembers = (members) => members.filter(
+  (member) => member.name?.trim().toLowerCase() !== 'kshiraj gupta'
+);
 
 const MemberCard = ({ member, onLinkedInClick }) => (
   <Box
@@ -128,7 +134,7 @@ const ClassFilterChips = ({ options, active, setActive }) => (
 export default function MembersPage() {
   const [activeTab, setActiveTab] = useState('Executive Board');
   const [classFilter, setClassFilter] = useState('All');
-  const [allMembers, setAllMembers] = useState(fallbackMembers);
+  const [allMembers, setAllMembers] = useState(fallbackLineageMembers);
   const [loadingMembers, setLoadingMembers] = useState(true);
 
   useEffect(() => {
@@ -138,7 +144,7 @@ export default function MembersPage() {
       const cachedMembers = readCachedData(MEMBERS_CACHE_KEY, MEMBERS_CACHE_TTL_MS);
 
       if (cachedMembers) {
-        setAllMembers(cachedMembers);
+        setAllMembers(visibleMembers(cachedMembers));
         setLoadingMembers(false);
       }
 
@@ -151,18 +157,16 @@ export default function MembersPage() {
       // authenticated visitors while exposing only directory-safe columns.
       const { data, error } = await supabase
         .from('public_member_directory')
-        .select(
-          'id, name, position, image_path, photo_url, graduation_year, major, minors, linkedin_url, pledge_class, member_status, executive_board, committees, sort_order'
-        )
+        .select('*')
         .order('sort_order', { ascending: true });
 
       if (!isMounted) return;
 
       if (error) {
         console.error('Failed to load member profiles from Supabase:', error);
-        setAllMembers(fallbackMembers);
+        setAllMembers(fallbackLineageMembers);
       } else {
-        const mappedMembers = (data || []).map(memberProfileToCardMember);
+        const mappedMembers = visibleMembers(directoryProfilesToMembers(data || []));
         writeCachedData(MEMBERS_CACHE_KEY, mappedMembers);
         setAllMembers(mappedMembers);
       }

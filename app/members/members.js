@@ -12,6 +12,7 @@ import FadeIn from '@/components/FadeIn';
 
 
 const greekLetters = {
+  Transfer: '→',
     Alpha: "Α",
     Beta: "Β",
     Gamma: "Γ",

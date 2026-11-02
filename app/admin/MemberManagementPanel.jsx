@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Loader2, Plus, Search, Trash2, X } from "lucide-react";
 import { api } from "@/lib/coderank/clientFetch";
 import SelectMenu from "@/components/SelectMenu";
+import { clearCachedData } from '@/lib/publicDataCache';
+import { MEMBERS_CACHE_KEY } from '@/lib/cacheKeys';
 
 const SCOPES = [
   ["members.manage", "Member management"],
@@ -105,6 +107,7 @@ export default function MemberManagementPanel({ viewerRole }) {
         body: JSON.stringify(form),
       });
       setMembers((v) => v.map((m) => (m.id === r.member.id ? r.member : m)));
+      clearCachedData(MEMBERS_CACHE_KEY);
       setEditing(null);
     } catch (e) {
       setError(e.message);
@@ -136,6 +139,7 @@ export default function MemberManagementPanel({ viewerRole }) {
     setError("");
     try {
       await api(`/api/admin/members/${member.id}`, { method: "DELETE" });
+      clearCachedData(MEMBERS_CACHE_KEY);
       setMembers((current) => current.filter((item) => item.id !== member.id));
     } catch (e) {
       setError(e.message);

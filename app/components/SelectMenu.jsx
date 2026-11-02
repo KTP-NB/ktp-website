@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Check, ChevronDown, Search } from 'lucide-react';
 
 /**
@@ -26,10 +27,13 @@ export default function SelectMenu({
   disabled = false,
   className = '',
   menuClassName = 'w-full min-w-[13rem]',
+  portal = false,
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const rootRef = useRef(null);
+  const menuRef = useRef(null);
+  const [menuPosition, setMenuPosition] = useState(null);
 
   useEffect(() => {
     if (!open) {
@@ -37,7 +41,7 @@ export default function SelectMenu({
       return undefined;
     }
     function onPointerDown(event) {
-      if (rootRef.current && !rootRef.current.contains(event.target)) setOpen(false);
+      if (!rootRef.current?.contains(event.target) && !menuRef.current?.contains(event.target)) setOpen(false);
     }
     function onKeyDown(event) {
       if (event.key === 'Escape') setOpen(false);
@@ -71,6 +75,60 @@ export default function SelectMenu({
   const allVisibleSelected = multiple && visibleOptions.length > 0
     && visibleOptions.every((option) => selected.includes(option.value));
 
+  useLayoutEffect(() => {
+    if (!open || !portal) {
+      setMenuPosition(null);
+      return undefined;
+    }
+    let frame;
+    function positionMenu() {
+      const anchor = rootRef.current?.getBoundingClientRect();
+      if (!anchor) return;
+      const viewport = window.visualViewport;
+      const viewportTop = viewport?.offsetTop || 0;
+      const viewportLeft = viewport?.offsetLeft || 0;
+      const viewportWidth = viewport?.width || window.innerWidth;
+      const viewportBottom = viewportTop + (viewport?.height || window.innerHeight);
+      const padding = 12;
+      const gap = 8;
+      if (anchor.bottom < viewportTop || anchor.top > viewportBottom) {
+        setOpen(false);
+        return;
+      }
+      const below = Math.max(0, viewportBottom - padding - anchor.bottom - gap);
+      const above = Math.max(0, anchor.top - gap - viewportTop - padding);
+      const desiredHeight = Math.min(384, 16 + (searchable ? 56 : 0) + Math.min(288, Math.max(1, options.length) * 44));
+      const opensUp = below < desiredHeight && above > below;
+      const width = Math.min(anchor.width, viewportWidth - padding * 2);
+      const preferredLeft = align === 'right' ? anchor.right - width : anchor.left;
+      const left = Math.max(viewportLeft + padding, Math.min(preferredLeft, viewportLeft + viewportWidth - padding - width));
+      setMenuPosition({
+        position: 'fixed',
+        zIndex: 1000,
+        left,
+        width,
+        maxHeight: Math.min(384, opensUp ? above : below),
+        ...(opensUp ? { bottom: window.innerHeight - anchor.top + gap } : { top: anchor.bottom + gap }),
+      });
+    }
+    function schedulePosition() {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(positionMenu);
+    }
+    positionMenu();
+    window.addEventListener('scroll', schedulePosition, true);
+    window.addEventListener('resize', schedulePosition);
+    window.visualViewport?.addEventListener('resize', schedulePosition);
+    window.visualViewport?.addEventListener('scroll', schedulePosition);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', schedulePosition, true);
+      window.removeEventListener('resize', schedulePosition);
+      window.visualViewport?.removeEventListener('resize', schedulePosition);
+      window.visualViewport?.removeEventListener('scroll', schedulePosition);
+    };
+  }, [open, portal, align, searchable, options.length]);
+
   function pick(optionValue) {
     if (multiple) {
       const next = selected.includes(optionValue)
@@ -85,28 +143,16 @@ export default function SelectMenu({
 
   const isPlaceholder = multiple ? selected.length === 0 : !options.some((o) => o.value === selected);
 
-  return (
-    <div ref={rootRef} className={`relative ${className}`}>
-      <button
-        type="button"
-        disabled={disabled}
-        onClick={() => setOpen((current) => !current)}
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        aria-label={label}
-        className="flex w-full items-center justify-between gap-3 rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-left text-sm font-bold text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-45"
-      >
-        <span className={`truncate ${isPlaceholder ? 'text-white/35' : 'text-white'}`}>{triggerLabel}</span>
-        <ChevronDown size={16} className={`shrink-0 text-white/45 transition ${open ? 'rotate-180' : ''}`} />
-      </button>
-
-      {open && (
+  const menu = open && (!portal || menuPosition) && (
         <div
+          ref={menuRef}
           role="listbox"
-          className={`absolute ${align === 'right' ? 'right-0' : 'left-0'} top-full z-[80] mt-3 overflow-hidden rounded-2xl border border-white/15 bg-[#0b1426] p-2 shadow-2xl shadow-black/45 backdrop-blur-xl ${menuClassName}`}
+          aria-label={label}
+          style={portal ? menuPosition : undefined}
+          className={`${portal ? 'flex flex-col text-white' : `absolute ${align === 'right' ? 'right-0' : 'left-0'} top-full z-[80] mt-3`} overflow-hidden rounded-2xl border border-white/15 bg-[#0b1426] p-2 shadow-2xl shadow-black/45 backdrop-blur-xl ${menuClassName}`}
         >
           {searchable && (
-            <div className="relative mb-2">
+            <div className="relative mb-2 shrink-0">
               <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
               <input
                 autoFocus
@@ -133,7 +179,7 @@ export default function SelectMenu({
             </button>
           )}
 
-          <div className="pretty-scrollbar max-h-72 overflow-y-auto">
+          <div className="pretty-scrollbar min-h-0 max-h-72 overflow-y-auto overscroll-contain">
             {visibleOptions.length === 0 ? (
               <p className="px-4 py-3 text-sm text-white/45">No matches.</p>
             ) : (
@@ -177,7 +223,23 @@ export default function SelectMenu({
             </button>
           )}
         </div>
-      )}
+      );
+
+  return (
+    <div ref={rootRef} className={`relative ${className}`}>
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => setOpen((current) => !current)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-label={label}
+        className="flex w-full items-center justify-between gap-3 rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-left text-sm font-bold text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-45"
+      >
+        <span className={`truncate ${isPlaceholder ? 'text-white/35' : 'text-white'}`}>{triggerLabel}</span>
+        <ChevronDown size={16} className={`shrink-0 text-white/45 transition ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {portal ? menu && createPortal(menu, document.body) : menu}
     </div>
   );
 }

@@ -17,7 +17,7 @@
     "test:harness": "node --test lib/coderank/__tests__/harness.test.mjs",
     "test:recruiter-emails": "node --test lib/recruiter-emails/__tests__/*.test.mjs",
     "test:applications": "node --test lib/__tests__/applicationFines.test.mjs lib/__tests__/applicationPayloads.test.mjs",
-    "test:members": "node --test lib/__tests__/publicDirectoryVisibility.test.mjs lib/__tests__/memberAccess.test.mjs lib/__tests__/rolePermissionManagement.test.mjs lib/__tests__/apiKeyAccess.test.mjs lib/__tests__/referralMatching.test.mjs",
+    "test:members": "node --test lib/__tests__/publicDirectoryVisibility.test.mjs lib/__tests__/memberAccess.test.mjs lib/__tests__/rolePermissionManagement.test.mjs lib/__tests__/apiKeyAccess.test.mjs lib/__tests__/referralMatching.test.mjs lib/__tests__/memberLineage.test.mjs",
     "test:fines": "node --test lib/__tests__/fineBulkAssignment.test.mjs",
     "test:job-board": "node --test lib/job-board/__tests__/*.test.mjs"
   },

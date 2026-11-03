@@ -24,6 +24,7 @@ const PERMISSIONS = [
   "coderank.manage",
   "applications.manage",
   "fines.manage",
+  "spotlight.manage",
 ];
 // Roles whose portal tabs a Super Admin curates.
 const GRANTABLE_ROLES = ["admin", "manager"];

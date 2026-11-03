@@ -1,14 +1,16 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { Check, ChevronDown, Plus, Send } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
+import { Check, ChevronDown, Plus, Send, Trash2 } from 'lucide-react';
 import FadeIn from '@/components/FadeIn';
 import Tabs from '@/components/Tabs';
 import { useAuth } from '@/components/authprovider';
 import { hasSupabaseConfig, supabase } from '@/lib/supabase';
 import { readCachedData, writeCachedData } from '@/lib/publicDataCache';
+import { canRemoveSpotlightPost, loadSpotlightPosts, removeSpotlightPost } from '@/lib/spotlight/client.mjs';
 
-const SPOTLIGHT_CACHE_KEY = 'ktp:spotlight_posts:v4';
+const SPOTLIGHT_CACHE_KEY = 'ktp:spotlight_posts:v5';
 const SPOTLIGHT_CACHE_TTL_MS = 5 * 60 * 1000;
 const SPOTLIGHT_CATEGORIES = [
   { value: 'company', label: 'Company', aliases: ['company', 'internship'] },
@@ -98,8 +100,31 @@ function getLinkedInPostUrlFromEmbedUrl(value) {
   }
 }
 
-function SpotlightCard({ post }) {
+function SpotlightCard({ post, canRemove, onRemove }) {
   const categoryLabel = getSpotlightCategoryLabel(post.category);
+  const [confirming, setConfirming] = useState(false);
+  const [removing, setRemoving] = useState(false);
+  const [error, setError] = useState('');
+  const removeButton = useRef(null);
+  const confirmButton = useRef(null);
+  const wasConfirming = useRef(false);
+
+  useEffect(() => {
+    if (confirming) confirmButton.current?.focus();
+    else if (wasConfirming.current) removeButton.current?.focus();
+    wasConfirming.current = confirming;
+  }, [confirming]);
+
+  async function confirmRemoval() {
+    setRemoving(true);
+    setError('');
+    try {
+      await onRemove(post.id);
+    } catch (error) {
+      setError(error.message || 'Could not remove spotlight post. Please try again.');
+      setRemoving(false);
+    }
+  }
 
   const card = (
     <article className="relative pt-4 transition duration-300 hover:-translate-y-1 hover:scale-[1.015]">
@@ -118,15 +143,53 @@ function SpotlightCard({ post }) {
           className="block w-full bg-white"
         />
       </div>
-      {post.post_url && (
-        <a
-          href={post.post_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Open ${categoryLabel || 'spotlight'} on LinkedIn`}
-          title={`Open ${categoryLabel || 'spotlight'} on LinkedIn`}
-          className="absolute right-2 top-6 z-10 h-11 w-20 rounded-md"
-        />
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-sm">
+        {post.post_url && (
+          <a
+            href={post.post_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-md px-1 py-2 font-semibold text-blue-200 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-200"
+          >
+            View on LinkedIn <span aria-hidden="true">↗</span>
+          </a>
+        )}
+        {canRemove && !confirming && (
+          <button
+            ref={removeButton}
+            type="button"
+            onClick={() => { setConfirming(true); setError(''); }}
+            className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-white/15 px-3 py-2 font-semibold text-white/75 transition hover:border-red-300/40 hover:bg-red-500/10 hover:text-red-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-200"
+          >
+            <Trash2 size={15} aria-hidden="true" /> Remove from wall
+          </button>
+        )}
+      </div>
+      {canRemove && confirming && (
+        <div className="mt-2 rounded-xl border border-red-300/25 bg-red-400/10 p-4">
+          <p className="text-sm font-semibold text-white">Remove this spotlight from the wall?</p>
+          <p className="mt-1 text-sm text-white/70">The original LinkedIn post will stay on LinkedIn.</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              ref={confirmButton}
+              type="button"
+              disabled={removing}
+              onClick={confirmRemoval}
+              className="min-h-11 rounded-lg bg-red-600 px-3 py-2 text-sm font-bold text-white hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white disabled:cursor-wait disabled:opacity-60"
+            >
+              {removing ? 'Removing…' : 'Confirm removal'}
+            </button>
+            <button
+              type="button"
+              disabled={removing}
+              onClick={() => { setConfirming(false); setError(''); }}
+              className="min-h-11 rounded-lg border border-white/20 px-3 py-2 text-sm font-semibold text-white hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-200 disabled:opacity-60"
+            >
+              Cancel
+            </button>
+          </div>
+          {error && <p role="alert" className="mt-3 text-sm text-red-100">{error}</p>}
+        </div>
       )}
     </article>
   );
@@ -198,7 +261,11 @@ function SpotlightSubmitForm({ onPostCreated }) {
     }
   }
 
-  if (!user) return null;
+  if (!user) return (
+    <p className="text-center text-sm text-white/70">
+      Have a win to share? <Link href="/login" className="font-semibold text-blue-200 underline underline-offset-4">Sign in</Link> to add your LinkedIn post.
+    </p>
+  );
 
   return (
     <section className="relative z-50 flex justify-end">
@@ -252,6 +319,8 @@ function SpotlightSubmitForm({ onPostCreated }) {
               <input
                 value={iframeCode}
                 onChange={(event) => setIframeCode(event.target.value)}
+                aria-label="LinkedIn embed code"
+                aria-describedby="linkedin-embed-help"
                 placeholder="Paste LinkedIn iframe embed code"
                 required
                 className="h-11 min-w-0 flex-1 bg-transparent px-4 text-sm text-white outline-none placeholder:text-white/40"
@@ -265,6 +334,9 @@ function SpotlightSubmitForm({ onPostCreated }) {
                 <Send size={18} />
               </button>
             </div>
+            <p id="linkedin-embed-help" className="mt-3 text-sm leading-6 text-white/70">
+              On LinkedIn desktop, open your public post and choose More → Embed this post → Copy code. Paste the code above and choose a category. You can remove your spotlight later.
+            </p>
             {message && (
               <p className="mt-3 rounded-xl border border-red-300/25 bg-red-400/10 px-4 py-3 text-sm text-red-100">
                 {message.text}
@@ -287,7 +359,10 @@ function SpotlightSubmitForm({ onPostCreated }) {
 }
 
 export default function SpotlightPage() {
+  const auth = useAuth();
   const [posts, setPosts] = useState([]);
+  const [status, setStatus] = useState('');
+  const postsRevision = useRef(0);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
@@ -327,12 +402,7 @@ export default function SpotlightPage() {
         return;
       }
 
-      const { data, error } = await supabase
-        .from('spotlight_posts')
-        .select('*')
-        .eq('is_published', true)
-        .order('sort_order', { ascending: true })
-        .order('created_at', { ascending: false });
+      const { data, error } = await loadSpotlightPosts(supabase, () => postsRevision.current);
 
       if (!isMounted) return;
 
@@ -358,11 +428,25 @@ export default function SpotlightPage() {
   }, []);
 
   function addPost(post) {
+    postsRevision.current += 1;
+    setStatus('Spotlight added to the wall.');
     setPosts((current) => {
       const nextPosts = [post, ...current];
       writeCachedData(SPOTLIGHT_CACHE_KEY, nextPosts);
       return nextPosts;
     });
+  }
+
+  async function removePost(postId) {
+    if (!hasSupabaseConfig) throw new Error('Spotlight removal is not configured.');
+    await removeSpotlightPost(supabase, postId);
+    postsRevision.current += 1;
+    setPosts((current) => {
+      const nextPosts = current.filter((post) => post.id !== postId);
+      writeCachedData(SPOTLIGHT_CACHE_KEY, nextPosts);
+      return nextPosts;
+    });
+    setStatus('Spotlight removed from the wall.');
   }
 
   return (
@@ -378,6 +462,7 @@ export default function SpotlightPage() {
         </section>
 
         <SpotlightSubmitForm onPostCreated={addPost} />
+        <p role="status" className="mt-3 text-center text-sm text-blue-100">{status}</p>
 
         <div className="relative z-10 mt-8">
           <Tabs
@@ -404,7 +489,7 @@ export default function SpotlightPage() {
         {filteredPosts.length > 0 && (
           <section className="relative z-0 mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {filteredPosts.map((post) => (
-              <SpotlightCard key={post.id} post={post} />
+              <SpotlightCard key={post.id} post={post} canRemove={canRemoveSpotlightPost(auth, post)} onRemove={removePost} />
             ))}
           </section>
         )}
